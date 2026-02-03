@@ -1,2 +1,4 @@
 # Python virtual environments
 .venv/
+estados/__pycache__/
+.github/

@@ -1,64 +1,94 @@
 # Example file showing a circle moving on screen
-import pygame
+import os,time,pygame
 
-# pygame setup
-pygame.init()
-screen = pygame.display.set_mode((1920, 1080))
-clock = pygame.time.Clock()
-running = True
-dt = 0
+from estados.titulo import Titulo
 
-player_pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
-TAMANO_JUGADOR = 40
-VELOCIDAD = 300
-ATAQUE_RADIO = 25
-# Direccion en la que el jugador "mira" (por defecto hacia la derecha)
-mirando_dir = pygame.Vector2(1, 0)
+class Juego():
+    def __init__(self):
+        pygame.init()
+        self.ancho, self.alto = 1080, 720
+        self.game_canvas = pygame.Surface((self.ancho, self.alto))
+        self.screen = pygame.display.set_mode((self.ancho, self.alto))
+        self.actions = {"left":False, "right":False, "up":False, "down":False, "attack1":False,"enter":False}
+        self.dt, self.prev_time = 0,0
+        self.running, self.playing = True, True
+        self.clock = pygame.time.Clock()
+        self.running = True
+        self.state_stack = []
+        self.load_assets()
+        self.load_states()
 
-while running:
-    # poll for events
-    # pygame.QUIT event means the user clicked X to close your window
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
+    def game_loop(self):
+        while self.running:
+            self.get_dt()
+            self.get_events()
+            self.update()
+            self.render()
 
-    # fill the screen with a color to wipe away anything from last frame
-    screen.fill("purple")
+    def get_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_a:
+                    self.actions["left"] = True
+                if event.key == pygame.K_d:
+                    self.actions["right"] = True
+                if event.key == pygame.K_w:
+                    self.actions["up"] = True
+                if event.key == pygame.K_s:
+                    self.actions["down"] = True
+                if event.key == pygame.K_SPACE:
+                    self.actions["attack1"] = True
+                if event.key == pygame.K_RETURN:
+                    self.actions["enter"] = True
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_a:
+                    self.actions["left"] = False
+                if event.key == pygame.K_d:
+                    self.actions["right"] = False
+                if event.key == pygame.K_w:
+                    self.actions["up"] = False
+                if event.key == pygame.K_s:
+                    self.actions["down"] = False
+                if event.key == pygame.K_SPACE:
+                    self.actions["attack1"] = False
+                if event.key == pygame.K_RETURN:
+                    self.actions["enter"] = False
+    def update(self):
+        self.state_stack[-1].actualizar(self.dt, self.actions)
 
-    pygame.draw.circle(screen, "red", player_pos, TAMANO_JUGADOR)
+    def render(self):
+        # Render current state to the canvas, then scale to the screen (como el ejemplo)
+        self.state_stack[-1].dibujar(self.game_canvas)
+        self.screen.blit(
+            pygame.transform.scale(self.game_canvas, self.screen.get_size()),
+            (0, 0),
+        )
+        pygame.display.flip()
 
-    keys = pygame.key.get_pressed()
-    move_dir = pygame.Vector2(0, 0)
-    if keys[pygame.K_w]:
-        move_dir.y -= 1
-    if keys[pygame.K_s]:
-        move_dir.y += 1
-    if keys[pygame.K_a]:
-        move_dir.x -= 1
-    if keys[pygame.K_d]:
-        move_dir.x += 1
+    def get_dt(self):
+        self.dt = self.clock.tick(60) / 1000
 
-    if move_dir.length_squared() > 0:
-        move_dir = move_dir.normalize()
-        player_pos += move_dir * VELOCIDAD * dt
-        mirando_dir = move_dir
+    def draw_text(self, surface, text, color, x, y):
+        font = pygame.font.Font(None, 36)
+        text_surface = font.render(text, True, color)
+        text_rect = text_surface.get_rect()
+        text_rect.center = (int(x), int(y))
+        surface.blit(text_surface, text_rect)
 
-    # Que el jugador no se salga de la pantalla
-    player_pos.x = max(TAMANO_JUGADOR, min(screen.get_width() - TAMANO_JUGADOR, player_pos.x))
-    player_pos.y = max(TAMANO_JUGADOR, min(screen.get_height() - TAMANO_JUGADOR, player_pos.y))
+    def load_assets(self):
+        pass
 
-    #Al pulsar espacio, el jugador ataca (ahora se muestra el hitbox solo)
-    if keys[pygame.K_SPACE]:
-        # Hitbox del ataque hacia la direccion en la que mira
-        ataque_pos = player_pos + mirando_dir * (TAMANO_JUGADOR + ATAQUE_RADIO)
-        pygame.draw.circle(screen, "yellow", ataque_pos, ATAQUE_RADIO, 5)
+    def reset_keys(self):
+        for k in self.actions:
+            self.actions[k] = False
 
-    # flip() the display to put your work on screen
-    pygame.display.flip()
+    def load_states(self):
+        self.title_screen = Titulo(self)
+        self.state_stack.append(self.title_screen)
 
-    # limits FPS to 60
-    # dt is delta time in seconds since last frame, used for framerate-
-    # independent physics.
-    dt = clock.tick(60) / 1000
-
-pygame.quit()
+if __name__ == "__main__":
+    j = Juego()
+    while j.running:
+        j.game_loop()
