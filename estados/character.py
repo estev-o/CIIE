@@ -1,8 +1,54 @@
 import pygame
+from estados.constants import RED, PLAYER_DEATH
 
-class AbstractCharacter():
-    def __init__(self, game, x, y, width, height, scale, speed, anim_fps, asset_file=None):
+'''
+    Character generaliza la creacion de un personaje en el juego (protagonista, enemigos...)
+    Propiedades "publicas":
+        max_live -> vida maxima
+        x -> posiciones en x 
+        y -> posicion en y
+        width -> ancho
+        height -> alto
+        scale -> escala del tamaño
+        speed -> px/segundo que se mueve el personaje
+        anim_fps -> fps de la animacion
+        asset_file -> archivo con las imagenes
+        remaining_life -> vida restante
+        remaining_life_percentage -> porcentaje de la vida restante
+
+    Funciones "publicas":
+        heal(heal_amount) -> suma la 'heal_amount' a la vida actual con 
+                            'max_live' como limite.
+                        
+
+        heal_percentage(heal_percentage) -> suma un porcentaje [0 - 100] de 
+                            'max_live' a la vida actual con 'max_live' como limite.
+
+        apply_damage(damage_amount) -> resta 'damage_amount' de la vida actual 
+                            con 0 como limite. SI la vida llega a 
+                            0, se disparael evento PLAYER_DEATH
+
+        apply_damage_percentage(damage_percentage) -> resta un porcentage [0 - 100 ]
+                            de la vida actual con 0 como limite. SI la vida
+                            llega a 0, se dispara el evento PLAYER_DEATH
+
+                                        
+    Funciones Internas:
+        load_sprites -> carga el archivo de assets y crea las propiedades self._down_sprites,
+                        self._up_sprites, self._left_sprites, self._right_sprites
+
+        update: modifica la posicion del personaje y llama 'animate' en caso de haber archivo de assets
+
+        animate: selecciona que imagen mostrar en caso de que el personaje esté moviendose o esté quieto
+
+'''
+
+
+class Character():
+    def __init__(self, game, max_live, x, y, width, height, scale, speed, anim_fps, asset_file=None):
         self.game = game
+        self.max_live = max_live
+        self._actual_life = max_live
         self.pos_x = x
         self.pos_y = y
         self.speed = speed
@@ -21,7 +67,39 @@ class AbstractCharacter():
             self._curr_image = self._curr_anim_list[0]
         else:
             self._curr_image = pygame.Surface((self.frame_w, self.frame_h))
-            self._curr_image.fill((255, 0, 0))  # rojo
+            self._curr_image.fill(RED)
+
+    @property
+    def remaining_life(self):
+        return self._actual_life
+    
+    @property
+    def remaining_life_percentage(self):
+        return (self._actual_life / self.remaining_life) * 100
+    
+    def alert_if_death(self):
+        if(self.remaining_life <= 0):
+            pygame.event.post(PLAYER_DEATH)
+
+    def heal(self, heal_amount):
+        if heal_amount > 0:
+            self._actual_life = min(self._actual_life + heal_amount, self.max_live)
+
+    def heal_percetage(self, heal_percentage):
+        if 0 < heal_percentage <= 100:
+            heal = self.max_live * heal_percentage / 100
+            self._actual_life = min(self._actual_life + heal, self.max_live)
+    
+    def apply_damage(self, damage_amount):
+        if damage_amount > 0:
+            self._actual_life = max(self._actual_life - damage_amount, 0)
+            self.alert_if_death()
+        
+    def apply_damage_percentage(self, damage_percentage):
+        if 0 < damage_percentage <= 100:
+            damage = self.max_live * damage_percentage / 100
+            self._actual_life = min(self._actual_life - damage, 0)
+            self.alert_if_death()
 
     def update(self, dt, acciones):
         direction_x = acciones["right"] - acciones["left"]
@@ -103,3 +181,11 @@ class AbstractCharacter():
         self._up_sprites = slice_row(1) if rows >= 2 else list(self._down_sprites)
         self._left_sprites = slice_row(2) if rows >= 3 else [pygame.transform.flip(f, True, False) for f in self._down_sprites]
         self._right_sprites = slice_row(3) if rows >= 4 else [pygame.transform.flip(f, True, False) for f in self._left_sprites]
+
+    def get_rect(self) -> pygame.Rect:
+        return pygame.Rect(
+            int(self.pos_x),
+            int(self.pos_y),
+            self.frame_w * self.scale,
+            self.frame_h * self.scale,
+        )
