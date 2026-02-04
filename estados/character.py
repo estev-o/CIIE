@@ -17,9 +17,10 @@ from estados.constants import RED, PLAYER_DEATH
         remaining_life_percentage -> porcentaje de la vida restante
 
     Funciones "publicas":
+        get_rect() -> Devuelve un pygame.Rect que representa la hitbox
+
         heal(heal_amount) -> suma la 'heal_amount' a la vida actual con 
                             'max_live' como limite.
-                        
 
         heal_percentage(heal_percentage) -> suma un porcentaje [0 - 100] de 
                             'max_live' a la vida actual con 'max_live' como limite.
