@@ -1,18 +1,8 @@
-import pygame, os
-from estados.character import Character
+"""Compat: este módulo se movió a personajes/player.py.
 
-class Player(Character):
-    def __init__(self, game):
-        super().__init__(
-            game = game,
-            max_live = 100,
-            x = 100,
-            y = 100,
-            width = 64,
-            height = 64,
-            speed = 250,
-            scale = 2,
-            anim_fps = 10,
-            asset_file = "assets/Blub/PNG/Slime1/Walk/Slime1_Walk_full.png"
-        )
+Mantengo este import para no romper código existente que haga:
+    from estados.player import Player
+"""
+
+from personajes.player import Player
 

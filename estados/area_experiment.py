@@ -1,6 +1,6 @@
 import pygame, os
 from estados.estado import Estado
-from estados.player import Player
+from personajes.player import Player
 
 class AreaExperiment(Estado):
     def __init__(self, juego):

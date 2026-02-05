@@ -2,3 +2,4 @@
 .venv/
 estados/__pycache__/
 .github/
+personajes/__pycache__/

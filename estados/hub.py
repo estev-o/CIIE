@@ -1,5 +1,5 @@
 import pygame
-from estados.player import Player
+from personajes.player import Player
 from estados.estado import Estado
 
 class Hub(Estado):
