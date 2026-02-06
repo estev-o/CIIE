@@ -1,35 +1,28 @@
+import os
 import pygame
-from personajes.player import Player
+from assets.tiles import TiledTMX
 from estados.estado import Estado
+from personajes.player import Player
 
 class Hub(Estado):
     def __init__(self, juego):
         Estado.__init__(self,juego)
-        # CARGAR FONDO AQUÍ
 
-        # Puerta de salida (rectángulo) a la derecha en el centro
-        self.puerta_rect = pygame.Rect(
-            self.juego.ancho - 100,
-            self.juego.alto // 2 - 50,
-            80,
-            100,
-        )
+        # guarda el mapa desde Tiled como TMX (layers en CSV) en esta ruta.
+        tmx_path = os.path.join("assets", "Fondo_Hub", "hub.tmx")
 
+        # Esto detecta todos los tilesets 
+        self.tmx_map = TiledTMX(tmx_path)
+
+        # Se usa el orden del TMX pero se podría cambiar el orden TODO: Util para sistema de colisiones??¿??¿?¿???
+        self.map_layer_order = list(self.tmx_map.layer_names)
+        
         self.player = Player(self.juego)       
 
     def actualizar(self, dt, acciones):
         self.player.update(dt, acciones)
 
-        # Si el rect del jugador toca cualquier parte del rectángulo de la puerta, cambiar de área
-        if self.player.get_rect().colliderect(self.puerta_rect):
-            from estados.area_experiment import AreaExperiment
-            AreaExperiment(self.juego).entrar_estado()
-            return
-
     def dibujar(self, pantalla):
-        # Dibujar el Hub en la pantalla
-        pantalla.fill((50, 50, 100))  # Fondo azul oscuro como ejemplo
-        pygame.draw.rect(pantalla, (200, 100, 50), self.puerta_rect)
-
-        self.juego.draw_text(pantalla, "HUB DEL JUEGO", (255, 255, 255), self.juego.ancho // 2, self.juego.alto // 2)
+        pantalla.fill((0, 0, 0))
+        self.tmx_map.draw(pantalla, only=self.map_layer_order)
         self.player.render(pantalla)

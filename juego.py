@@ -6,7 +6,7 @@ from estados.titulo import Titulo
 class Juego():
     def __init__(self):
         pygame.init()
-        self.ancho, self.alto = 1080, 720
+        self.ancho, self.alto = 1024, 544
         self.game_canvas = pygame.Surface((self.ancho, self.alto))
         self.screen = pygame.display.set_mode((self.ancho, self.alto))
         self.actions = {"left":False, "right":False, "up":False, "down":False, "attack1":False,"enter":False}
