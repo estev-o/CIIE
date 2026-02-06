@@ -26,7 +26,6 @@ class TileAtlas:
 
     Soporta el concepto de GID global de Tiled con `firstgid`.
     """
-
     def __init__(self, tileset: TileSet):
         self.tileset = tileset
 
@@ -72,6 +71,22 @@ class TileAtlas:
         return self.surface.subsurface(rect).copy()
 
 
+@dataclass(frozen=True, slots=True)
+class TiledObject:
+    id: int
+    name: str
+    type: str
+    x: float
+    y: float
+    width: float
+    height: float
+    properties: dict[str, str]
+
+    @property
+    def rect(self) -> pygame.Rect:
+        return pygame.Rect(int(self.x), int(self.y), int(self.width), int(self.height))
+
+
 class TiledTMX:
     """Carga un mapa .tmx de Tiled con múltiples tilesets y layers.
 
@@ -93,6 +108,29 @@ class TiledTMX:
 
         self._atlases: list[TileAtlas] = self._load_tilesets()
         self.layers: list[tuple[str, pygame.Surface]] = self._render_layers()
+        self.object_layers: dict[str, list[TiledObject]] = self._parse_object_layers()
+
+    @property
+    def object_layer_names(self) -> list[str]:
+        return list(self.object_layers.keys())
+
+    def get_objects(
+        self,
+        *,
+        layer: str | None = None,
+        name: str | None = None,
+        type: str | None = None,
+    ) -> list["TiledObject"]:
+        if layer is None:
+            objs = [o for lst in self.object_layers.values() for o in lst]
+        else:
+            objs = list(self.object_layers.get(layer, []))
+
+        if name is not None:
+            objs = [o for o in objs if o.name == name]
+        if type is not None:
+            objs = [o for o in objs if o.type == type]
+        return objs
 
     @property
     def layer_names(self) -> list[str]:
@@ -117,6 +155,58 @@ class TiledTMX:
             "margin": int(root.attrib.get("margin", "0")),
             "image": image_el.attrib.get("source", ""),
         }
+
+    def _parse_properties(self, props_el: ET.Element | None) -> dict[str, str]:
+        if props_el is None:
+            return {}
+
+        out: dict[str, str] = {}
+        for prop in props_el.findall("property"):
+            key = prop.attrib.get("name", "")
+            if not key:
+                continue
+            if "value" in prop.attrib:
+                out[key] = str(prop.attrib.get("value", ""))
+            else:
+                out[key] = str(prop.text or "")
+        return out
+
+    def _parse_object_layers(self) -> dict[str, list[TiledObject]]:
+        layers: dict[str, list[TiledObject]] = {}
+
+        for obj_group in self.root.findall("objectgroup"):
+            layer_name = obj_group.attrib.get("name", "objects")
+            objects: list[TiledObject] = []
+
+            for obj in obj_group.findall("object"):
+                obj_id = int(obj.attrib.get("id", "0"))
+                obj_name = obj.attrib.get("name", "")
+                obj_type = obj.attrib.get("type", "")
+
+                # Tiled exporta floats a veces
+                x = float(obj.attrib.get("x", "0"))
+                y = float(obj.attrib.get("y", "0"))
+                w = float(obj.attrib.get("width", "0"))
+                h = float(obj.attrib.get("height", "0"))
+
+                props = self._parse_properties(obj.find("properties"))
+                objects.append(
+                    TiledObject(
+                        id=obj_id,
+                        name=obj_name,
+                        type=obj_type,
+                        x=x,
+                        y=y,
+                        width=w,
+                        height=h,
+                        properties=props,
+                    )
+                )
+
+            if objects:
+                layers[layer_name] = objects
+
+        return layers
 
     def _load_tilesets(self) -> list[TileAtlas]:
         atlases: list[TileAtlas] = []

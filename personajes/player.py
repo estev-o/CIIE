@@ -12,6 +12,6 @@ class Player(Character):
             height=64,
             speed=200,
             scale=2,
-            anim_fps=10,
+            anim_fps=15,
             asset_file="assets/Blub/PNG/Slime1/Walk/Slime1_Walk_full.png",
         )
