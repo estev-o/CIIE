@@ -1,11 +1,20 @@
 import pygame, os
 from estados.estado import Estado
+from assets.tiles import TiledTMX
+import random
 from personajes.player import Player
 
 class AreaExperiment(Estado):
     def __init__(self, juego):
         Estado.__init__(self,juego)
-        # CARGAR FONDO AQUÍ
+        # Elige aleatoriamente entre dos mapas de experimentación
+        distintas_areas = ["area_exp1.tmx", "area_exp2.tmx"]
+        tmx_elegido = random.choice(distintas_areas)
+        tmx_path = os.path.join("assets", "area_experimentacion", tmx_elegido)
+        
+        self.tmx_map = TiledTMX(tmx_path)
+        self.map_layer_order = list(self.tmx_map.layer_names)
+
 
         self.player = Player(self.juego)       
 
@@ -13,10 +22,6 @@ class AreaExperiment(Estado):
         self.player.update(dt, acciones)
 
     def dibujar(self, pantalla):
-        # Dibujar el Área de Experimento en la pantalla
-        pantalla.fill((100, 50, 50))  # Fondo rojo oscuro como ejemplo
-        # Puerta de salida (simple rectángulo) a la derecha en el centro
-        pygame.draw.rect(pantalla, (50, 200, 50), (self.juego.ancho - 100, self.juego.alto // 2 - 50, 80, 100))
-        
-        self.juego.draw_text(pantalla, "ÁREA DE EXPERIMENTOS", (255, 255, 255), self.juego.ancho // 2, self.juego.alto // 2)
+        pantalla.fill((0, 0, 0))
+        self.tmx_map.draw(pantalla, only=self.map_layer_order)
         self.player.render(pantalla)

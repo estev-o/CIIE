@@ -1,10 +1,13 @@
 import os
 from dataclasses import dataclass
 import xml.etree.ElementTree as ET
-
 import pygame
 
-__all__ = ["TileSet", "TiledTMX"]
+__all__ = ["TiledTMX"]
+
+# En Tiled, los 3 bits superiores del GID se usan para flips/rotaciones.
+# Como aquí NO soportamos flips, aplicamos una máscara para quedarnos con el ID real.
+_TILED_GID_MASK = 0x1FFFFFFF
 
 
 @dataclass(frozen=True, slots=True)
@@ -67,43 +70,6 @@ class TileAtlas:
         local_id = gid - self.tileset.firstgid
         rect = self._rect_for_local_id(local_id)
         return self.surface.subsurface(rect).copy()
-
-
-# Flags de Tiled para volteos dentro del GID
-_FLIPPED_HORIZONTALLY_FLAG = 0x80000000
-_FLIPPED_VERTICALLY_FLAG = 0x40000000
-_FLIPPED_DIAGONALLY_FLAG = 0x20000000
-
-
-def _decode_tiled_gid(raw_gid: int) -> tuple[int, bool, bool, bool]:
-    flip_h = bool(raw_gid & _FLIPPED_HORIZONTALLY_FLAG)
-    flip_v = bool(raw_gid & _FLIPPED_VERTICALLY_FLAG)
-    flip_d = bool(raw_gid & _FLIPPED_DIAGONALLY_FLAG)
-    gid = raw_gid & 0x1FFFFFFF
-    return gid, flip_h, flip_v, flip_d
-
-
-def _apply_tiled_flips(
-    img: pygame.Surface, flip_h: bool, flip_v: bool, flip_d: bool
-) -> pygame.Surface:
-    # En la mayoría de mapas no se usa diagonal; lo soportamos de forma básica.
-    if not (flip_h or flip_v or flip_d):
-        return img
-
-    out = img
-    if flip_d:
-        # Aproximación estándar: rotación + flips
-        out = pygame.transform.rotate(out, 90)
-        # tras rotación, el significado de h/v cambia; aplicamos una combinación razonable
-        if flip_h and flip_v:
-            out = pygame.transform.flip(out, True, False)
-        elif flip_h:
-            out = pygame.transform.flip(out, True, True)
-        elif flip_v:
-            out = pygame.transform.flip(out, False, False)
-        return out
-
-    return pygame.transform.flip(out, flip_h, flip_v)
 
 
 class TiledTMX:
@@ -241,7 +207,7 @@ class TiledTMX:
 
             surf = pygame.Surface((map_w_px, map_h_px), flags=pygame.SRCALPHA)
             for idx, raw_gid in enumerate(gids):
-                gid, fh, fv, fd = _decode_tiled_gid(raw_gid)
+                gid = raw_gid & _TILED_GID_MASK
                 if gid <= 0:
                     continue
                 atlas = self._atlas_for_gid(gid)
@@ -250,7 +216,6 @@ class TiledTMX:
                 tile_img = atlas.get_tile_by_gid(gid)
                 if tile_img is None:
                     continue
-                tile_img = _apply_tiled_flips(tile_img, fh, fv, fd)
 
                 x = (idx % self.width) * self.tile_width
                 y = (idx // self.width) * self.tile_height
