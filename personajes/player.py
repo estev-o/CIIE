@@ -6,12 +6,13 @@ class Player(Character):
         super().__init__(
             game=game,
             max_live=100,
-            x=100,
-            y=100,
+            # la posición la cambiamos porque el spawn cambia según el estado del nivel
+            x=0,
+            y=0,
             width=64,
             height=64,
             speed=200,
-            scale=2,
+            scale=1.75,
             anim_fps=15,
             asset_file="assets/Blub/PNG/Slime1/Walk/Slime1_Walk_full.png",
         )

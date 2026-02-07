@@ -3,6 +3,8 @@ from estados.estado import Estado
 from assets.tiles import TiledTMX
 import random
 from personajes.player import Player
+NIVEL_FORZADO = "area_exp1.tmx"  # Para pruebas, fuerza a entrar a esta área de experimentación específica
+DEBUG = False
 
 class AreaExperiment(Estado):
     def __init__(self, juego):
@@ -11,12 +13,19 @@ class AreaExperiment(Estado):
         distintas_areas = ["area_exp1.tmx", "area_exp2.tmx"]
         tmx_elegido = random.choice(distintas_areas)
         tmx_path = os.path.join("assets", "area_experimentacion", tmx_elegido)
-        
+
+        # CODIGO DEBUG, BORRAR
+        if DEBUG:
+            tmx_path = os.path.join("assets", "area_experimentacion", NIVEL_FORZADO)
+
         self.tmx_map = TiledTMX(tmx_path)
         self.map_layer_order = list(self.tmx_map.layer_names)
 
-
-        self.player = Player(self.juego)       
+        self.player = Player(self.juego)  
+        spawn = self.tmx_map.get_objects(layer="spawn_point")[0]
+        r = self.player.get_rect()
+        self.player.pos_x = spawn.x - (r.width / 2)
+        self.player.pos_y = spawn.y - (r.height / 2)
 
     def actualizar(self, dt, acciones):
         self.player.update(dt, acciones)

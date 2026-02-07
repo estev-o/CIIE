@@ -12,20 +12,23 @@ class Hub(Estado):
         # guarda el mapa desde Tiled como TMX (layers en CSV) en esta ruta.
         tmx_path = os.path.join("assets", "Fondo_Hub", "hub.tmx")
 
-        # Esto detecta todos los tilesets 
+        # Esto detecta todos los tilesets
         self.tmx_map = TiledTMX(tmx_path)
-
         self.map_layer_order = list(self.tmx_map.layer_names)
-        
-        # TODO: meter el spawn_point del player, que está en el TMX
-        self.player = Player(self.juego)       
 
-        # Punto medio de la puerta del hub
-        doors = self.tmx_map.get_objects(layer="puerta")
-        door = next((d for d in doors if d.width > 0 and d.height > 0), None)
+        # Cargamos el jugador y su spawn
+        self.player = Player(self.juego)       
+        # get_objects devuelve una lista de objetos, aunque en este caso solo hay uno, el spawn del jugador
+        spawn = self.tmx_map.get_objects(layer="spawn_point")[0]
+        r = self.player.get_rect()
+        self.player.pos_x = spawn.x - (r.width / 2)
+        self.player.pos_y = spawn.y - (r.height / 2)
+
+        # Punto medio de la puerta del hub, para detectar la colisión con jugador
+        door = self.tmx_map.get_objects(layer="puerta")[0]
         self._door_center = door.rect.center
-        #Modificamos hardcodeado el punto de la puerta, en el juego coincide demasiado abajo
-        self._door_center = (self._door_center[0], self._door_center[1] - 70)
+        # Modificamos hardcodeado el punto de la puerta, en el juego coincide demasiado abajo
+        self._door_center = (self._door_center[0], self._door_center[1] - 55)
 
     def actualizar(self, dt, acciones):
         self.player.update(dt, acciones)
