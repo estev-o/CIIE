@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="32" height="17" tilewidth="32" tileheight="32" infinite="0" nextlayerid="8" nextobjectid="11">
  <tileset firstgid="1" source="../pixel_cyberpunk_interior_free_1.0.1/pixel-cyberpunk-interior.tsx"/>
- <tileset firstgid="232" source="../../../../../Downloads/assets/CIIE proyecto/pixel-cyberpunk-interior.tsx"/>
+ <tileset firstgid="232" source="../pixel_cyberpunk_interior_free_1.0.1/pixel-cyberpunk-interior.tsx"/>
  <layer id="1" name="Tile Layer 1" width="32" height="17">
   <data encoding="csv">
 106,87,87,87,87,87,87,87,88,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,106,87,87,87,87,87,87,88,

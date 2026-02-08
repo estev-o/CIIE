@@ -5,7 +5,7 @@
  </editorsettings>
  <tileset firstgid="1" source="../pixel_cyberpunk_interior_free_1.0.1/pixel-cyberpunk-interior.tsx"/>
  <tileset firstgid="232" source="../tiles_laboratory_LandOfPixels/tilesStuff.tsx"/>
- <tileset firstgid="824" source="../../../../../Downloads/assets/CIIE proyecto/pixel-cyberpunk-interior.tsx"/>
+ <tileset firstgid="824" source="../pixel_cyberpunk_interior_free_1.0.1/pixel-cyberpunk-interior.tsx"/>
  <layer id="1" name="Tile Layer 1" width="32" height="17">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,3,0,0,0,0,0,
