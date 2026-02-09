@@ -14,7 +14,9 @@ class Azulejo(Attack):
             height = 16,
             scale = 2,
             speed = 500,
-            anim_fps = 10
+            anim_fps = 10,
+            hitbox_offset_x= 0,
+            hitbox_offset_y= 0
         )
         self.image = pygame.Surface((self.frame_w, self.frame_h))
         self.image.fill(BLUE)
