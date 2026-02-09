@@ -32,6 +32,11 @@ class Hub(Estado):
         self._door_center = door.rect.center
 
     def actualizar(self, dt, acciones):
+        if acciones.get("toggle_pause"):
+            self.juego.actions["toggle_pause"] = False
+            from estados.pausa import Pausa
+            Pausa(self.juego).entrar_estado()
+            return
         self.player.update(dt, acciones)
 
         for attack in self.attacks[:]:
