@@ -12,12 +12,15 @@ class Hub(Estado):
         # guarda el mapa desde Tiled como TMX (layers en CSV) en esta ruta.
         tmx_path = os.path.join("assets", "Fondo_Hub", "hub.tmx")
 
+        # ataques que estan activos en este nivel
+        self.attacks = []
+
         # Esto detecta todos los tilesets
         self.tmx_map = TiledTMX(tmx_path)
         self.map_layer_order = list(self.tmx_map.layer_names)
 
         # Cargamos el jugador y su spawn
-        self.player = Player(self.juego)       
+        self.player = Player(self.juego)
         # get_objects devuelve una lista de objetos, aunque en este caso solo hay uno, el spawn del jugador
         spawn = self.tmx_map.get_objects(layer="spawn_point")[0]
         r = self.player.get_rect()
@@ -33,6 +36,9 @@ class Hub(Estado):
     def actualizar(self, dt, acciones):
         self.player.update(dt, acciones)
 
+        for attack in self.attacks[:]:
+            attack.update(dt, acciones)
+
         if self.player.get_rect().collidepoint(self._door_center):
             AreaExperiment(self.juego).entrar_estado()
             return
@@ -41,3 +47,6 @@ class Hub(Estado):
         pantalla.fill((0, 0, 0))
         self.tmx_map.draw(pantalla, only=self.map_layer_order)
         self.player.render(pantalla)
+        
+        for attack in self.attacks[:]:
+            attack.render(pantalla)

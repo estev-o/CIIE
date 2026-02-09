@@ -1,12 +1,11 @@
 import pygame
-from personajes.constants import RED, PLAYER_DEATH
+from personajes.constants import RED
+from abc import abstractmethod, ABC
 
-
-class Character:
+class Character(ABC):
     def __init__(
         self,
         game,
-        max_live,
         x,
         y,
         width,
@@ -14,11 +13,11 @@ class Character:
         scale,
         speed,
         anim_fps,
+        max_live=None,
         asset_file=None,
     ):
+        super().__init__()
         self.game = game
-        self.max_live = max_live
-        self._actual_life = max_live
         self.pos_x = x
         self.pos_y = y
         self.speed = speed
@@ -30,6 +29,8 @@ class Character:
         self._anim_timer = 0.0
         self.facing = "down"
         self._asset_file = asset_file
+        self.max_live = max_live
+        self._actual_life = max_live
 
         if asset_file is not None:
             self.load_sprites()
@@ -47,10 +48,6 @@ class Character:
     def remaining_life_percentage(self):
         return (self._actual_life / self.remaining_life) * 100
 
-    def alert_if_death(self):
-        if self.remaining_life <= 0:
-            pygame.event.post(PLAYER_DEATH)
-
     def heal(self, heal_amount):
         if heal_amount > 0:
             self._actual_life = min(self._actual_life + heal_amount, self.max_live)
@@ -60,36 +57,30 @@ class Character:
             heal = self.max_live * heal_percentage / 100
             self._actual_life = min(self._actual_life + heal, self.max_live)
 
+    @abstractmethod
+    def die(self):
+        pass
+
     def apply_damage(self, damage_amount):
         if damage_amount > 0:
             self._actual_life = max(self._actual_life - damage_amount, 0)
-            self.alert_if_death()
+
+            if self.remaining_life <= 0:
+                self.die()
 
     def apply_damage_percentage(self, damage_percentage):
         if 0 < damage_percentage <= 100:
             damage = self.max_live * damage_percentage / 100
             self._actual_life = min(self._actual_life - damage, 0)
-            self.alert_if_death()
+            
+            if self.remaining_life <= 0:
+                self.die()
 
     def update(self, dt, acciones):
-        direction_x = acciones["right"] - acciones["left"]
-        direction_y = acciones["down"] - acciones["up"]
-
-        if direction_x > 0:
-            self.facing = "right"
-        elif direction_x < 0:
-            self.facing = "left"
-        elif direction_y > 0:
-            self.facing = "down"
-        elif direction_y < 0:
-            self.facing = "up"
-
-        self.pos_x += direction_x * self.speed * dt
-        self.pos_y += direction_y * self.speed * dt
-
-        if self._asset_file is not None:
-            moving = bool(direction_x or direction_y)
-            self.animate(dt, moving)
+        '''
+            Actualiza el estado del personaje
+        '''
+        pass
 
     def render(self, pantalla):
         pantalla.blit(self._curr_image, (int(self.pos_x), int(self.pos_y)))
@@ -118,42 +109,16 @@ class Character:
 
         self._curr_image = self._curr_anim_list[self._current_frame]
 
+    @abstractmethod
     def load_sprites(self):
-        sheet = pygame.image.load(self._asset_file).convert_alpha()
-
-        cols = sheet.get_width() // self.frame_w
-        rows = sheet.get_height() // self.frame_h
-
-        def slice_row(row_index: int):
-            frames = []
-            for col in range(cols):
-                rect = pygame.Rect(
-                    col * self.frame_w,
-                    row_index * self.frame_h,
-                    self.frame_w,
-                    self.frame_h,
-                )
-                frame = sheet.subsurface(rect).copy()
-                if self.scale != 1:
-                    frame = pygame.transform.scale(
-                        frame,
-                        (self.frame_w * self.scale, self.frame_h * self.scale),
-                    )
-                frames.append(frame)
-            return frames
-
-        self._down_sprites = slice_row(0)
-        self._up_sprites = slice_row(1) if rows >= 2 else list(self._down_sprites)
-        self._left_sprites = (
-            slice_row(2)
-            if rows >= 3
-            else [pygame.transform.flip(f, True, False) for f in self._down_sprites]
-        )
-        self._right_sprites = (
-            slice_row(3)
-            if rows >= 4
-            else [pygame.transform.flip(f, True, False) for f in self._left_sprites]
-        )
+        '''
+            Inicializa las variables:
+                self._down_sprites
+                self._up_sprites
+                self._left_sprites
+                self._right_sprites
+        '''
+        pass
 
     def get_rect(self) -> pygame.Rect:
         return pygame.Rect(
