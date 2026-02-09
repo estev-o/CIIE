@@ -1,7 +1,6 @@
 # Python virtual environments
 .venv/
-estados/__pycache__/
 .github/
-personajes/__pycache__/
-assets/__pycache__/
-assets/__pycache__/tiles.cpython-312.pyc
+
+# Python cache
+__pycache__/
