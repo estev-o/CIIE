@@ -14,5 +14,7 @@ class Player(Character):
             speed=200,
             scale=1.75,
             anim_fps=15,
+            hitbox_offset_x=45,
+            hitbox_offset_y=45,
             asset_file="assets/Blub/PNG/Slime1/Walk/Slime1_Walk_full.png",
         )

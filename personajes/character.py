@@ -14,6 +14,8 @@ class Character:
         scale,
         speed,
         anim_fps,
+        hitbox_offset_x,
+        hitbox_offset_y,
         asset_file=None,
     ):
         self.game = game
@@ -29,6 +31,8 @@ class Character:
         self._current_frame = 0
         self._anim_timer = 0.0
         self.facing = "down"
+        self.body_hitbox_offset_x = hitbox_offset_x
+        self.body_hitbox_offset_y = hitbox_offset_y
         self._asset_file = asset_file
 
         if asset_file is not None:
@@ -46,6 +50,25 @@ class Character:
     @property
     def remaining_life_percentage(self):
         return (self._actual_life / self.remaining_life) * 100
+
+    @property
+    def body_hitbox(self):
+        w = self.frame_w * self.scale
+        h = self.frame_h * self.scale
+
+        # Ajustamos el rect en función del personaje
+        hitbox_w = w - (self.body_hitbox_offset_x * 2)
+        hitbox_h = h - (self.body_hitbox_offset_y * 2)
+        return pygame.Rect(
+            int(self.pos_x + self.body_hitbox_offset_x),
+            int(self.pos_y + self.body_hitbox_offset_y),
+            int(hitbox_w),
+            int(hitbox_h)
+        )
+
+    def debug_draw_hitbox(self, pantalla, color):
+        # Dibujar Body Hitbox
+        pygame.draw.rect(pantalla, color, self.body_hitbox, 1)
 
     def alert_if_death(self):
         if self.remaining_life <= 0:
