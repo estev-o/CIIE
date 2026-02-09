@@ -4,7 +4,7 @@ from assets.tiles import TiledTMX
 from estados.estado import Estado
 from estados.area_experiment import AreaExperiment
 from personajes.player import Player
-
+DEBUG = True
 class Hub(Estado):
     def __init__(self, juego):
         Estado.__init__(self,juego)
@@ -30,16 +30,13 @@ class Hub(Estado):
         # Punto medio de la puerta del hub, para detectar la colisión con jugador
         door = self.tmx_map.get_objects(layer="puerta")[0]
         self._door_center = door.rect.center
-        # Modificamos hardcodeado el punto de la puerta, en el juego coincide demasiado abajo
-        self._door_center = (self._door_center[0], self._door_center[1] - 55)
 
     def actualizar(self, dt, acciones):
         self.player.update(dt, acciones)
 
         for attack in self.attacks[:]:
             attack.update(dt, acciones)
-
-        if self.player.get_rect().collidepoint(self._door_center):
+        if self.player.body_hitbox.collidepoint(self._door_center):
             AreaExperiment(self.juego).entrar_estado()
             return
 
@@ -47,6 +44,9 @@ class Hub(Estado):
         pantalla.fill((0, 0, 0))
         self.tmx_map.draw(pantalla, only=self.map_layer_order)
         self.player.render(pantalla)
+        if DEBUG:
+            self.player.debug_draw_hitbox(pantalla, (0,255, 0))
+            pygame.draw.circle(pantalla, (255, 0, 255), self._door_center, 5)  # Punto Magenta
         
         for attack in self.attacks[:]:
             attack.render(pantalla)

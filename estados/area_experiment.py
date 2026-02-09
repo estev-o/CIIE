@@ -2,9 +2,11 @@ import pygame, os
 from estados.estado import Estado
 from assets.tiles import TiledTMX
 import random
+
+from personajes.mock_enemy import Mock_enemy
 from personajes.player import Player
 NIVEL_FORZADO = "area_exp1.tmx"  # Para pruebas, fuerza a entrar a esta área de experimentación específica
-DEBUG = False
+DEBUG = True
 
 class AreaExperiment(Estado):
     def __init__(self, juego):
@@ -21,16 +23,23 @@ class AreaExperiment(Estado):
         self.tmx_map = TiledTMX(tmx_path)
         self.map_layer_order = list(self.tmx_map.layer_names)
 
-        self.player = Player(self.juego)  
+        self.player = Player(self.juego)
+        self.enemy = Mock_enemy(self.juego)
         spawn = self.tmx_map.get_objects(layer="spawn_point")[0]
         r = self.player.get_rect()
         self.player.pos_x = spawn.x - (r.width / 2)
         self.player.pos_y = spawn.y - (r.height / 2)
+        self.enemy.pos_x = 500
+        self.enemy.pos_y = 250
 
     def actualizar(self, dt, acciones):
         self.player.update(dt, acciones)
-
+        self.enemy.idle_move(dt)
     def dibujar(self, pantalla):
         pantalla.fill((0, 0, 0))
         self.tmx_map.draw(pantalla, only=self.map_layer_order)
         self.player.render(pantalla)
+        self.enemy.render(pantalla)
+        if DEBUG:
+            self.player.debug_draw_hitbox(pantalla, (0, 255 ,0))
+            self.enemy.debug_draw_hitbox(pantalla, (0, 255 ,255))
