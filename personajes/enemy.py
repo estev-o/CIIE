@@ -37,7 +37,7 @@ class Enemy(Character, ABC):
         self.move_time_min = 1.0
         self.move_time_max = 3.0
 
-    def idle_move(self, dt):
+    def idle_move(self, dt, tiles=None):
         """
         Gestiona el movimiento aleatorio.
         Retorna (velocidad_x, velocidad_y) para aplicar al movimiento.
@@ -66,8 +66,31 @@ class Enemy(Character, ABC):
         # Calcular el movimiento final
         move_x = self.idle_dir_x * self.speed * dt
         move_y = self.idle_dir_y * self.speed * dt
+
+        # Orientación (para animación)
+        if abs(self.idle_dir_x) > abs(self.idle_dir_y):
+            if self.idle_dir_x > 0:
+                self.facing = "right"
+            elif self.idle_dir_x < 0:
+                self.facing = "left"
+        else:
+            if self.idle_dir_y > 0:
+                self.facing = "down"
+            elif self.idle_dir_y < 0:
+                self.facing = "up"
+
         self.pos_x += move_x
         self.pos_y += move_y
+
+        if tiles is not None:
+            # rehacer el movimiento con colisión por ejes (evita glitches en diagonales)
+            self.pos_x -= move_x
+            self.pos_y -= move_y
+            self.move_and_collide(move_x, move_y, tiles)
+
+        if self._asset_file is not None:
+            moving = bool(self.idle_dir_x or self.idle_dir_y)
+            self.animate(dt, moving)
         return
 
     def ai_behavior(self, dist, dt):

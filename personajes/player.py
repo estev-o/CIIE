@@ -57,12 +57,7 @@ class Player(Character):
         dx = direction_x * self.speed * dt
         dy = direction_y * self.speed * dt
 
-        if dx:
-            self.pos_x += dx
-            self.checkCollisionsx(tiles, dx)
-        if dy:
-            self.pos_y += dy
-            self.checkCollisionsy(tiles, dy)
+        self.move_and_collide(dx, dy, tiles)
 
         if self._asset_file is not None:
             moving = bool(direction_x or direction_y)
@@ -104,30 +99,3 @@ class Player(Character):
             if rows >= 4
             else [pygame.transform.flip(f, True, False) for f in self._left_sprites]
         )
-
-    def get_hits(self, tiles):
-        hits = []
-        for tile in tiles:
-            if self.body_hitbox.colliderect(tile.hitbox):
-                hits.append(tile)
-        return hits
-    
-    def checkCollisionsx(self, tiles, dx: float):
-        if dx == 0:
-            return
-        collisions = self.get_hits(tiles)
-        for tile in collisions:
-            if dx > 0:
-                self.pos_x = tile.hitbox.left - self.hitbox.width - self.body_hitbox_offset_x
-            elif dx < 0:
-                self.pos_x = tile.hitbox.right - self.body_hitbox_offset_x
-
-    def checkCollisionsy(self, tiles, dy: float):
-        if dy == 0:
-            return
-        collisions = self.get_hits(tiles)
-        for tile in collisions:
-            if dy > 0:
-                self.pos_y = tile.hitbox.top - self.hitbox.height - self.body_hitbox_offset_y
-            elif dy < 0:
-                self.pos_y = tile.hitbox.bottom - self.body_hitbox_offset_y

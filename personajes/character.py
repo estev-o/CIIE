@@ -69,8 +69,65 @@ class Character(ABC):
 
     @property
     def hitbox(self) -> pygame.Rect:
-        # Alias por compatibilidad con código de colisiones
         return self.body_hitbox
+
+    def get_hits(self, tiles):
+        hits = []
+        for tile in tiles:
+            if self.hitbox.colliderect(tile.hitbox):
+                hits.append(tile)
+        return hits
+
+    def _resolve_collisions_x(self, tiles, dx: float):
+        if dx == 0:
+            return
+        for tile in self.get_hits(tiles):
+            if dx > 0:
+                self.pos_x = tile.hitbox.left - self.hitbox.width - self.body_hitbox_offset_x
+            elif dx < 0:
+                self.pos_x = tile.hitbox.right - self.body_hitbox_offset_x
+
+    def _resolve_collisions_y(self, tiles, dy: float):
+        if dy == 0:
+            return
+        for tile in self.get_hits(tiles):
+            if dy > 0:
+                self.pos_y = tile.hitbox.top - self.hitbox.height - self.body_hitbox_offset_y
+            elif dy < 0:
+                self.pos_y = tile.hitbox.bottom - self.body_hitbox_offset_y
+
+    def move_and_collide(self, dx: float, dy: float, tiles):
+        """Mueve y resuelve colisiones por ejes (X y luego Y)."""
+
+        if not tiles:
+            self.pos_x += dx
+            self.pos_y += dy
+            return
+
+        if dx:
+            self.pos_x += dx
+            self._resolve_collisions_x(tiles, dx)
+        if dy:
+            self.pos_y += dy
+            self._resolve_collisions_y(tiles, dy)
+
+    def collide_with_tiles(self, tiles):
+        if not tiles:
+            return
+
+        # Primero resolvemos X
+        for tile in self.get_hits(tiles):
+            if self.facing == "right":
+                self.pos_x = tile.hitbox.left - self.hitbox.width - self.body_hitbox_offset_x
+            elif self.facing == "left":
+                self.pos_x = tile.hitbox.right - self.body_hitbox_offset_x
+
+        # Luego resolvemos Y
+        for tile in self.get_hits(tiles):
+            if self.facing == "down":
+                self.pos_y = tile.hitbox.top - self.hitbox.height - self.body_hitbox_offset_y
+            elif self.facing == "up":
+                self.pos_y = tile.hitbox.bottom - self.body_hitbox_offset_y
 
     def debug_draw_hitbox(self, pantalla, color):
         # Dibujar Body Hitbox
