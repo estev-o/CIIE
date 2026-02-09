@@ -37,7 +37,8 @@ class Hub(Estado):
             from estados.pausa import Pausa
             Pausa(self.juego).entrar_estado()
             return
-        self.player.update(dt, acciones)
+        # Pasamos los tiles para que el jugador pueda detectar colisiones
+        self.player.update(dt, acciones,self.tmx_map.get_tiles())
 
         for attack in self.attacks[:]:
             attack.update(dt, acciones)
@@ -52,6 +53,6 @@ class Hub(Estado):
         if DEBUG:
             self.player.debug_draw_hitbox(pantalla, (0,255, 0))
             pygame.draw.circle(pantalla, (255, 0, 255), self._door_center, 5)  # Punto Magenta
-        
+
         for attack in self.attacks[:]:
             attack.render(pantalla)

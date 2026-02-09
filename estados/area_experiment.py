@@ -38,7 +38,7 @@ class AreaExperiment(Estado):
             from estados.pausa import Pausa
             Pausa(self.juego).entrar_estado()
             return
-        self.player.update(dt, acciones)
+        self.player.update(dt, acciones,self.tmx_map.get_tiles())
         self.enemy.idle_move(dt)
     def dibujar(self, pantalla):
         pantalla.fill((0, 0, 0))

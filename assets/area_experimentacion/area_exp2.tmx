@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="32" height="17" tilewidth="32" tileheight="32" infinite="0" nextlayerid="8" nextobjectid="11">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="32" height="17" tilewidth="32" tileheight="32" infinite="0" nextlayerid="10" nextobjectid="30">
  <tileset firstgid="1" source="../pixel_cyberpunk_interior_free_1.0.1/pixel-cyberpunk-interior.tsx"/>
- <tileset firstgid="232" source="../pixel_cyberpunk_interior_free_1.0.1/pixel-cyberpunk-interior.tsx"/>
  <layer id="1" name="Tile Layer 1" width="32" height="17">
   <data encoding="csv">
 106,87,87,87,87,87,87,87,88,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,106,87,87,87,87,87,87,88,
@@ -47,8 +46,8 @@
  <layer id="6" name="puerta_abierta" width="32" height="17">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,387,388,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,408,409,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,156,157,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,177,178,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -68,8 +67,8 @@
  <layer id="7" name="puerta_cerrada" width="32" height="17">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,385,386,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,406,407,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,154,155,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,175,176,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -86,6 +85,25 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
+ <objectgroup id="8" name="hitbox_fondo">
+  <object id="11" x="255.507" y="7.39409" width="543.055" height="408.318"/>
+  <object id="12" x="784.596" y="6.57253" width="232.503" height="89.5507"/>
+  <object id="13" x="991.63" y="78.8703" width="26.2901" height="451.861"/>
+  <object id="15" gid="85" x="831.75" y="543.75" width="32" height="32"/>
+  <object id="16" gid="85" x="864.25" y="546.25" width="32" height="32"/>
+  <object id="17" gid="85" x="832.5" y="539.25" width="32" height="32"/>
+  <object id="18" gid="85" x="832" y="543.5" width="32" height="32"/>
+  <object id="19" gid="85" x="832" y="544.25" width="32" height="32"/>
+  <object id="20" gid="85" x="861.75" y="541.75" width="32" height="32"/>
+  <object id="21" gid="85" x="829.75" y="544.75" width="32" height="32"/>
+  <object id="22" gid="85" x="935" y="544.25" width="32" height="32"/>
+  <object id="23" gid="85" x="901.75" y="550.5" width="32" height="32"/>
+  <object id="25" x="7.25" y="512" width="986.5" height="23.25"/>
+  <object id="26" x="11.25" y="13.25" width="21" height="504.75"/>
+  <object id="27" x="25" y="25.25" width="72.75" height="71"/>
+  <object id="28" x="91.75" y="22.5" width="61" height="28.25"/>
+  <object id="29" x="141" y="22.25" width="124.5" height="73.5"/>
+ </objectgroup>
  <objectgroup id="5" name="spawn_point">
   <object id="10" x="117.484" y="105.16">
    <point/>

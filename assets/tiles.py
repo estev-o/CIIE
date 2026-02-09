@@ -87,6 +87,16 @@ class TiledObject:
         return pygame.Rect(int(self.x), int(self.y), int(self.width), int(self.height))
 
 
+@dataclass(frozen=True, slots=True)
+class SolidTile:
+    """Adapter mínimo para colisiones.
+
+    Tu `Player` espera una lista de objetos con atributo `.hitbox`.
+    """
+
+    hitbox: pygame.Rect
+
+
 class TiledTMX:
     """Carga un mapa .tmx de Tiled con múltiples tilesets y layers.
 
@@ -109,6 +119,9 @@ class TiledTMX:
         self._atlases: list[TileAtlas] = self._load_tilesets()
         self.layers: list[tuple[str, pygame.Surface]] = self._render_layers()
         self.object_layers: dict[str, list[TiledObject]] = self._parse_object_layers()
+
+        # cachea resultados de colisión (porque `get_tiles()` se llama cada frame)
+        self._solid_tiles_cache: dict[str, list[SolidTile]] = {}
 
     @property
     def object_layer_names(self) -> list[str]:
@@ -135,6 +148,23 @@ class TiledTMX:
     @property
     def layer_names(self) -> list[str]:
         return [name for name, _ in self.layers]
+
+    def get_tiles(self, object_layer: str = "hitbox_fondo") -> list[SolidTile]:
+        """Devuelve hitboxes sólidos desde una Object Layer de Tiled.
+        """
+
+        if object_layer in self._solid_tiles_cache:
+            return self._solid_tiles_cache[object_layer]
+
+        solids: list[SolidTile] = []
+        for obj in self.object_layers.get(object_layer, []):
+            # Tiled: objetos tipo point tienen w/h = 0
+            if obj.width <= 0 and obj.height <= 0:
+                continue
+            solids.append(SolidTile(obj.rect))
+
+        self._solid_tiles_cache[object_layer] = solids
+        return solids
 
     def _resolve(self, base: str, path: str) -> str:
         if os.path.isabs(path):

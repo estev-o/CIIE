@@ -1,5 +1,5 @@
 import pygame
-from personajes.constants import RED
+from personajes.constants import RED, PLAYER_DEATH
 from abc import abstractmethod, ABC
 
 class Character(ABC):
@@ -66,6 +66,11 @@ class Character(ABC):
             int(hitbox_w),
             int(hitbox_h)
         )
+
+    @property
+    def hitbox(self) -> pygame.Rect:
+        # Alias por compatibilidad con código de colisiones
+        return self.body_hitbox
 
     def debug_draw_hitbox(self, pantalla, color):
         # Dibujar Body Hitbox

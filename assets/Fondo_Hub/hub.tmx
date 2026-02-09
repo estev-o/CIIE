@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="32" height="17" tilewidth="32" tileheight="32" infinite="0" nextlayerid="12" nextobjectid="26">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="32" height="17" tilewidth="32" tileheight="32" infinite="0" nextlayerid="13" nextobjectid="55">
  <editorsettings>
   <export target="hub.csv" format="csv"/>
  </editorsettings>
  <tileset firstgid="1" source="../pixel_cyberpunk_interior_free_1.0.1/pixel-cyberpunk-interior.tsx"/>
  <tileset firstgid="232" source="../tiles_laboratory_LandOfPixels/tilesStuff.tsx"/>
- <tileset firstgid="824" source="../pixel_cyberpunk_interior_free_1.0.1/pixel-cyberpunk-interior.tsx"/>
  <layer id="1" name="Tile Layer 1" width="32" height="17">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,3,0,0,0,0,0,
@@ -29,8 +28,8 @@
  </layer>
  <layer id="2" name="arriba" width="32" height="17">
   <data encoding="csv">
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,979,980,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1000,1001,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,156,157,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,177,178,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -141,5 +140,35 @@
   <object id="24" x="824.031" y="55.0449">
    <point/>
   </object>
+ </objectgroup>
+ <objectgroup id="12" name="hitbox_fondo">
+  <object id="26" x="864.288" y="1.64313" width="141.309" height="220.18"/>
+  <object id="28" x="960.667" y="152" width="58" height="362.667"/>
+  <object id="29" x="72" y="482" width="901" height="50">
+   <polygon points="0,0 901,0 901,50 0,50"/>
+  </object>
+  <object id="30" x="61.5" y="140.5" width="33.5" height="355.5"/>
+  <object id="31" x="83.3333" y="4" width="716" height="220"/>
+  <object id="32" x="843.333" y="1.33333" width="22" height="63.3333"/>
+  <object id="33" x="258.667" y="191.333" width="57.3333" height="65.3333"/>
+  <object id="34" x="314.667" y="196.667" width="66" height="50.6667"/>
+  <object id="35" x="418.667" y="194.667" width="91.3333" height="60.6667"/>
+  <object id="36" x="546.667" y="170.667" width="58.6667" height="85.3333"/>
+  <object id="37" x="583.333" y="302" width="46.6667" height="34.6667"/>
+  <object id="38" x="486" y="300" width="49.3333" height="37.3333"/>
+  <object id="39" x="389.333" y="300.667" width="50.6667" height="36.6667"/>
+  <object id="40" x="228" y="194.667" width="20.6667" height="91.3333"/>
+  <object id="41" x="128.667" y="389.333" width="94.6667" height="58.6667"/>
+  <object id="42" x="836.667" y="419.333" width="56.6667" height="27.3333"/>
+  <object id="43" x="930.667" y="203.333" width="29.3333" height="42.6667"/>
+  <object id="44" x="869.333" y="164" width="22" height="91.3333"/>
+  <object id="46" x="80.1818" y="479.273" width="253.818" height="16.9091"/>
+  <object id="47" x="334.5" y="480" width="392" height="22"/>
+  <object id="48" x="726" y="480" width="246.333" height="24"/>
+  <object id="50" x="92.5" y="200.5" width="34" height="82"/>
+  <object id="51" x="110.5" y="215" width="127" height="40"/>
+  <object id="52" x="161" y="239" width="77" height="47.5"/>
+  <object id="53" x="331.75" y="479.625" width="635.938" height="12.625"/>
+  <object id="54" x="931.667" y="266" width="55.3333" height="181.667"/>
  </objectgroup>
 </map>

@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="32" height="17" tilewidth="32" tileheight="32" infinite="0" nextlayerid="10" nextobjectid="10">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="32" height="17" tilewidth="32" tileheight="32" infinite="0" nextlayerid="11" nextobjectid="17">
  <tileset firstgid="1" source="../pixel_cyberpunk_interior_free_1.0.1/pixel-cyberpunk-interior.tsx"/>
  <tileset firstgid="232" source="../tiles_laboratory_LandOfPixels/tilesStuff.tsx"/>
- <tileset firstgid="824" source="../pixel_cyberpunk_interior_free_1.0.1/pixel-cyberpunk-interior.tsx"/>
  <layer id="3" name="suelo" width="32" height="17">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -74,8 +73,8 @@
  <layer id="8" name="puerta_abierta" width="32" height="17">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,979,980,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1000,1001,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,156,157,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,177,178,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -95,8 +94,8 @@
  <layer id="9" name="puerta_abierta" width="32" height="17">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,977,978,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,998,999,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,154,155,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,175,176,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -113,4 +112,13 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
+ <objectgroup id="10" name="hitbox_fondo">
+  <object id="10" x="357.381" y="0" width="155.276" height="95.3017"/>
+  <object id="11" x="504.442" y="11.5019" width="501.155" height="37.792"/>
+  <object id="12" x="557.022" y="25.4685" width="446.11" height="70.6547"/>
+  <object id="13" x="990.809" y="64.0822" width="77.2272" height="462.542"/>
+  <object id="14" x="12.3235" y="512.657" width="984.236" height="24.647"/>
+  <object id="15" x="3.28626" y="206.213" width="27.9332" height="325.34"/>
+  <object id="16" x="23.0039" y="64.0822" width="391.887" height="224.288"/>
+ </objectgroup>
 </map>
