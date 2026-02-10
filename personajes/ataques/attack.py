@@ -1,11 +1,33 @@
-from abc import abstractmethod
-from personajes.character import Character
+import pygame
 
-class Attack(Character):
-    def __init__(self, damage, game, x, y, width, height, scale, speed, anim_fps, hitbox_offset_x, hitbox_offset_y):
-        super().__init__(game=game, x=x, y=y, width=width, height=height, scale=scale, speed=speed, anim_fps=anim_fps, hitbox_offset_x=hitbox_offset_x, hitbox_offset_y=hitbox_offset_y)
+class Attack(pygame.sprite.Sprite):
+    def __init__(self, game, image, damage, speed, rect=None):
+        super().__init__()
         self.damage = damage
+        self.game = game
+        self.speed = speed
+        self.image = image
+        self.active = False
+
+        if rect:
+            self.rect = rect
+        else:
+            self.rect = self.image.get_rect()
+
+    def init(self, *args, **kwargs):
+        raise NotImplementedError
+
+    def update(self, dt):
+        raise NotImplementedError
     
-    def die(self):
-        pass
+    def activate(self):
+        self.active = True
+
+    def deactivate(self):
+        self.active = False
+
+    def in_use(self):
+        return self.active
     
+    def render(self, screen):
+        screen.blit(self.image, self.rect)
