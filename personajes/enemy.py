@@ -87,7 +87,8 @@ class Enemy(Character, ABC):
             self.pos_x -= move_x
             self.pos_y -= move_y
             self.move_and_collide(move_x, move_y, tiles)
-
+        self.rect.topleft = (int(self.pos_x), int(self.pos_y))
+        
         if self._asset_file is not None:
             moving = bool(self.idle_dir_x or self.idle_dir_y)
             self.animate(dt, moving)
@@ -107,7 +108,9 @@ class Enemy(Character, ABC):
             #Lógica de persecución
         return
     def die(self):
-        pass
+        # Quitar sprite de los grupos
+        self.kill()
+
     def load_sprites(self):
         sheet = pygame.image.load(self._asset_file).convert_alpha()
 

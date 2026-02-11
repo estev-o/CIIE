@@ -42,6 +42,7 @@ class Azulejo(Attack):
         self.rect.x += self.direction_x * self.speed * dt
         self.rect.y += self.direction_y * self.speed * dt
 
+        self.check_collisions()
         if not -screen_x < self.rect.x < screen_x:
             self.deactivate()
         if not -screen_y < self.rect.y < screen_y:

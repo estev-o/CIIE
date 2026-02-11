@@ -25,6 +25,7 @@ class AreaExperiment(Estado):
 
         self.player = Player(self.juego)
         self.enemy = Mock_enemy(self.juego)
+        self.append_enemy(self.enemy)
         spawn = self.tmx_map.get_objects(layer="spawn_point")[0]
         r = self.player.get_rect()
         self.player.pos_x = spawn.x - (r.width / 2)
@@ -40,12 +41,15 @@ class AreaExperiment(Estado):
             return
         solid_tiles = self.tmx_map.get_tiles()
         self.player.update(dt, acciones, solid_tiles)
-        self.enemy.idle_move(dt, solid_tiles)
+        
+        for enemy in self.enemies:
+            enemy.idle_move(dt, solid_tiles)
+
     def dibujar(self, pantalla):
         pantalla.fill((0, 0, 0))
         self.tmx_map.draw(pantalla, only=self.map_layer_order)
         self.player.render(pantalla)
-        self.enemy.render(pantalla)
+        self.enemies.draw(pantalla)
         if DEBUG:
             self.player.debug_draw_hitbox(pantalla, (0, 255 ,0))
             self.enemy.debug_draw_hitbox(pantalla, (0, 255 ,255))

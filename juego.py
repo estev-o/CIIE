@@ -90,6 +90,10 @@ class Juego():
         self.title_screen = Titulo(self)
         self.state_stack.append(self.title_screen)
 
+    @property
+    def actual_state(self):
+        return self.state_stack[-1]
+
 if __name__ == "__main__":
     j = Juego()
     while j.running:

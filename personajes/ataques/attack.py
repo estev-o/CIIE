@@ -16,6 +16,15 @@ class Attack(pygame.sprite.Sprite):
 
     def init(self, *args, **kwargs):
         raise NotImplementedError
+    
+    def check_collisions(self):
+        hits = pygame.sprite.spritecollide(self, self.game.actual_state.enemies, False)
+
+        if len(hits) > 0:
+            for enemy in hits:
+                enemy.apply_damage(self.damage)
+            
+            self.deactivate()
 
     def update(self, dt):
         raise NotImplementedError

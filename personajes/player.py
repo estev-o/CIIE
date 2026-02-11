@@ -64,11 +64,9 @@ class Player(Character):
             self.animate(dt, moving)
 
     def render(self, pantalla):
-        pantalla.blit(self._curr_image, (int(self.pos_x), int(self.pos_y)))
+        pantalla.blit(self.image, self.rect)
 
         self.attack_launcher1.render(pantalla)
-
-
 
     def load_sprites(self):
         sheet = pygame.image.load(self._asset_file).convert_alpha()

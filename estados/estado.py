@@ -1,7 +1,13 @@
+import pygame
+
 class Estado():
     def __init__(self, juego):
         self.juego = juego
         self.estado_prev= None
+        self.enemies = pygame.sprite.Group()
+
+    def append_enemy(self, enemy):
+        self.enemies.add(enemy)
 
     def actualizar(self, dt, acciones):
         pass
