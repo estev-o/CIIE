@@ -1,9 +1,9 @@
-import pygame, os
+import os
 from estados.estado import Estado
 from assets.tiles import TiledTMX
 import random
 
-from personajes.mock_enemy import Mock_enemy
+from personajes.enemigos.mock_enemy import Mock_enemy
 from personajes.player import Player
 NIVEL_FORZADO = "area_exp1.tmx"  # Para pruebas, fuerza a entrar a esta área de experimentación específica
 DEBUG = True
@@ -43,7 +43,7 @@ class AreaExperiment(Estado):
         self.player.update(dt, acciones, solid_tiles)
         
         for enemy in self.enemies:
-            enemy.idle_move(dt, solid_tiles)
+            enemy.ai_behavior(self.player, dt, solid_tiles)
 
     def dibujar(self, pantalla):
         pantalla.fill((0, 0, 0))

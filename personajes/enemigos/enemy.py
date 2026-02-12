@@ -1,3 +1,4 @@
+import math
 import random
 from abc import ABC
 
@@ -15,6 +16,7 @@ class Enemy(Character, ABC):
             height,
             scale,
             speed,
+            vision_range,
             anim_fps,
             hitbox_offset_x,
             hitbox_offset_y,
@@ -24,7 +26,7 @@ class Enemy(Character, ABC):
         super().__init__(
             game=game, max_live=max_live, x=x, y=y, width=width, height=height, scale=scale, speed=speed, anim_fps=anim_fps, hitbox_offset_x=hitbox_offset_x, hitbox_offset_y= hitbox_offset_y, asset_file=asset_file
         )
-
+        self.vision_range = vision_range
         # VARIABLES PARA IDLE_MOVE
         self.idle_state = "wait"  # Puede ser "wait" o "move"
         self.idle_timer = 1.0  # Tiempo restante en el estado actual
@@ -94,13 +96,16 @@ class Enemy(Character, ABC):
             self.animate(dt, moving)
         return
 
-    def ai_behavior(self, dist, dt):
-        vision_range = 0  # Rango de detección
+    def ai_behavior(self, player, dt, solid_tiles):
+        dist = math.hypot(
+            player.hitbox.centerx - self.hitbox.centerx,
+            player.hitbox.centery - self.hitbox.centery
+        )
 
-        if dist > vision_range:
+        if dist > self.vision_range:
             # 1. ESTADO: IDLE / PATRULLA
             # El jugador está lejos, deambulamos
-            self.idle_move(dt)
+            self.idle_move(dt, solid_tiles)
         else:
             # 2. ESTADO: PERSECUCIÓN / ATAQUE
             # El jugador fue detectado
@@ -147,3 +152,14 @@ class Enemy(Character, ABC):
             if rows >= 4
             else [pygame.transform.flip(f, True, False) for f in self._left_sprites]
         )
+    def debug_draw_hitbox(self, pantalla, color):
+        if self.remaining_life<=0:
+            return
+        pygame.draw.circle(
+            pantalla,
+            (255, 0, 0),
+            self.rect.center,
+            int(self.vision_range),
+            1
+        )
+        super().debug_draw_hitbox(pantalla, color)
