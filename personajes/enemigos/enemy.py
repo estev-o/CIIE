@@ -6,7 +6,7 @@ import pygame
 
 from personajes.character import Character
 
-class Enemy(Character, ABC):
+class Enemy(Character):
     def __init__(
             self,
             game,
@@ -98,8 +98,8 @@ class Enemy(Character, ABC):
 
     def ai_behavior(self, player, dt, solid_tiles):
         dist = math.hypot(
-            player.hitbox.centerx - self.hitbox.centerx,
-            player.hitbox.centery - self.hitbox.centery
+            player.rect.centerx - self.rect.centerx,
+            player.rect.centery - self.rect.centery
         )
 
         if dist > self.vision_range:

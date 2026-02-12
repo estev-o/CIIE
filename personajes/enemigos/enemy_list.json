@@ -1,0 +1,14 @@
+{
+  "mock_enemy": {
+    "max_live": 40,
+    "width": 64,
+    "height": 64,
+    "scale": 1.75,
+    "speed": 50,
+    "vision_range": 100,
+    "anim_fps": 15,
+    "hitbox_offset_x": 37.5,
+    "hitbox_offset_y": 37.5,
+    "asset_file": "assets/Blub/PNG/Slime1/Walk/Slime1_Walk_full.png"
+  }
+}

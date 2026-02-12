@@ -3,7 +3,6 @@ from estados.estado import Estado
 from assets.tiles import TiledTMX
 import random
 
-from personajes.enemigos.mock_enemy import Mock_enemy
 from personajes.player import Player
 NIVEL_FORZADO = "area_exp1.tmx"  # Para pruebas, fuerza a entrar a esta área de experimentación específica
 DEBUG = True
@@ -24,14 +23,15 @@ class AreaExperiment(Estado):
         self.map_layer_order = list(self.tmx_map.layer_names)
 
         self.player = Player(self.juego)
-        self.enemy = Mock_enemy(self.juego)
-        self.append_enemy(self.enemy)
-        spawn = self.tmx_map.get_objects(layer="spawn_point")[0]
         r = self.player.get_rect()
+        spawn = self.tmx_map.get_objects(layer="spawn_point")[0]
         self.player.pos_x = spawn.x - (r.width / 2)
         self.player.pos_y = spawn.y - (r.height / 2)
-        self.enemy.pos_x = 500
-        self.enemy.pos_y = 250
+
+        self.enemy = juego.enemy_factory.create_enemy("mock_enemy", 500, 300)
+        self.append_enemy(self.enemy)
+        self.enemy = juego.enemy_factory.create_enemy("mock_enemy", 200, 300)
+        self.append_enemy(self.enemy)
 
     def actualizar(self, dt, acciones):
         if acciones.get("toggle_pause"):
@@ -41,15 +41,16 @@ class AreaExperiment(Estado):
             return
         solid_tiles = self.tmx_map.get_tiles()
         self.player.update(dt, acciones, solid_tiles)
-        
         for enemy in self.enemies:
             enemy.ai_behavior(self.player, dt, solid_tiles)
 
     def dibujar(self, pantalla):
         pantalla.fill((0, 0, 0))
         self.tmx_map.draw(pantalla, only=self.map_layer_order)
+        self.enemies.draw(pantalla)
         self.player.render(pantalla)
         self.enemies.draw(pantalla)
         if DEBUG:
             self.player.debug_draw_hitbox(pantalla, (0, 255 ,0))
-            self.enemy.debug_draw_hitbox(pantalla, (0, 255 ,255))
+            for enemy in self.enemies:
+                enemy.debug_draw_hitbox(pantalla, (0, 255 ,255))

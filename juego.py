@@ -2,6 +2,7 @@
 import os,time,pygame
 
 from estados.titulo import Titulo
+from personajes.enemigos.enemy_factory import EnemyFactory
 
 class Juego():
     def __init__(self):
@@ -14,6 +15,7 @@ class Juego():
         self.running, self.playing = True, True
         self.clock = pygame.time.Clock()
         self.running = True
+        self.enemy_factory= EnemyFactory(self, "personajes/enemigos/enemy_list.json")
         self.state_stack = []
         self.load_assets()
         self.load_states()
