@@ -11,6 +11,7 @@ class Juego():
         self.game_canvas = pygame.Surface((self.ancho, self.alto))
         self.screen = pygame.display.set_mode((self.ancho, self.alto))
         self.actions = {"left":False, "right":False, "up":False, "down":False, "attack1":False,"enter":False, "toggle_pause":False}
+        self.debug=False
         self.dt, self.prev_time = 0,0
         self.running, self.playing = True, True
         self.clock = pygame.time.Clock()
@@ -46,6 +47,8 @@ class Juego():
                     self.actions["enter"] = True
                 if event.key == pygame.K_ESCAPE:
                     self.actions["toggle_pause"] = True
+                if event.key == pygame.K_PERIOD:
+                    self.debug = not self.debug
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_a:
                     self.actions["left"] = False

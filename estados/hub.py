@@ -4,7 +4,7 @@ from assets.tiles import TiledTMX
 from estados.estado import Estado
 from estados.area_experiment import AreaExperiment
 from personajes.player import Player
-DEBUG = True
+
 class Hub(Estado):
     def __init__(self, juego):
         Estado.__init__(self,juego)
@@ -45,6 +45,6 @@ class Hub(Estado):
         pantalla.fill((0, 0, 0))
         self.tmx_map.draw(pantalla, only=self.map_layer_order)
         self.player.render(pantalla)
-        if DEBUG:
+        if self.juego.debug:
             self.player.debug_draw_hitbox(pantalla, (0,255, 0))
             pygame.draw.circle(pantalla, (255, 0, 255), self._door_center, 5)  # Punto Magenta
