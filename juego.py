@@ -4,11 +4,13 @@ import os,time,pygame
 from config.configuracion import Configuracion
 from estados.titulo import Titulo
 from personajes.enemigos.enemy_factory import EnemyFactory
+from estados.fonts import Fuentes
 
 class Juego():
     def __init__(self):
         pygame.init()
         self.configuracion=Configuracion()
+        self.fonts=Fuentes()
         self.ancho, self.alto = 1024, 544
         self.game_canvas = pygame.Surface((self.ancho, self.alto))
         self.screen = pygame.display.set_mode((self.ancho, self.alto))
