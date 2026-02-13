@@ -34,8 +34,8 @@ class AreaExperiment(Estado):
         self.append_enemy(self.enemy)
 
     def actualizar(self, dt, acciones):
-        if acciones.get("toggle_pause"):
-            self.juego.actions["toggle_pause"] = False
+        if acciones.get("esc"):
+            self.juego.actions["esc"] = False
             from estados.pausa import Pausa
             Pausa(self.juego).entrar_estado()
             return

@@ -3,25 +3,24 @@ from estados.componentes import Boton
 import pygame
 
 
-class Pausa(Estado):
-    """Menú de pausa con opciones"""
+class MenuPrincipal(Estado):
 
     def __init__(self, juego):
         Estado.__init__(self, juego)
 
-        #botones
+        # crear botones
         centro_x = juego.ancho // 2
-        centro_y = juego.alto // 2
-
         self.botones = [
-            Boton(centro_x - 150, centro_y - 30, 300, 55, "Continuar"),
-            Boton(centro_x - 150, centro_y + 40, 300, 55, "Configuración"),
-            Boton(centro_x - 150, centro_y + 110, 300, 55, "Menú Principal")
+            Boton(centro_x - 150, 200, 300, 60, "Nueva Partida"),
+            Boton(centro_x - 150, 280, 300, 60, "Continuar"),
+            Boton(centro_x - 150, 360, 300, 60, "Configuración"),
+            Boton(centro_x - 150, 440, 300, 60, "Salir")
         ]
 
         self.indice_seleccionado = 0
         self.botones[self.indice_seleccionado].seleccionado = True
 
+        # control  navegación
         self.cooldown_nav = 0
         self.delay_nav = 0.15
 
@@ -32,11 +31,6 @@ class Pausa(Estado):
         if self.cooldown_nav > 0:
             self.cooldown_nav -= dt
 
-        if acciones.get("esc"):
-            self.juego.actions["esc"] = False
-            self.salir_estado()
-            return
-
         # teclado
         if self.cooldown_nav <= 0:
             if acciones.get("arrowUp"):
@@ -45,12 +39,13 @@ class Pausa(Estado):
             elif acciones.get("arrowDown"):
                 self.cambiar_seleccion(1)
                 self.cooldown_nav = self.delay_nav
+            elif acciones.get("esc"):
+                self.juego.running = False
 
         if acciones.get("enter") or acciones.get("attack1"):
             self.activar_opcion()
             self.juego.reset_keys()
 
-        # Mouse
         pos_mouse = pygame.mouse.get_pos()
         escala_x = self.juego.ancho / self.juego.screen.get_width()
         escala_y = self.juego.alto / self.juego.screen.get_height()
@@ -83,54 +78,46 @@ class Pausa(Estado):
         self.botones[self.indice_seleccionado].seleccionado = True
 
     def activar_opcion(self):
-        if self.indice_seleccionado == 0:  # Continuar
-            self.salir_estado()
+        if self.indice_seleccionado == 0:  # Nueva Partida
+            from estados.hub import Hub
+            Hub(self.juego).entrar_estado()
 
-        elif self.indice_seleccionado == 1:  # Configuración
+        elif self.indice_seleccionado == 1:  # Continuar
+            # TODO: Implementar carga de partida
+            from estados.hub import Hub
+            Hub(self.juego).entrar_estado()
+
+        elif self.indice_seleccionado == 2:  # Configuración
             from estados.menu_configuracion import MenuConfiguracion
             MenuConfiguracion(self.juego).entrar_estado()
 
-        elif self.indice_seleccionado == 2:  # Menú Principal
-            while len(self.juego.state_stack) > 1:
-                self.juego.state_stack.pop()
-
-            from estados.menu_principal import MenuPrincipal
-            MenuPrincipal(self.juego).entrar_estado()
+        elif self.indice_seleccionado == 3:  # Salir
+            self.juego.running = False
 
     def dibujar(self, pantalla):
-        # Dibujar estado anterior (el juego)
-        self.estado_prev.dibujar(pantalla)
+        # Fondo degradado
+        for y in range(pantalla.get_height()):
+            ratio = y / pantalla.get_height()
+            color = (
+                int(15 + ratio * 25),
+                int(15 + ratio * 35),
+                int(40 + ratio * 60)
+            )
+            pygame.draw.line(pantalla, color, (0, y), (pantalla.get_width(), y))
 
-        # Overlay semi-transparente
-        overlay = pygame.Surface((self.juego.ancho, self.juego.alto))
-        overlay.set_alpha(180)
-        overlay.fill((0, 0, 0))
-        pantalla.blit(overlay, (0, 0))
+        font_titulo = pygame.font.Font(None, 96)
+        titulo = font_titulo.render("GILBERTOV EVIL", True, (255, 255, 255))
+        titulo_rect = titulo.get_rect(center=(self.juego.ancho // 2, 100))
 
-        # Marco decorativo
-        centro_x = self.juego.ancho // 2
-        centro_y = self.juego.alto // 2
-        marco = pygame.Rect(centro_x - 250, centro_y - 150, 500, 400)
-        pygame.draw.rect(pantalla, (30, 30, 50), marco, border_radius=15)
-        pygame.draw.rect(pantalla, (100, 120, 180), marco, 3, border_radius=15)
-
-        # Título "PAUSA"
-        font_titulo = pygame.font.Font(None, 86)
-        titulo = font_titulo.render("PAUSA", True, (255, 255, 255))
-        titulo_rect = titulo.get_rect(center=(centro_x, centro_y - 100))
-
-        # Sombra del título
-        sombra = font_titulo.render("PAUSA", True, (50, 50, 70))
-        sombra_rect = sombra.get_rect(center=(centro_x + 3, centro_y - 97))
+        sombra = font_titulo.render("GILBERTOV EVIL", True, (50, 50, 80))
+        sombra_rect = sombra.get_rect(center=(self.juego.ancho // 2 + 4, 104))
         pantalla.blit(sombra, sombra_rect)
         pantalla.blit(titulo, titulo_rect)
 
-        # Dibujar botones
         for boton in self.botones:
             boton.dibujar(pantalla)
 
-        # Instrucciones
-        font_info = pygame.font.Font(None, 24)
-        info = font_info.render("ESC: Continuar  |  ↑/↓: Navegar  |  ENTER: Seleccionar", True, (180, 180, 200))
-        info_rect = info.get_rect(center=(centro_x, self.juego.alto - 40))
+        font_info = pygame.font.Font(None, 26)
+        info = font_info.render("↑/↓: Navegar  |  ENTER: Seleccionar  |  ESC: Salir", True, (150, 150, 180))
+        info_rect = info.get_rect(center=(self.juego.ancho // 2, self.juego.alto - 25))
         pantalla.blit(info, info_rect)

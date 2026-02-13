@@ -1,17 +1,34 @@
 # Example file showing a circle moving on screen
 import os,time,pygame
 
+from config.configuracion import Configuracion
 from estados.titulo import Titulo
 from personajes.enemigos.enemy_factory import EnemyFactory
 
 class Juego():
     def __init__(self):
         pygame.init()
+        self.configuracion=Configuracion()
         self.ancho, self.alto = 1024, 544
         self.game_canvas = pygame.Surface((self.ancho, self.alto))
         self.screen = pygame.display.set_mode((self.ancho, self.alto))
         self.actions = {"left":False, "right":False, "up":False, "down":False, "attack1":False,"enter":False, "toggle_pause":False}
         self.debug=False
+        # pantalla completa
+        if self.configuracion.get("pantalla_completa", False):
+            self.screen = pygame.display.set_mode((self.ancho, self.alto), pygame.FULLSCREEN)
+        else:
+            self.screen = pygame.display.set_mode((self.ancho, self.alto))
+
+        self.actions = {
+            "left": False,
+            "right": False,
+            "up": False,
+            "down": False,
+            "attack1": False,
+            "enter": False,
+            "esc": False
+        }
         self.dt, self.prev_time = 0,0
         self.running, self.playing = True, True
         self.clock = pygame.time.Clock()
@@ -46,6 +63,16 @@ class Juego():
                 if event.key == pygame.K_RETURN:
                     self.actions["enter"] = True
                 if event.key == pygame.K_ESCAPE:
+                    self.actions["esc"] = True
+                if event.key == pygame.K_UP:
+                    self.actions["arrowUp"] = True
+                if event.key == pygame.K_DOWN:
+                    self.actions["arrowDown"] = True
+                if event.key == pygame.K_RIGHT:
+                    self.actions["arrowRight"] = True
+                if event.key == pygame.K_LEFT:
+                    self.actions["arrowLeft"] = True
+
                     self.actions["toggle_pause"] = True
                 if event.key == pygame.K_PERIOD:
                     self.debug = not self.debug
@@ -62,6 +89,15 @@ class Juego():
                     self.actions["attack1"] = False
                 if event.key == pygame.K_RETURN:
                     self.actions["enter"] = False
+                if event.key == pygame.K_UP:
+                    self.actions["arrowUp"] = False
+                if event.key == pygame.K_DOWN:
+                    self.actions["arrowDown"] = False
+                if event.key == pygame.K_RIGHT:
+                    self.actions["arrowRight"] = False
+                if event.key == pygame.K_LEFT:
+                    self.actions["arrowLeft"] = False
+
     def update(self):
         self.state_stack[-1].actualizar(self.dt, self.actions)
 
