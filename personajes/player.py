@@ -2,7 +2,7 @@ from personajes.character import Character
 from personajes.constants import PLAYER_DEATH
 import pygame
 from personajes.ataques.azulejo import Azulejo
-from personajes.ataques.attack_launcher import AttackLauncher
+from personajes.ataques.attack_pool import AttackPool
 
 class Player(Character):
     def __init__(self, game):
@@ -22,21 +22,19 @@ class Player(Character):
             asset_file="assets/Blub/PNG/Slime1/Walk/Slime1_Walk_full.png",
         )
 
-        self.attack_launcher1 = AttackLauncher(Azulejo)
+        self.attack_launcher1 = AttackPool(Azulejo, game)
     
     
     def die(self):
         pygame.event.post(PLAYER_DEATH)
 
     def attack(self):
-        if self.attack_launcher1.is_ready:
-            attack = self.attack_launcher1.get_attack(
-                self.game, 
+        if self.attack_launcher1.is_ready():
+            attack = self.attack_launcher1.create(
                 self.pos_x+(self.frame_w/2),
                 self.pos_y+(self.frame_h/2), 
                 self.facing
                 )
-            self.game.state_stack[-1].attacks.append(attack)
 
     def update(self, dt, acciones,tiles):
         direction_x = acciones["right"] - acciones["left"]
@@ -59,9 +57,16 @@ class Player(Character):
 
         self.move_and_collide(dx, dy, tiles)
 
+        self.attack_launcher1.update(dt)
+
         if self._asset_file is not None:
             moving = bool(direction_x or direction_y)
             self.animate(dt, moving)
+
+    def render(self, pantalla):
+        pantalla.blit(self.image, self.rect)
+
+        self.attack_launcher1.render(pantalla)
 
     def load_sprites(self):
         sheet = pygame.image.load(self._asset_file).convert_alpha()

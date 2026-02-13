@@ -1,3 +1,4 @@
+import math
 import random
 from abc import ABC
 
@@ -5,7 +6,7 @@ import pygame
 
 from personajes.character import Character
 
-class Enemy(Character, ABC):
+class Enemy(Character):
     def __init__(
             self,
             game,
@@ -15,6 +16,7 @@ class Enemy(Character, ABC):
             height,
             scale,
             speed,
+            vision_range,
             anim_fps,
             hitbox_offset_x,
             hitbox_offset_y,
@@ -24,7 +26,7 @@ class Enemy(Character, ABC):
         super().__init__(
             game=game, max_live=max_live, x=x, y=y, width=width, height=height, scale=scale, speed=speed, anim_fps=anim_fps, hitbox_offset_x=hitbox_offset_x, hitbox_offset_y= hitbox_offset_y, asset_file=asset_file
         )
-
+        self.vision_range = vision_range
         # VARIABLES PARA IDLE_MOVE
         self.idle_state = "wait"  # Puede ser "wait" o "move"
         self.idle_timer = 1.0  # Tiempo restante en el estado actual
@@ -87,19 +89,23 @@ class Enemy(Character, ABC):
             self.pos_x -= move_x
             self.pos_y -= move_y
             self.move_and_collide(move_x, move_y, tiles)
-
+        self.rect.topleft = (int(self.pos_x), int(self.pos_y))
+        
         if self._asset_file is not None:
             moving = bool(self.idle_dir_x or self.idle_dir_y)
             self.animate(dt, moving)
         return
 
-    def ai_behavior(self, dist, dt):
-        vision_range = 0  # Rango de detección
+    def ai_behavior(self, player, dt, solid_tiles):
+        dist = math.hypot(
+            player.rect.centerx - self.rect.centerx,
+            player.rect.centery - self.rect.centery
+        )
 
-        if dist > vision_range:
+        if dist > self.vision_range:
             # 1. ESTADO: IDLE / PATRULLA
             # El jugador está lejos, deambulamos
-            self.idle_move(dt)
+            self.idle_move(dt, solid_tiles)
         else:
             # 2. ESTADO: PERSECUCIÓN / ATAQUE
             # El jugador fue detectado
@@ -107,7 +113,9 @@ class Enemy(Character, ABC):
             #Lógica de persecución
         return
     def die(self):
-        pass
+        # Quitar sprite de los grupos
+        self.kill()
+
     def load_sprites(self):
         sheet = pygame.image.load(self._asset_file).convert_alpha()
 
@@ -144,3 +152,14 @@ class Enemy(Character, ABC):
             if rows >= 4
             else [pygame.transform.flip(f, True, False) for f in self._left_sprites]
         )
+    def debug_draw_hitbox(self, pantalla, color):
+        if self.remaining_life<=0:
+            return
+        pygame.draw.circle(
+            pantalla,
+            (255, 0, 0),
+            self.rect.center,
+            int(self.vision_range),
+            1
+        )
+        super().debug_draw_hitbox(pantalla, color)

@@ -1,8 +1,8 @@
 import pygame
 from personajes.constants import RED, PLAYER_DEATH
-from abc import abstractmethod, ABC
+from abc import ABC, abstractmethod
 
-class Character(ABC):
+class Character(pygame.sprite.Sprite, ABC):
     def __init__(
         self,
         game,
@@ -18,7 +18,7 @@ class Character(ABC):
         max_live=None,
         asset_file=None,
     ):
-        super().__init__()
+        pygame.sprite.Sprite.__init__(self)
         self.game = game
         self.pos_x = x
         self.pos_y = y
@@ -39,10 +39,18 @@ class Character(ABC):
         if asset_file is not None:
             self.load_sprites()
             self._curr_anim_list = self._down_sprites
-            self._curr_image = self._curr_anim_list[0]
+            self.image = self._curr_anim_list[0]
         else:
-            self._curr_image = pygame.Surface((self.frame_w, self.frame_h))
-            self._curr_image.fill(RED)
+            self.image = pygame.Surface((self.frame_w, self.frame_h))
+            self.image.fill(RED)
+
+        # Inicializar rect
+        self.rect = pygame.Rect(
+            int(self.pos_x),
+            int(self.pos_y),
+            self.frame_w * self.scale,
+            self.frame_h * self.scale
+        )
 
     @property
     def remaining_life(self):
@@ -56,8 +64,6 @@ class Character(ABC):
     def body_hitbox(self):
         w = self.frame_w * self.scale
         h = self.frame_h * self.scale
-
-        # Ajustamos el rect en función del personaje
         hitbox_w = w - (self.body_hitbox_offset_x * 2)
         hitbox_h = h - (self.body_hitbox_offset_y * 2)
         return pygame.Rect(
@@ -111,6 +117,9 @@ class Character(ABC):
             self.pos_y += dy
             self._resolve_collisions_y(tiles, dy)
 
+        # Actualizar rect del sprite
+        self.rect.topleft = (int(self.pos_x), int(self.pos_y))
+
     def collide_with_tiles(self, tiles):
         if not tiles:
             return
@@ -128,6 +137,7 @@ class Character(ABC):
                 self.pos_y = tile.hitbox.top - self.hitbox.height - self.body_hitbox_offset_y
             elif self.facing == "up":
                 self.pos_y = tile.hitbox.bottom - self.body_hitbox_offset_y
+        self.rect.topleft = (int(self.pos_x), int(self.pos_y))
 
     def debug_draw_hitbox(self, pantalla, color):
         # Dibujar Body Hitbox
@@ -160,8 +170,7 @@ class Character(ABC):
     def apply_damage_percentage(self, damage_percentage):
         if 0 < damage_percentage <= 100:
             damage = self.max_live * damage_percentage / 100
-            self._actual_life = min(self._actual_life - damage, 0)
-
+            self._actual_life = max(self._actual_life - damage, 0)
             if self.remaining_life <= 0:
                 self.die()
 
@@ -185,8 +194,8 @@ class Character(ABC):
             moving = bool(direction_x or direction_y)
             self.animate(dt, moving)
 
-    def render(self, pantalla):
-        pantalla.blit(self._curr_image, (int(self.pos_x), int(self.pos_y)))
+        # Actualizar rect
+        self.rect.topleft = (int(self.pos_x), int(self.pos_y))
 
     def animate(self, dt, moving: bool):
         if self.facing == "right":
@@ -201,7 +210,7 @@ class Character(ABC):
         if not moving:
             self._current_frame = 0
             self._anim_timer = 0.0
-            self._curr_image = self._curr_anim_list[0]
+            self.image = self._curr_anim_list[0]
             return
 
         self._anim_timer += dt
@@ -210,7 +219,7 @@ class Character(ABC):
             self._anim_timer -= frame_time
             self._current_frame = (self._current_frame + 1) % len(self._curr_anim_list)
 
-        self._curr_image = self._curr_anim_list[self._current_frame]
+        self.image = self._curr_anim_list[self._current_frame]
 
     @abstractmethod
     def load_sprites(self):
@@ -224,9 +233,7 @@ class Character(ABC):
         pass
 
     def get_rect(self) -> pygame.Rect:
-        return pygame.Rect(
-            int(self.pos_x),
-            int(self.pos_y),
-            self.frame_w * self.scale,
-            self.frame_h * self.scale,
-        )
+        return self.rect
+    
+    def render(self, pantalla):
+        pantalla.blit(self.image, self.rect.topleft)
