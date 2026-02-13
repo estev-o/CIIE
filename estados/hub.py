@@ -32,6 +32,10 @@ class Hub(Estado):
         # Metemos al NPC Blob, el vendedor del hub
         self.blob = Blob(self.juego)
         spawn_blob = self.tmx_map.get_objects(layer="spawn_blob")[0]
+        rb = self.blob.get_rect()
+        self.blob.pos_x = spawn_blob.x - (rb.width / 2)
+        self.blob.pos_y = spawn_blob.y - (rb.height / 2)
+        self.blob.rect.topleft = (int(self.blob.pos_x), int(self.blob.pos_y))
 
     def actualizar(self, dt, acciones):
         if acciones.get("toggle_pause"):
@@ -39,8 +43,11 @@ class Hub(Estado):
             from estados.pausa import Pausa
             Pausa(self.juego).entrar_estado()
             return
-        # Pasamos los tiles para que el jugador pueda detectar colisiones
-        self.player.update(dt, acciones,self.tmx_map.get_tiles())
+        
+        tiles = self.tmx_map.get_tiles()
+        player_blockers = tiles + [self.blob] #Metemos colisiones de fondo y las colisiones de Blob
+        self.player.update(dt, acciones, player_blockers)
+        self.blob.update(dt, acciones, tiles)
 
         if self.player.body_hitbox.collidepoint(self._door_center):
             AreaExperiment(self.juego).entrar_estado()
@@ -49,6 +56,7 @@ class Hub(Estado):
     def dibujar(self, pantalla):
         pantalla.fill((0, 0, 0))
         self.tmx_map.draw(pantalla, only=self.map_layer_order)
+        self.blob.render(pantalla)
         self.player.render(pantalla)
         if self.juego.debug:
             self.player.debug_draw_hitbox(pantalla, (0,255, 0))

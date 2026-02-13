@@ -9,13 +9,13 @@ class Blob(Character):
             # blub es invencible jejejejejeje
             x=0,
             y=0,
-            width=64,
-            height=64,
+            width=32,
+            height=32,
             speed=200,
-            scale=1.75,
-            anim_fps=15,
-            hitbox_offset_x=45,
-            hitbox_offset_y=45,
+            scale=3.0,
+            anim_fps=5,
+            hitbox_offset_x=17,
+            hitbox_offset_y=17,
             asset_file="assets/Blob/SlimeIdleSheet.png",
         )
 
@@ -25,7 +25,11 @@ class Blob(Character):
     def update(self, dt, acciones, tiles):
 
         if self._asset_file is not None:
-            self.animate(dt, moving=False)
+            # Blob es NPC estático: animación idle continua en la primera fila.
+            self.facing = "down"
+            self.animate(dt, moving=True)
+
+        self.rect.topleft = (int(self.pos_x), int(self.pos_y))
 
     def load_sprites(self):
         sheet = pygame.image.load(self._asset_file).convert_alpha()
@@ -51,15 +55,4 @@ class Blob(Character):
                 frames.append(frame)
             return frames
 
-        self._down_sprites = slice_row(0)
-        self._up_sprites = slice_row(1) if rows >= 2 else list(self._down_sprites)
-        self._left_sprites = (
-            slice_row(2)
-            if rows >= 3
-            else [pygame.transform.flip(f, True, False) for f in self._down_sprites]
-        )
-        self._right_sprites = (
-            slice_row(3)
-            if rows >= 4
-            else [pygame.transform.flip(f, True, False) for f in self._left_sprites]
-        )
+        self._down_sprites = slice_row(0)[:4]
