@@ -25,7 +25,7 @@ class Hub(Estado):
         self.player.pos_x = spawn.x - (r.width / 2)
         self.player.pos_y = spawn.y - (r.height / 2)
 
-        # Punto medio de la puerta del hub, para detectar la colisión con jugador
+        # Punto de la puerta del hub, para detectar la colisión con jugador
         door = self.tmx_map.get_objects(layer="puerta")[0]
         self._door_center = door.rect.center
 

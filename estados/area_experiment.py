@@ -21,6 +21,7 @@ class AreaExperiment(Estado):
 
         self.tmx_map = TiledTMX(tmx_path)
         self.map_layer_order = list(self.tmx_map.layer_names)
+        self._door_open = False
 
         self.player = Player(self.juego)
         r = self.player.get_rect()
@@ -33,6 +34,14 @@ class AreaExperiment(Estado):
         self.enemy = juego.enemy_factory.create_enemy("mock_enemy", 200, 300)
         self.append_enemy(self.enemy)
 
+        # contamos los enemigos de el área
+        self.total_enemies = len(self.enemies)
+        self.enemies_alive = self.total_enemies
+
+        # Punto medio de la puerta, para detectar la colisión con jugador
+        door = self.tmx_map.get_objects(layer="puerta")[0]
+        self._door_center = door.rect.center
+
     def actualizar(self, dt, acciones):
         if acciones.get("toggle_pause"):
             self.juego.actions["toggle_pause"] = False
@@ -43,6 +52,16 @@ class AreaExperiment(Estado):
         self.player.update(dt, acciones, solid_tiles)
         for enemy in self.enemies:
             enemy.ai_behavior(self.player, dt, solid_tiles)
+
+        self.enemies_alive = len(self.enemies)
+        if self.enemies_alive == 0 and not self._door_open:
+            self._door_open = True
+            # Abrir puerta: ocultar el layer de puerta cerrada.
+            self.map_layer_order = [name for name in self.map_layer_order if name != "puerta_cerrada"]
+
+        if self.enemies_alive == 0:
+            if self.player.body_hitbox.collidepoint(self._door_center):
+                AreaExperiment(self.juego).entrar_estado()
 
     def dibujar(self, pantalla):
         pantalla.fill((0, 0, 0))
