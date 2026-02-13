@@ -4,7 +4,8 @@ from assets.tiles import TiledTMX
 from estados.estado import Estado
 from estados.area_experiment import AreaExperiment
 from personajes.player import Player
-
+from personajes.blob import Blob
+DEBUG = True
 class Hub(Estado):
     def __init__(self, juego):
         Estado.__init__(self,juego)
@@ -24,9 +25,17 @@ class Hub(Estado):
         self.player.pos_x = spawn.x - (r.width / 2)
         self.player.pos_y = spawn.y - (r.height / 2)
 
-        # Punto medio de la puerta del hub, para detectar la colisión con jugador
+        # Punto de la puerta del hub, para detectar la colisión con jugador
         door = self.tmx_map.get_objects(layer="puerta")[0]
         self._door_center = door.rect.center
+
+        # Metemos al NPC Blob, el vendedor del hub
+        self.blob = Blob(self.juego)
+        spawn_blob = self.tmx_map.get_objects(layer="spawn_blob")[0]
+        rb = self.blob.get_rect()
+        self.blob.pos_x = spawn_blob.x - (rb.width / 2)
+        self.blob.pos_y = spawn_blob.y - (rb.height / 2)
+        self.blob.rect.topleft = (int(self.blob.pos_x), int(self.blob.pos_y))
 
     def actualizar(self, dt, acciones):
         if acciones.get("toggle_pause"):
@@ -34,8 +43,11 @@ class Hub(Estado):
             from estados.pausa import Pausa
             Pausa(self.juego).entrar_estado()
             return
-        # Pasamos los tiles para que el jugador pueda detectar colisiones
-        self.player.update(dt, acciones,self.tmx_map.get_tiles())
+        
+        tiles = self.tmx_map.get_tiles()
+        player_blockers = tiles + [self.blob] #Metemos colisiones de fondo y las colisiones de Blob
+        self.player.update(dt, acciones, player_blockers)
+        self.blob.update(dt, acciones, tiles)
 
         if self.player.body_hitbox.collidepoint(self._door_center):
             AreaExperiment(self.juego).entrar_estado()
@@ -44,6 +56,7 @@ class Hub(Estado):
     def dibujar(self, pantalla):
         pantalla.fill((0, 0, 0))
         self.tmx_map.draw(pantalla, only=self.map_layer_order)
+        self.blob.render(pantalla)
         self.player.render(pantalla)
         if self.juego.debug:
             self.player.debug_draw_hitbox(pantalla, (0,255, 0))

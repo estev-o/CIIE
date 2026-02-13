@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="32" height="17" tilewidth="32" tileheight="32" infinite="0" nextlayerid="13" nextobjectid="55">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="32" height="17" tilewidth="32" tileheight="32" infinite="0" nextlayerid="14" nextobjectid="56">
  <editorsettings>
   <export target="hub.csv" format="csv"/>
  </editorsettings>
  <tileset firstgid="1" source="../pixel_cyberpunk_interior_free_1.0.1/pixel-cyberpunk-interior.tsx"/>
  <tileset firstgid="232" source="../tiles_laboratory_LandOfPixels/tilesStuff.tsx"/>
+ <objectgroup id="13" name="spawn_blob">
+  <object id="55" x="509.333" y="280">
+   <point/>
+  </object>
+ </objectgroup>
  <layer id="1" name="Tile Layer 1" width="32" height="17">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,3,0,0,0,0,0,
