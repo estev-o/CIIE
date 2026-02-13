@@ -37,7 +37,7 @@ class MenuConfiguracion(Estado):
             self.config.get("pantalla_completa", False)
         )
 
-        # navegación
+        # navegación teclado
         self.elementos_navegables = 3
         self.indice_nav = 0
         self.cooldown_nav = 0
@@ -45,13 +45,30 @@ class MenuConfiguracion(Estado):
 
         self.prev = {}
 
-    # -----------------------------------------------------
+        # mouse
+        self.mouse_pressed_prev = False
+        self.prev_mouse_pos = (0, 0)
+        self.mouse_moviendose = False
+
+
+
+    def detectar_hover(self, pos):
+        if self.slider_musica.rect.collidepoint(pos):
+            return 0
+        if self.slider_efectos.rect.collidepoint(pos):
+            return 1
+        if self.opcion_fullscreen.obtener_rect().collidepoint(pos):
+            return 2
+        return None
+
+
 
     def actualizar(self, dt, acciones):
 
         if not self.prev:
             self.prev = acciones.copy()
 
+        # -------- teclado edge trigger --------
         up    = acciones.get("arrowUp")    and not self.prev.get("arrowUp")
         down  = acciones.get("arrowDown")  and not self.prev.get("arrowDown")
         left  = acciones.get("arrowLeft")  and not self.prev.get("arrowLeft")
@@ -59,7 +76,43 @@ class MenuConfiguracion(Estado):
         enter = acciones.get("enter")      and not self.prev.get("enter")
         esc   = acciones.get("esc")        and not self.prev.get("esc")
 
-        # navegación vertical
+        # -------- mouse posición escalada --------
+        pos_mouse = pygame.mouse.get_pos()
+        escala_x = self.juego.ancho / self.juego.screen.get_width()
+        escala_y = self.juego.alto / self.juego.screen.get_height()
+        pos_mouse_escalado = (int(pos_mouse[0] * escala_x), int(pos_mouse[1] * escala_y))
+
+        # detectar movimiento
+        self.mouse_moviendose = pos_mouse != self.prev_mouse_pos
+        self.prev_mouse_pos = pos_mouse
+
+        # hover → foco
+        hover = self.detectar_hover(pos_mouse_escalado)
+        if self.mouse_moviendose and hover is not None:
+            self.indice_nav = hover
+
+        # click real
+        mouse_pressed = pygame.mouse.get_pressed()[0]
+        click = mouse_pressed and not self.mouse_pressed_prev
+        self.mouse_pressed_prev = mouse_pressed
+
+        # si el ratón se mueve, el teclado no manda
+        if self.mouse_moviendose:
+            up = down = left = right = enter = False
+
+        # -------- interacción ratón --------
+        if self.indice_nav == 0:
+            self.slider_musica.actualizar(pos_mouse_escalado, mouse_pressed)
+
+        elif self.indice_nav == 1:
+            self.slider_efectos.actualizar(pos_mouse_escalado, mouse_pressed)
+
+        elif self.indice_nav == 2:
+            if click and self.opcion_fullscreen.obtener_rect().collidepoint(pos_mouse_escalado):
+                self.opcion_fullscreen.cambiar()
+                self.aplicar_fullscreen()
+
+        # -------- navegación teclado --------
         if self.cooldown_nav > 0:
             self.cooldown_nav -= dt
 
@@ -72,7 +125,7 @@ class MenuConfiguracion(Estado):
                 self.indice_nav = (self.indice_nav + 1) % self.elementos_navegables
                 self.cooldown_nav = self.delay_nav
 
-        # sliders
+        # sliders teclado
         if left or right:
             direccion = -1 if left else 1
 
@@ -82,19 +135,10 @@ class MenuConfiguracion(Estado):
             elif self.indice_nav == 1:
                 self.slider_efectos.set_valor(self.slider_efectos.valor + direccion * 5)
 
-        # enter
-        if enter:
-            if self.indice_nav == 2:
-                self.opcion_fullscreen.cambiar()
-
-                if self.opcion_fullscreen.valor:
-                    self.juego.screen = pygame.display.set_mode(
-                        (self.juego.ancho, self.juego.alto), pygame.FULLSCREEN
-                    )
-                else:
-                    self.juego.screen = pygame.display.set_mode(
-                        (self.juego.ancho, self.juego.alto)
-                    )
+        # enter teclado
+        if enter and self.indice_nav == 2:
+            self.opcion_fullscreen.cambiar()
+            self.aplicar_fullscreen()
 
         # escape
         if esc:
@@ -103,7 +147,18 @@ class MenuConfiguracion(Estado):
 
         self.prev = acciones.copy()
 
-    # -----------------------------------------------------
+
+    def aplicar_fullscreen(self):
+        if self.opcion_fullscreen.valor:
+            self.juego.screen = pygame.display.set_mode(
+                (self.juego.ancho, self.juego.alto), pygame.FULLSCREEN
+            )
+        else:
+            self.juego.screen = pygame.display.set_mode(
+                (self.juego.ancho, self.juego.alto)
+            )
+
+
 
     def guardar_y_salir(self):
         self.config.set("volumen_musica", self.slider_musica.valor)
@@ -111,7 +166,6 @@ class MenuConfiguracion(Estado):
         self.config.set("pantalla_completa", self.opcion_fullscreen.valor)
         self.salir_estado()
 
-    # -----------------------------------------------------
 
     def obtener_y_indice(self):
         if self.indice_nav == 0:
@@ -120,8 +174,6 @@ class MenuConfiguracion(Estado):
             return self.slider_efectos.rect.centery
         elif self.indice_nav == 2:
             return self.opcion_fullscreen.obtener_rect().centery
-
-    # -----------------------------------------------------
 
     def dibujar(self, pantalla):
 
