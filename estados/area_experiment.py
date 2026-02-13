@@ -4,14 +4,14 @@ from assets.tiles import TiledTMX
 import random
 
 from personajes.player import Player
-NIVEL_FORZADO = "area_exp1.tmx"  # Para pruebas, fuerza a entrar a esta área de experimentación específica
+NIVEL_FORZADO = "area_exp3.tmx"  # Para pruebas, fuerza a entrar a esta área de experimentación específica
 
 
 class AreaExperiment(Estado):
     def __init__(self, juego):
         Estado.__init__(self,juego)
-        # Elige aleatoriamente entre dos mapas de experimentación
-        distintas_areas = ["area_exp1.tmx", "area_exp2.tmx"]
+        # Elige aleatoriamente entre los mapas de experimentación
+        distintas_areas = ["area_exp1.tmx", "area_exp2.tmx","area_exp3.tmx"]
         tmx_elegido = random.choice(distintas_areas)
         tmx_path = os.path.join("assets", "area_experimentacion", tmx_elegido)
 
