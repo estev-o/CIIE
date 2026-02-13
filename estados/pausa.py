@@ -9,14 +9,16 @@ class Pausa(Estado):
     def __init__(self, juego):
         Estado.__init__(self, juego)
 
+        font = self.juego.fonts
+
         #botones
         centro_x = juego.ancho // 2
         centro_y = juego.alto // 2
 
         self.botones = [
-            Boton(centro_x - 150, centro_y - 30, 300, 55, "Continuar"),
-            Boton(centro_x - 150, centro_y + 40, 300, 55, "Configuración"),
-            Boton(centro_x - 150, centro_y + 110, 300, 55, "Menú Principal")
+            Boton(centro_x - 150, centro_y - 30, 300, 55, "Continuar", font.medium),
+            Boton(centro_x - 150, centro_y + 40, 300, 55, "Configuración", font.medium),
+            Boton(centro_x - 150, centro_y + 110, 300, 55, "Menú Principal", font.medium)
         ]
 
         self.indice_seleccionado = 0
@@ -115,12 +117,10 @@ class Pausa(Estado):
         pygame.draw.rect(pantalla, (100, 120, 180), marco, 3, border_radius=15)
 
         # Título "PAUSA"
-        font_titulo = pygame.font.Font(None, 86)
-        titulo = font_titulo.render("PAUSA", True, (255, 255, 255))
+        titulo = self.juego.fonts.big.render("PAUSA", True, (255, 255, 255))
         titulo_rect = titulo.get_rect(center=(centro_x, centro_y - 100))
 
-        # Sombra del título
-        sombra = font_titulo.render("PAUSA", True, (50, 50, 70))
+        sombra = self.juego.fonts.big.render("PAUSA", True, (50, 50, 70))
         sombra_rect = sombra.get_rect(center=(centro_x + 3, centro_y - 97))
         pantalla.blit(sombra, sombra_rect)
         pantalla.blit(titulo, titulo_rect)
@@ -130,7 +130,9 @@ class Pausa(Estado):
             boton.dibujar(pantalla)
 
         # Instrucciones
-        font_info = pygame.font.Font(None, 24)
-        info = font_info.render("ESC: Continuar  |  ↑/↓: Navegar  |  ENTER: Seleccionar", True, (180, 180, 200))
+        info = self.juego.fonts.small.render(
+            "ESC: Continuar | ENTER: Seleccionar",
+            True, (180, 180, 200)
+        )
         info_rect = info.get_rect(center=(centro_x, self.juego.alto - 40))
         pantalla.blit(info, info_rect)

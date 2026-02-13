@@ -2,7 +2,8 @@
 import os,time,pygame
 
 from config.configuracion import Configuracion
-from estados.titulo import Titulo
+#from estados.titulo import Titulo
+from estados.titulo2 import Titulo #FULL CLAUDE
 from personajes.enemigos.enemy_factory import EnemyFactory
 from estados.fonts import Fuentes
 

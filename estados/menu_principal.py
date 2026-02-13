@@ -8,13 +8,15 @@ class MenuPrincipal(Estado):
     def __init__(self, juego):
         Estado.__init__(self, juego)
 
+        font = self.juego.fonts
+
         # crear botones
         centro_x = juego.ancho // 2
         self.botones = [
-            Boton(centro_x - 150, 200, 300, 60, "Nueva Partida"),
-            Boton(centro_x - 150, 280, 300, 60, "Continuar"),
-            Boton(centro_x - 150, 360, 300, 60, "Configuración"),
-            Boton(centro_x - 150, 440, 300, 60, "Salir")
+            Boton(centro_x - 150, 200, 300, 60, "Nueva Partida", font.medium),
+            Boton(centro_x - 150, 280, 300, 60, "Continuar", font.medium),
+            Boton(centro_x - 150, 360, 300, 60, "Configuración", font.medium),
+            Boton(centro_x - 150, 440, 300, 60, "Salir", font.medium)
         ]
 
         self.indice_seleccionado = 0
@@ -27,11 +29,9 @@ class MenuPrincipal(Estado):
         self.mouse_pressed_prev = False
 
     def actualizar(self, dt, acciones):
-        # Actualizar cooldown
         if self.cooldown_nav > 0:
             self.cooldown_nav -= dt
 
-        # teclado
         if self.cooldown_nav <= 0:
             if acciones.get("arrowUp"):
                 self.cambiar_seleccion(-1)
@@ -78,20 +78,19 @@ class MenuPrincipal(Estado):
         self.botones[self.indice_seleccionado].seleccionado = True
 
     def activar_opcion(self):
-        if self.indice_seleccionado == 0:  # Nueva Partida
+        if self.indice_seleccionado == 0:
             from estados.hub import Hub
             Hub(self.juego).entrar_estado()
 
-        elif self.indice_seleccionado == 1:  # Continuar
-            # TODO: Implementar carga de partida
+        elif self.indice_seleccionado == 1:
             from estados.hub import Hub
             Hub(self.juego).entrar_estado()
 
-        elif self.indice_seleccionado == 2:  # Configuración
+        elif self.indice_seleccionado == 2:
             from estados.menu_configuracion import MenuConfiguracion
             MenuConfiguracion(self.juego).entrar_estado()
 
-        elif self.indice_seleccionado == 3:  # Salir
+        elif self.indice_seleccionado == 3:
             self.juego.running = False
 
     def dibujar(self, pantalla):
@@ -105,11 +104,11 @@ class MenuPrincipal(Estado):
             )
             pygame.draw.line(pantalla, color, (0, y), (pantalla.get_width(), y))
 
-        font_titulo = pygame.font.Font(None, 96)
-        titulo = font_titulo.render("GILBERTOV EVIL", True, (255, 255, 255))
+        # ---- TITULO ----
+        titulo = self.juego.fonts.big.render("GILBERTOV EVIL", False, (255, 255, 255))
         titulo_rect = titulo.get_rect(center=(self.juego.ancho // 2, 100))
 
-        sombra = font_titulo.render("GILBERTOV EVIL", True, (50, 50, 80))
+        sombra = self.juego.fonts.big.render("GILBERTOV EVIL", False, (50, 50, 80))
         sombra_rect = sombra.get_rect(center=(self.juego.ancho // 2 + 4, 104))
         pantalla.blit(sombra, sombra_rect)
         pantalla.blit(titulo, titulo_rect)
@@ -117,7 +116,10 @@ class MenuPrincipal(Estado):
         for boton in self.botones:
             boton.dibujar(pantalla)
 
-        font_info = pygame.font.Font(None, 26)
-        info = font_info.render("↑/↓: Navegar  |  ENTER: Seleccionar  |  ESC: Salir", True, (150, 150, 180))
+        # ---- INFO ----
+        info = self.juego.fonts.small.render(
+            "ENTER: Seleccionar  |  ESC: Salir",
+            False, (150, 150, 180)
+        )
         info_rect = info.get_rect(center=(self.juego.ancho // 2, self.juego.alto - 25))
         pantalla.blit(info, info_rect)

@@ -58,8 +58,8 @@ class Titulo(Estado):
             pygame.draw.line(pantalla, color, (0, y), (pantalla.get_width(), y))
 
         # Título con fade
-        font_titulo = pygame.font.Font(None, 110)
-        titulo = font_titulo.render("GILBERTOV EVIL", True, (255, 255, 255))
+        font_titulo = self.juego.fonts.big
+        titulo = font_titulo.render("GILBERTOV EVIL", False, (255, 255, 255))
         titulo_surface = pygame.Surface(titulo.get_size(), pygame.SRCALPHA)
         titulo_surface.blit(titulo, (0, 0))
         titulo_surface.set_alpha(int(self.alpha))
@@ -68,7 +68,7 @@ class Titulo(Estado):
 
         # Sombra del título
         if self.alpha > 100:
-            sombra = font_titulo.render("GILBERTOV EVIL", True, (50, 50, 80))
+            sombra = font_titulo.render("GILBERTOV EVIL", False, (50, 50, 80))
             sombra_surface = pygame.Surface(sombra.get_size(), pygame.SRCALPHA)
             sombra_surface.blit(sombra, (0, 0))
             sombra_surface.set_alpha(int(self.alpha * 0.5))
@@ -79,7 +79,7 @@ class Titulo(Estado):
 
         # Texto "Presiona ENTER" parpadeante
         if not self.fade_in and self.timer > 0.5 and self.mostrar_texto:
-            font_sub = pygame.font.Font(None, 40)
-            subtitulo = font_sub.render("Presiona ENTER", True, (200, 200, 220))
+            font_sub = self.juego.fonts.medium
+            subtitulo = font_sub.render("Presiona ENTER", False, (200, 200, 220))
             subtitulo_rect = subtitulo.get_rect(center=(self.juego.ancho // 2, self.juego.alto // 2 + 80))
             pantalla.blit(subtitulo, subtitulo_rect)
