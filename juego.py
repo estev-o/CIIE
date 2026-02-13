@@ -3,8 +3,9 @@ import os,time,pygame
 
 from config.configuracion import Configuracion
 #from estados.titulo import Titulo #Cutre
-#from estados.titulo2 import Titulo #Decente
-from estados.xD import Titulo #Sin sentido
+#from estados.titulo2 import Titulo #Version 1
+#from estados.titulo3 import Titulo #Version 2
+from estados.xD import Titulo #Sin sentido alguno
 
 from personajes.enemigos.enemy_factory import EnemyFactory
 from estados.fonts import Fuentes
