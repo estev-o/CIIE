@@ -145,7 +145,7 @@ class Character(pygame.sprite.Sprite, ABC):
 
     def alert_if_death(self):
         if self.remaining_life <= 0:
-            pygame.event.post(PLAYER_DEATH)
+            pygame.event.post(pygame.event.Event(PLAYER_DEATH))
 
     def heal(self, heal_amount):
         if heal_amount > 0:

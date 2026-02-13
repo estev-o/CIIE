@@ -2,6 +2,7 @@ import os
 from estados.estado import Estado
 from assets.tiles import TiledTMX
 import random
+import pygame
 
 from personajes.player import Player
 NIVEL_FORZADO = "area_exp3.tmx"  # Para pruebas, fuerza a entrar a esta área de experimentación específica
@@ -24,6 +25,11 @@ class AreaExperiment(Estado):
         self._door_open = False
 
         self.player = Player(self.juego)
+
+        # CODIGO DEBUG PARA PROBAR VIDA, BORRAR
+        if juego.debug:
+            self.player.apply_damage(60)
+        
         r = self.player.get_rect()
         spawn = self.tmx_map.get_objects(layer="spawn_point")[0]
         self.player.pos_x = spawn.x - (r.width / 2)
@@ -42,6 +48,17 @@ class AreaExperiment(Estado):
         door = self.tmx_map.get_objects(layer="puerta")[0]
         self._door_center = door.rect.center
 
+        # Spawns de cofres definidos en Tiled (object layer: spawn_cofre).
+        chest_spawns = list(self.tmx_map.get_objects(layer="spawn_cofre"))
+        random.shuffle(chest_spawns)
+        chest_count = random.randint(0, min(3, len(chest_spawns)))
+        for spawn_chest in chest_spawns[:chest_count]:
+            raw_rarity = spawn_chest.properties.get("rarity")
+            rarity = int(raw_rarity) if raw_rarity is not None else random.randint(1, 7)
+            chest = juego.enemy_factory.create_enemy("chest", spawn_chest.x, spawn_chest.y, rarity=rarity)
+            if chest is not None:
+                self.append_enemy(chest)
+
     def actualizar(self, dt, acciones):
         if acciones.get("toggle_pause"):
             self.juego.actions["toggle_pause"] = False
@@ -52,8 +69,11 @@ class AreaExperiment(Estado):
         self.player.update(dt, acciones, solid_tiles)
         for enemy in self.enemies:
             enemy.ai_behavior(self.player, dt, solid_tiles)
+        self.objects.update(self.player, dt)
 
-        self.enemies_alive = len(self.enemies)
+        # Los cofres no cuentan como enemigos vivos para abrir la puerta.
+        self.enemies_alive = sum(1 for enemy in self.enemies if enemy.__class__.__name__ != "Chest")
+        
         if self.enemies_alive == 0 and not self._door_open:
             self._door_open = True
             # Abrir puerta: ocultar el layer de puerta cerrada.
@@ -67,8 +87,13 @@ class AreaExperiment(Estado):
         pantalla.fill((0, 0, 0))
         self.tmx_map.draw(pantalla, only=self.map_layer_order)
         self.enemies.draw(pantalla)
+        self.objects.draw(pantalla)
         self.player.render(pantalla)
         if self.juego.debug:
+            font = pygame.font.Font(None, 28)
+            text = font.render(f"VIDA = {int(self.player.remaining_life)}", True, (255, 255, 255))
+            text_rect = text.get_rect(topright=(pantalla.get_width() - 12, 10))
+            pantalla.blit(text, text_rect)
             self.player.debug_draw_hitbox(pantalla, (0, 255 ,0))
             for enemy in self.enemies:
                 enemy.debug_draw_hitbox(pantalla, (0, 255 ,255))

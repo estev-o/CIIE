@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="32" height="17" tilewidth="32" tileheight="32" infinite="0" nextlayerid="11" nextobjectid="31">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="32" height="17" tilewidth="32" tileheight="32" infinite="0" nextlayerid="12" nextobjectid="35">
  <tileset firstgid="1" source="../pixel_cyberpunk_interior_free_1.0.1/pixel-cyberpunk-interior.tsx"/>
+ <objectgroup id="11" name="spawn_cofre">
+  <object id="31" x="839" y="131">
+   <point/>
+  </object>
+  <object id="32" x="939" y="124">
+   <point/>
+  </object>
+  <object id="33" x="842" y="247">
+   <point/>
+  </object>
+  <object id="34" x="932" y="243">
+   <point/>
+  </object>
+ </objectgroup>
  <layer id="1" name="Tile Layer 1" width="32" height="17">
   <data encoding="csv">
 106,87,87,87,87,87,87,87,88,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,106,87,87,87,87,87,87,88,

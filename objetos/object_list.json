@@ -1,0 +1,7 @@
+{
+  "health_potion_small": {
+    "type": "health_potion",
+    "heal_amount": 25,
+    "sprite_path": "assets/objects/potion.png"
+  }
+}

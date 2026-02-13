@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="32" height="17" tilewidth="32" tileheight="32" infinite="0" nextlayerid="12" nextobjectid="18">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="32" height="17" tilewidth="32" tileheight="32" infinite="0" nextlayerid="14" nextobjectid="24">
  <tileset firstgid="1" source="../pixel_cyberpunk_interior_free_1.0.1/pixel-cyberpunk-interior.tsx"/>
  <tileset firstgid="232" source="../tiles_laboratory_LandOfPixels/tilesStuff.tsx"/>
  <layer id="3" name="suelo" width="32" height="17">
@@ -125,5 +125,25 @@
   <object id="14" x="12.3235" y="512.657" width="984.236" height="24.647"/>
   <object id="15" x="3.28626" y="206.213" width="27.9332" height="325.34"/>
   <object id="16" x="23.0039" y="64.0822" width="391.887" height="224.288"/>
+ </objectgroup>
+ <objectgroup id="13" name="spawn_cofre">
+  <object id="18" x="959.589" y="115.019">
+   <point/>
+  </object>
+  <object id="19" x="927.548" y="447.754">
+   <point/>
+  </object>
+  <object id="20" x="81.335" y="321.232">
+   <point/>
+  </object>
+  <object id="21" x="194.711" y="460.077">
+   <point/>
+  </object>
+  <object id="22" x="699.153" y="154.454">
+   <point/>
+  </object>
+  <object id="23" x="621.104" y="392.709">
+   <point/>
+  </object>
  </objectgroup>
 </map>

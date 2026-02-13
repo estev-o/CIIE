@@ -28,7 +28,7 @@ class Player(Character):
     
     
     def die(self):
-        pygame.event.post(PLAYER_DEATH)
+        pygame.event.post(pygame.event.Event(PLAYER_DEATH))
 
     def attack(self):
         if self.attack_launcher1.is_ready():
