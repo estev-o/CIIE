@@ -4,6 +4,7 @@ from assets.tiles import TiledTMX
 from estados.estado import Estado
 from estados.area_experiment import AreaExperiment
 from personajes.player import Player
+from personajes.blob import Blob
 DEBUG = True
 class Hub(Estado):
     def __init__(self, juego):
@@ -30,6 +31,10 @@ class Hub(Estado):
         # Punto medio de la puerta del hub, para detectar la colisión con jugador
         door = self.tmx_map.get_objects(layer="puerta")[0]
         self._door_center = door.rect.center
+
+        # Metemos al NPC Blob, el vendedor del hub
+        self.blob = Blob(self.juego)
+        spawn_blob = self.tmx_map.get_objects(layer="spawn_blob")[0]
 
     def actualizar(self, dt, acciones):
         if acciones.get("toggle_pause"):
