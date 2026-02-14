@@ -34,8 +34,7 @@ class Azulejo(Attack):
         else:
             raise ValueError("Azulejo: invalid direction ", direction)
     
-        self.rect.x = x
-        self.rect.y = y
+        self.rect.center = (x, y)
 
     def update(self, dt):
         screen_x, screen_y = self.game.screen.get_size()

@@ -5,6 +5,9 @@ import random
 import pygame
 
 from personajes.player import Player
+from ui.health_bar import HealthBarManager
+from ui.player_health_bar import PlayerHealthBar
+
 NIVEL_FORZADO = "area_exp3.tmx"  # Para pruebas, fuerza a entrar a esta área de experimentación específica
 
 
@@ -58,6 +61,12 @@ class AreaExperiment(Estado):
             chest = juego.enemy_factory.create_enemy("chest", spawn_chest.x, spawn_chest.y, rarity=rarity)
             if chest is not None:
                 self.append_enemy(chest)
+        
+        # Initializar health bar manager
+        self.health_bar_manager = HealthBarManager(self.enemies)
+        
+        # Player Health Bar
+        self.player_health_bar = PlayerHealthBar(25, self.juego.alto - 65)
 
     def actualizar(self, dt, acciones):
         if acciones.get("toggle_pause"):
@@ -70,6 +79,9 @@ class AreaExperiment(Estado):
         for enemy in self.enemies:
             enemy.ai_behavior(self.player, dt, solid_tiles)
         self.objects.update(self.player, dt)
+        
+        self.health_bar_manager.update()
+        self.player_health_bar.update(dt, self.player.remaining_life, self.player.max_live)
 
         # Los cofres no cuentan como enemigos vivos para abrir la puerta.
         self.enemies_alive = sum(1 for enemy in self.enemies if enemy.__class__.__name__ != "Chest")
@@ -89,6 +101,10 @@ class AreaExperiment(Estado):
         self.enemies.draw(pantalla)
         self.objects.draw(pantalla)
         self.player.render(pantalla)
+        
+        self.health_bar_manager.draw(pantalla)
+        self.player_health_bar.draw(pantalla)
+
         if self.juego.debug:
             font = pygame.font.Font(None, 28)
             text = font.render(f"VIDA = {int(self.player.remaining_life)}", True, (255, 255, 255))

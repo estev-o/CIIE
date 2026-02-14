@@ -1,5 +1,6 @@
 from estados.estado import Estado
 from estados.hub import Hub
+from estados.area_experiment import AreaExperiment
 
 class Titulo(Estado):
     def __init__(self, juego):
@@ -7,7 +8,10 @@ class Titulo(Estado):
 
     def actualizar(self, dt, acciones):
         if acciones.get("enter"):
-            Hub(self.juego).entrar_estado()
+            if self.juego.debug and getattr(self.juego, "skip_hub", False):
+                AreaExperiment(self.juego).entrar_estado()
+            else:
+                Hub(self.juego).entrar_estado()
         self.juego.reset_keys()
 
     def dibujar(self, pantalla):

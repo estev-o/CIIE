@@ -33,8 +33,8 @@ class Player(Character):
     def attack(self):
         if self.attack_launcher1.is_ready():
             attack = self.attack_launcher1.create(
-                self.pos_x+(self.frame_w/2),
-                self.pos_y+(self.frame_h/2), 
+                self.rect.centerx,
+                self.rect.centery, 
                 self.facing
                 )
 

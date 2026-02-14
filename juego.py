@@ -5,6 +5,9 @@ from estados.titulo import Titulo
 from personajes.enemigos.enemy_factory import EnemyFactory
 from objetos.object_factory import ObjectFactory
 
+DEBUG = True
+SKIP_HUB = True
+
 class Juego():
     def __init__(self):
         pygame.init()
@@ -12,7 +15,8 @@ class Juego():
         self.game_canvas = pygame.Surface((self.ancho, self.alto))
         self.screen = pygame.display.set_mode((self.ancho, self.alto))
         self.actions = {"left":False, "right":False, "up":False, "down":False, "attack1":False,"enter":False, "toggle_pause":False}
-        self.debug=False
+        self.debug = DEBUG
+        self.skip_hub = SKIP_HUB
         self.dt, self.prev_time = 0,0
         self.running, self.playing = True, True
         self.clock = pygame.time.Clock()
@@ -94,8 +98,12 @@ class Juego():
             self.actions[k] = False
 
     def load_states(self):
-        self.title_screen = Titulo(self)
-        self.state_stack.append(self.title_screen)
+        if self.debug and self.skip_hub:
+            from estados.area_experiment import AreaExperiment
+            self.state_stack.append(AreaExperiment(self))
+        else:
+            self.title_screen = Titulo(self)
+            self.state_stack.append(self.title_screen)
 
     @property
     def actual_state(self):
