@@ -26,7 +26,7 @@ class Attack(pygame.sprite.Sprite):
             
             self.deactivate()
 
-    def update(self, dt):
+    def update(self, dt, tiles=None):
         raise NotImplementedError
     
     def activate(self):

@@ -30,13 +30,22 @@ class Player(Character):
     def die(self):
         pygame.event.post(pygame.event.Event(PLAYER_DEATH))
 
-    def attack(self):
+    def attack(self, acciones):
         if self.attack_launcher1.is_ready():
-            attack = self.attack_launcher1.create(
-                self.rect.centerx,
-                self.rect.centery, 
-                self.facing
-                )
+            mouse_pos = acciones.get("mouse_pos")
+            if mouse_pos:
+                player_center = pygame.math.Vector2(self.rect.center)
+                target = pygame.math.Vector2(mouse_pos)
+                direction = target - player_center
+                
+                if direction.length() > 0:
+                    direction = direction.normalize()
+                    
+                attack = self.attack_launcher1.create(
+                    self.rect.centerx,
+                    self.rect.centery, 
+                    direction
+                    )
 
     def update(self, dt, acciones,tiles):
         direction_x = acciones["right"] - acciones["left"]
@@ -52,14 +61,14 @@ class Player(Character):
             self.facing = "up"
 
         if acciones["attack1"]:
-            self.attack()
+            self.attack(acciones)
 
         dx = direction_x * self.speed * dt
         dy = direction_y * self.speed * dt
 
         self.move_and_collide(dx, dy, tiles)
 
-        self.attack_launcher1.update(dt)
+        self.attack_launcher1.update(dt, tiles)
 
         if self._asset_file is not None:
             moving = bool(direction_x or direction_y)

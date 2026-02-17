@@ -31,6 +31,13 @@ class Juego():
         while self.running:
             self.get_dt()
             self.get_events()
+            
+            # Capture and scale mouse position
+            mouse_pos = pygame.mouse.get_pos()
+            scale_x = self.game_canvas.get_width() / self.screen.get_width()
+            scale_y = self.game_canvas.get_height() / self.screen.get_height()
+            self.actions["mouse_pos"] = (mouse_pos[0] * scale_x, mouse_pos[1] * scale_y)
+
             self.update()
             self.render()
 
@@ -47,8 +54,6 @@ class Juego():
                     self.actions["up"] = True
                 if event.key == pygame.K_s:
                     self.actions["down"] = True
-                if event.key == pygame.K_SPACE:
-                    self.actions["attack1"] = True
                 if event.key == pygame.K_RETURN:
                     self.actions["enter"] = True
                 if event.key == pygame.K_ESCAPE:
@@ -64,10 +69,15 @@ class Juego():
                     self.actions["up"] = False
                 if event.key == pygame.K_s:
                     self.actions["down"] = False
-                if event.key == pygame.K_SPACE:
-                    self.actions["attack1"] = False
                 if event.key == pygame.K_RETURN:
                     self.actions["enter"] = False
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    self.actions["attack1"] = True
+            if event.type == pygame.MOUSEBUTTONUP:
+                if event.button == 1:
+                    self.actions["attack1"] = False
     def update(self):
         self.state_stack[-1].actualizar(self.dt, self.actions)
 

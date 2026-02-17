@@ -20,10 +20,10 @@ class AttackPool():
                 attack.init(*args, **kwargs)
                 return attack
     
-    def update(self, dt):
+    def update(self, dt, tiles=None):
         for attack in self.attacks:
             if attack.in_use():
-                attack.update(dt)
+                attack.update(dt, tiles)
 
     def render(self, screen):
         for attack in self.attacks:
