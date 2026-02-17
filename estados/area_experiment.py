@@ -7,6 +7,7 @@ import pygame
 from personajes.player import Player
 from ui.health_bar import HealthBarManager
 from ui.player_health_bar import PlayerHealthBar
+from personajes.enemigos.chest import Chest
 
 NIVEL_FORZADO = "area_exp3.tmx"  # Para pruebas, fuerza a entrar a esta área de experimentación específica
 
@@ -90,10 +91,23 @@ class AreaExperiment(Estado):
             self._door_open = True
             # Abrir puerta: ocultar el layer de puerta cerrada.
             self.map_layer_order = [name for name in self.map_layer_order if name != "puerta_cerrada"]
+            
+            # Desbloquear cofres
+            for enemy in self.enemies:
+                if isinstance(enemy, Chest):
+                    enemy.unlock()
 
         if self.enemies_alive == 0:
             if self.player.body_hitbox.collidepoint(self._door_center):
                 AreaExperiment(self.juego).entrar_estado()
+
+        # Interacción con cofres
+        if acciones.get("interact"):
+            acciones["interact"] = False  # Consumir el input
+            for enemy in self.enemies:
+                if isinstance(enemy, Chest):
+                    if self.player.hitbox.colliderect(enemy.hitbox):
+                        enemy.interact()
 
     def dibujar(self, pantalla):
         pantalla.fill((0, 0, 0))

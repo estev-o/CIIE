@@ -13,6 +13,7 @@ class Chest(Enemy):
             if table is not None:
                 kwargs["drop_table"] = table
         super().__init__(*args, **kwargs)
+        self.locked = True
         self.opening = False
         self.opened = False
         self._drop_done = False
@@ -35,6 +36,18 @@ class Chest(Enemy):
                 frame = pygame.transform.scale(frame, (int(self.frame_w * self.scale), int(self.frame_h * self.scale)))
             self._open_frames.append(frame)
         self._down_sprites = self._up_sprites = self._left_sprites = self._right_sprites = self._open_frames
+
+    def apply_damage(self, damage_amount):
+        # Chests are invincible
+        pass
+
+    def unlock(self):
+        self.locked = False
+
+    def interact(self):
+        if self.locked or self.opened or self.opening:
+            return
+        self.die()
 
     def die(self):
         if self.opened or self.opening:
