@@ -17,7 +17,7 @@ class Estado():
         pass
 
     def entrar_estado(self):
-        if len(self.juego.state_stack) > 1:
+        if len(self.juego.state_stack) > 0:
             self.estado_prev = self.juego.state_stack[-1]
         self.juego.state_stack.append(self)
 
