@@ -4,6 +4,7 @@ import os,time,pygame
 from estados.titulo import Titulo
 from personajes.enemigos.enemy_factory import EnemyFactory
 from objetos.object_factory import ObjectFactory
+from action_manager import ActionManager
 
 DEBUG = True
 SKIP_HUB = True
@@ -14,7 +15,8 @@ class Juego():
         self.ancho, self.alto = 1024, 544
         self.game_canvas = pygame.Surface((self.ancho, self.alto))
         self.screen = pygame.display.set_mode((self.ancho, self.alto))
-        self.actions = {"left":False, "right":False, "up":False, "down":False, "attack1":False,"enter":False, "toggle_pause":False, "interact":False}
+        self.action_manager = ActionManager(self)
+        self.actions = self.action_manager.actions
         self.debug = DEBUG
         self.skip_hub = SKIP_HUB
         self.dt, self.prev_time = 0,0
@@ -30,58 +32,12 @@ class Juego():
     def game_loop(self):
         while self.running:
             self.get_dt()
-            self.get_events()
+            self.action_manager.update()
             
-            # Capture and scale mouse position
-            mouse_pos = pygame.mouse.get_pos()
-            scale_x = self.game_canvas.get_width() / self.screen.get_width()
-            scale_y = self.game_canvas.get_height() / self.screen.get_height()
-            self.actions["mouse_pos"] = (mouse_pos[0] * scale_x, mouse_pos[1] * scale_y)
-
             self.update()
             self.render()
 
-    def get_events(self):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.running = False
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_a:
-                    self.actions["left"] = True
-                if event.key == pygame.K_d:
-                    self.actions["right"] = True
-                if event.key == pygame.K_w:
-                    self.actions["up"] = True
-                if event.key == pygame.K_s:
-                    self.actions["down"] = True
-                if event.key == pygame.K_RETURN:
-                    self.actions["enter"] = True
-                if event.key == pygame.K_e:
-                    self.actions["interact"] = True
-                if event.key == pygame.K_ESCAPE:
-                    self.actions["toggle_pause"] = True
-                if event.key == pygame.K_PERIOD:
-                    self.debug = not self.debug
-            if event.type == pygame.KEYUP:
-                if event.key == pygame.K_a:
-                    self.actions["left"] = False
-                if event.key == pygame.K_d:
-                    self.actions["right"] = False
-                if event.key == pygame.K_w:
-                    self.actions["up"] = False
-                if event.key == pygame.K_s:
-                    self.actions["down"] = False
-                if event.key == pygame.K_RETURN:
-                    self.actions["enter"] = False
-                if event.key == pygame.K_e:
-                    self.actions["interact"] = False
 
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    self.actions["attack1"] = True
-            if event.type == pygame.MOUSEBUTTONUP:
-                if event.button == 1:
-                    self.actions["attack1"] = False
     def update(self):
         self.state_stack[-1].actualizar(self.dt, self.actions)
 
