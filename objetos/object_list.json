@@ -3,5 +3,10 @@
     "type": "health_potion",
     "heal_amount": 25,
     "sprite_path": "assets/objects/potion.png"
+  },
+  "adn": {
+    "type": "adn",
+    "amount": 1,
+    "sprite_path": "assets/UI/ADN/ADN.png"
   }
 }

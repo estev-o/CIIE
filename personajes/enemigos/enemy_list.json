@@ -9,7 +9,11 @@
     "anim_fps": 15,
     "hitbox_offset_x": 37.5,
     "hitbox_offset_y": 37.5,
-    "asset_file": "assets/Blub/PNG/Slime1/Walk/Slime1_Walk_full.png"
+    "asset_file": "assets/Blub/PNG/Slime1/Walk/Slime1_Walk_full.png",
+    "drop_table": [
+      { "object": "adn", "weight": 0.9 },
+      { "object": null, "weight": 0.1 }
+    ]
   },
   "chest": {
     "enemy_class": "chest",

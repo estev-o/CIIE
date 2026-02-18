@@ -21,11 +21,28 @@ class Juego():
         self.running, self.playing = True, True
         self.clock = pygame.time.Clock()
         self.running = True
+        self.adn = 0
         self.enemy_factory= EnemyFactory(self, "personajes/enemigos/enemy_list.json")
         self.object_factory = ObjectFactory("objetos/object_list.json")
         self.state_stack = []
         self.load_assets()
         self.load_states()
+
+    def add_adn(self, amount):
+        amount = int(amount)
+        if amount <= 0:
+            return self.adn
+        self.adn += amount
+        return self.adn
+
+    def spend_adn(self, amount):
+        amount = int(amount)
+        if amount <= 0:
+            return True
+        if self.adn < amount:
+            return False
+        self.adn -= amount
+        return True
 
     def game_loop(self):
         while self.running:

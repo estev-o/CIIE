@@ -7,6 +7,7 @@ import pygame
 from personajes.player import Player
 from ui.health_bar import HealthBarManager
 from ui.player_health_bar import PlayerHealthBar
+from ui.adn_counter import ADNCounter
 from personajes.enemigos.chest import Chest
 
 NIVEL_FORZADO = "area_exp3.tmx"  # Para pruebas, fuerza a entrar a esta área de experimentación específica
@@ -68,6 +69,11 @@ class AreaExperiment(Estado):
         
         # Player Health Bar
         self.player_health_bar = PlayerHealthBar(25, self.juego.alto - 65)
+        self.adn_counter = ADNCounter()
+        self.adn_counter.set_position(
+            self.player_health_bar.x,
+            self.player_health_bar.y - self.adn_counter.height - 8,
+        )
 
     def actualizar(self, dt, acciones):
         if acciones.get("toggle_pause"):
@@ -118,6 +124,7 @@ class AreaExperiment(Estado):
         
         self.health_bar_manager.draw(pantalla)
         self.player_health_bar.draw(pantalla)
+        self.adn_counter.draw(pantalla, self.juego.adn)
 
         if self.juego.debug:
             font = pygame.font.Font(None, 28)

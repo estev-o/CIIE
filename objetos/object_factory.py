@@ -1,6 +1,7 @@
 import json
 
 from objetos.health_potion import HealthPotion
+from objetos.adn import ADN
 
 
 class ObjectFactory:
@@ -20,5 +21,12 @@ class ObjectFactory:
                 y=y,
                 heal_amount=config.get("heal_amount", 25),
                 sprite_path=config.get("sprite_path", "assets/objects/potion.png"),
+            )
+        if object_type == "adn":
+            return ADN(
+                x=x,
+                y=y,
+                amount=config.get("amount", 1),
+                sprite_path=config.get("sprite_path", "assets/UI/ADN/ADN.png"),
             )
         return None
