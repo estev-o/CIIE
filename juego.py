@@ -4,6 +4,7 @@ import os,time,pygame
 from estados.titulo import Titulo
 from personajes.enemigos.enemy_factory import EnemyFactory
 from objetos.object_factory import ObjectFactory
+from personajes.player import Player
 
 DEBUG = False
 SKIP_HUB = False
@@ -22,6 +23,7 @@ class Juego():
         self.clock = pygame.time.Clock()
         self.running = True
         self.adn = 0
+        self.player = Player(self)
         self.enemy_factory= EnemyFactory(self, "personajes/enemigos/enemy_list.json")
         self.object_factory = ObjectFactory("objetos/object_list.json")
         self.state_stack = []

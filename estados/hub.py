@@ -3,7 +3,6 @@ import pygame
 from assets.tiles import TiledTMX
 from estados.estado import Estado
 from estados.area_experiment import AreaExperiment
-from personajes.player import Player
 from personajes.blob import Blob
 from ui.adn_counter import ADNCounter
 from ui.player_health_bar import PlayerHealthBar
@@ -20,7 +19,7 @@ class Hub(Estado):
         self.map_layer_order = list(self.tmx_map.layer_names)
 
         # Cargamos el jugador y su spawn
-        self.player = Player(self.juego)
+        self.player = self.juego.player
         # get_objects devuelve una lista de objetos, aunque en este caso solo hay uno, el spawn del jugador
         spawn = self.tmx_map.get_objects(layer="spawn_point")[0]
         r = self.player.get_rect()

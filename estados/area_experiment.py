@@ -4,7 +4,6 @@ from assets.tiles import TiledTMX
 import random
 import pygame
 
-from personajes.player import Player
 from ui.health_bar import HealthBarManager
 from ui.player_health_bar import PlayerHealthBar
 from ui.adn_counter import ADNCounter
@@ -29,11 +28,11 @@ class AreaExperiment(Estado):
         self.map_layer_order = list(self.tmx_map.layer_names)
         self._door_open = False
 
-        self.player = Player(self.juego)
+        self.player = self.juego.player
 
         # CODIGO DEBUG PARA PROBAR VIDA, BORRAR
         if juego.debug:
-            self.player.apply_damage(60)
+            self.player.apply_damage(15)
         
         r = self.player.get_rect()
         spawn = self.tmx_map.get_objects(layer="spawn_point")[0]
