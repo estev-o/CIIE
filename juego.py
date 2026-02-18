@@ -5,8 +5,8 @@ from estados.titulo import Titulo
 from personajes.enemigos.enemy_factory import EnemyFactory
 from objetos.object_factory import ObjectFactory
 
-DEBUG = True
-SKIP_HUB = True
+DEBUG = False
+SKIP_HUB = False
 
 class Juego():
     def __init__(self):
