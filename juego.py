@@ -4,6 +4,7 @@ import os,time,pygame
 from estados.titulo import Titulo
 from personajes.enemigos.enemy_factory import EnemyFactory
 from objetos.object_factory import ObjectFactory
+from personajes.constants import PLAYER_DEATH
 from personajes.player import Player
 
 DEBUG = False
@@ -22,6 +23,7 @@ class Juego():
         self.running, self.playing = True, True
         self.clock = pygame.time.Clock()
         self.running = True
+        self._death_screen_requested = False
         self.adn = 0
         self.player = Player(self)
         self.enemy_factory= EnemyFactory(self, "personajes/enemigos/enemy_list.json")
@@ -50,6 +52,11 @@ class Juego():
         while self.running:
             self.get_dt()
             self.get_events()
+            if not self.running:
+                break
+            if self._death_screen_requested:
+                self.open_death_screen()
+                continue
             
             # Capture and scale mouse position
             mouse_pos = pygame.mouse.get_pos()
@@ -64,6 +71,8 @@ class Juego():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
+            if event.type == PLAYER_DEATH:
+                self._death_screen_requested = True
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_a:
                     self.actions["left"] = True
@@ -137,6 +146,27 @@ class Juego():
         else:
             self.title_screen = Titulo(self)
             self.state_stack.append(self.title_screen)
+
+    def open_death_screen(self):
+        self._death_screen_requested = False
+        pygame.event.clear(PLAYER_DEATH)
+        self.reset_keys()
+        from estados.muerte import Muerte
+        if self.state_stack and self.actual_state.__class__.__name__ == "Muerte":
+            return
+        Muerte(self).entrar_estado()
+
+    def start_new_run(self, start_state="menu"):
+        pygame.event.clear(PLAYER_DEATH)
+        self._death_screen_requested = False
+        self.reset_keys()
+        self.player = Player(self)
+        self.state_stack = []
+        if start_state == "hub":
+            from estados.hub import Hub
+            self.state_stack.append(Hub(self))
+        else:
+            self.state_stack.append(Titulo(self))
 
     @property
     def actual_state(self):
