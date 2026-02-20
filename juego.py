@@ -9,6 +9,12 @@ from estados.titulo3 import Titulo #Version 2
 
 from personajes.enemigos.enemy_factory import EnemyFactory
 from estados.fonts import Fuentes
+from objetos.object_factory import ObjectFactory
+from personajes.constants import PLAYER_DEATH
+from personajes.player import Player
+
+DEBUG = False
+SKIP_HUB = False
 
 class Juego():
     def __init__(self):
@@ -39,15 +45,47 @@ class Juego():
         self.running, self.playing = True, True
         self.clock = pygame.time.Clock()
         self.running = True
+        self._death_screen_requested = False
+        self.adn = 0
+        self.player = Player(self)
         self.enemy_factory= EnemyFactory(self, "personajes/enemigos/enemy_list.json")
+        self.object_factory = ObjectFactory("objetos/object_list.json")
         self.state_stack = []
         self.load_assets()
         self.load_states()
+
+    def add_adn(self, amount):
+        amount = int(amount)
+        if amount <= 0:
+            return self.adn
+        self.adn += amount
+        return self.adn
+
+    def spend_adn(self, amount):
+        amount = int(amount)
+        if amount <= 0:
+            return True
+        if self.adn < amount:
+            return False
+        self.adn -= amount
+        return True
 
     def game_loop(self):
         while self.running:
             self.get_dt()
             self.get_events()
+            if not self.running:
+                break
+            if self._death_screen_requested:
+                self.open_death_screen()
+                continue
+            
+            # Capture and scale mouse position
+            mouse_pos = pygame.mouse.get_pos()
+            scale_x = self.game_canvas.get_width() / self.screen.get_width()
+            scale_y = self.game_canvas.get_height() / self.screen.get_height()
+            self.actions["mouse_pos"] = (mouse_pos[0] * scale_x, mouse_pos[1] * scale_y)
+
             self.update()
             self.render()
 
@@ -55,6 +93,8 @@ class Juego():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
+            if event.type == PLAYER_DEATH:
+                self._death_screen_requested = True
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_a:
                     self.actions["left"] = True
@@ -64,10 +104,10 @@ class Juego():
                     self.actions["up"] = True
                 if event.key == pygame.K_s:
                     self.actions["down"] = True
-                if event.key == pygame.K_SPACE:
-                    self.actions["attack1"] = True
                 if event.key == pygame.K_RETURN:
                     self.actions["enter"] = True
+                if event.key == pygame.K_e:
+                    self.actions["interact"] = True
                 if event.key == pygame.K_ESCAPE:
                     self.actions["esc"] = True
                 if event.key == pygame.K_UP:
@@ -91,8 +131,6 @@ class Juego():
                     self.actions["up"] = False
                 if event.key == pygame.K_s:
                     self.actions["down"] = False
-                if event.key == pygame.K_SPACE:
-                    self.actions["attack1"] = False
                 if event.key == pygame.K_RETURN:
                     self.actions["enter"] = False
                 if event.key == pygame.K_UP:
@@ -104,6 +142,15 @@ class Juego():
                 if event.key == pygame.K_LEFT:
                     self.actions["arrowLeft"] = False
 
+                if event.key == pygame.K_e:
+                    self.actions["interact"] = False
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    self.actions["attack1"] = True
+            if event.type == pygame.MOUSEBUTTONUP:
+                if event.button == 1:
+                    self.actions["attack1"] = False
     def update(self):
         self.state_stack[-1].actualizar(self.dt, self.actions)
 
@@ -134,8 +181,33 @@ class Juego():
             self.actions[k] = False
 
     def load_states(self):
-        self.title_screen = Titulo(self)
-        self.state_stack.append(self.title_screen)
+        if self.debug and self.skip_hub:
+            from estados.area_experiment import AreaExperiment
+            self.state_stack.append(AreaExperiment(self))
+        else:
+            self.title_screen = Titulo(self)
+            self.state_stack.append(self.title_screen)
+
+    def open_death_screen(self):
+        self._death_screen_requested = False
+        pygame.event.clear(PLAYER_DEATH)
+        self.reset_keys()
+        from estados.muerte import Muerte
+        if self.state_stack and self.actual_state.__class__.__name__ == "Muerte":
+            return
+        Muerte(self).entrar_estado()
+
+    def start_new_run(self, start_state="menu"):
+        pygame.event.clear(PLAYER_DEATH)
+        self._death_screen_requested = False
+        self.reset_keys()
+        self.player = Player(self)
+        self.state_stack = []
+        if start_state == "hub":
+            from estados.hub import Hub
+            self.state_stack.append(Hub(self))
+        else:
+            self.state_stack.append(Titulo(self))
 
     @property
     def actual_state(self):

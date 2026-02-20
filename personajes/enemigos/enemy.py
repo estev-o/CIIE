@@ -22,11 +22,13 @@ class Enemy(Character):
             hitbox_offset_y,
             max_live,
             asset_file,
+            drop_table=None,
     ):
         super().__init__(
             game=game, max_live=max_live, x=x, y=y, width=width, height=height, scale=scale, speed=speed, anim_fps=anim_fps, hitbox_offset_x=hitbox_offset_x, hitbox_offset_y= hitbox_offset_y, asset_file=asset_file
         )
         self.vision_range = vision_range
+        self.drop_table = list(drop_table or [])
         # VARIABLES PARA IDLE_MOVE
         self.idle_state = "wait"  # Puede ser "wait" o "move"
         self.idle_timer = 1.0  # Tiempo restante en el estado actual
@@ -113,8 +115,23 @@ class Enemy(Character):
             #Lógica de persecución
         return
     def die(self):
+        self.drop()
         # Quitar sprite de los grupos
         self.kill()
+
+    def drop(self):
+        if self.drop_table:
+            object_ids = [entry.get("object") for entry in self.drop_table]
+            weights = [entry.get("weight", 0) for entry in self.drop_table]
+            drop_object_id = random.choices(object_ids, weights=weights, k=1)[0]
+            if drop_object_id is not None:
+                drop = self.game.object_factory.create_object(
+                    drop_object_id,
+                    self.rect.centerx,
+                    self.rect.centery,
+                )
+                if drop is not None:
+                    self.game.actual_state.objects.add(drop)
 
     def load_sprites(self):
         sheet = pygame.image.load(self._asset_file).convert_alpha()

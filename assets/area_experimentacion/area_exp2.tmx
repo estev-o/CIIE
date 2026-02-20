@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="32" height="17" tilewidth="32" tileheight="32" infinite="0" nextlayerid="10" nextobjectid="30">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="32" height="17" tilewidth="32" tileheight="32" infinite="0" nextlayerid="12" nextobjectid="35">
  <tileset firstgid="1" source="../pixel_cyberpunk_interior_free_1.0.1/pixel-cyberpunk-interior.tsx"/>
+ <objectgroup id="11" name="spawn_cofre">
+  <object id="31" x="839" y="131">
+   <point/>
+  </object>
+  <object id="32" x="939" y="124">
+   <point/>
+  </object>
+  <object id="33" x="842" y="247">
+   <point/>
+  </object>
+  <object id="34" x="932" y="243">
+   <point/>
+  </object>
+ </objectgroup>
  <layer id="1" name="Tile Layer 1" width="32" height="17">
   <data encoding="csv">
 106,87,87,87,87,87,87,87,88,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,106,87,87,87,87,87,87,88,
@@ -103,6 +117,11 @@
   <object id="27" x="25" y="25.25" width="72.75" height="71"/>
   <object id="28" x="91.75" y="22.5" width="61" height="28.25"/>
   <object id="29" x="141" y="22.25" width="124.5" height="73.5"/>
+ </objectgroup>
+ <objectgroup id="10" name="puerta">
+  <object id="30" x="119" y="81">
+   <point/>
+  </object>
  </objectgroup>
  <objectgroup id="5" name="spawn_point">
   <object id="10" x="117.484" y="105.16">

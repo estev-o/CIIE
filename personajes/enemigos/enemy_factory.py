@@ -2,6 +2,7 @@ import json
 import os
 
 from personajes.enemigos.enemy import Enemy
+from personajes.enemigos.chest import Chest
 
 
 class EnemyFactory:
@@ -19,7 +20,7 @@ class EnemyFactory:
             self.enemy_data = json.load(file)
             print(f"Enemigos cargados: {list(self.enemy_data.keys())}")
 
-    def create_enemy(self, enemy_name, x, y):
+    def create_enemy(self, enemy_name, x, y, **overrides):
         """
         Crea una instancia de Enemy basada en el tipo (string)
         y la posición dada.
@@ -28,10 +29,13 @@ class EnemyFactory:
             print(f"ERROR: El enemigo '{enemy_name}' no existe en el JSON.")
             return None
 
-        config = self.enemy_data[enemy_name]
+        config = dict(self.enemy_data[enemy_name])
+        config.update(overrides)
+        enemy_class = config.pop("enemy_class", "enemy")
+        cls = Chest if enemy_class == "chest" else Enemy
 
         # Creamos el enemigo desempaquetando la configuración (**config)
-        new_enemy = Enemy(
+        new_enemy = cls(
             game=self.game,
             x=x,
             y=y,

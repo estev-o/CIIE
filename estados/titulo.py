@@ -1,6 +1,8 @@
 from estados.estado import Estado
 import pygame
 
+from estados.hub import Hub
+from estados.area_experiment import AreaExperiment
 
 class Titulo(Estado):
     """Pantalla de título con animación"""

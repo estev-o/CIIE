@@ -19,6 +19,8 @@ class Attack(pygame.sprite.Sprite):
     
     def check_collisions(self):
         hits = pygame.sprite.spritecollide(self, self.game.actual_state.enemies, False)
+        # Avoid circular import by checking class name
+        hits = [hit for hit in hits if hit.__class__.__name__ != "Chest"]
 
         if len(hits) > 0:
             for enemy in hits:
@@ -26,7 +28,7 @@ class Attack(pygame.sprite.Sprite):
             
             self.deactivate()
 
-    def update(self, dt):
+    def update(self, dt, tiles=None):
         raise NotImplementedError
     
     def activate(self):
