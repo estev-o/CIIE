@@ -1,8 +1,14 @@
 # Example file showing a circle moving on screen
 import os,time,pygame
 
-from estados.titulo import Titulo
+from config.configuracion import Configuracion
+#from estados.titulo import Titulo #Cutre
+#from estados.titulo2 import Titulo #Version 1
+from estados.titulo3 import Titulo #Version 2
+#from estados.xD import Titulo #Sin sentido alguno
+
 from personajes.enemigos.enemy_factory import EnemyFactory
+from estados.fonts import Fuentes
 from objetos.object_factory import ObjectFactory
 from personajes.constants import PLAYER_DEATH
 from personajes.player import Player
@@ -13,12 +19,28 @@ SKIP_HUB = False
 class Juego():
     def __init__(self):
         pygame.init()
+        self.configuracion=Configuracion()
+        self.fonts=Fuentes()
         self.ancho, self.alto = 1024, 544
         self.game_canvas = pygame.Surface((self.ancho, self.alto))
         self.screen = pygame.display.set_mode((self.ancho, self.alto))
-        self.actions = {"left":False, "right":False, "up":False, "down":False, "attack1":False,"enter":False, "toggle_pause":False, "interact":False}
-        self.debug = DEBUG
-        self.skip_hub = SKIP_HUB
+        self.actions = {"left":False, "right":False, "up":False, "down":False, "attack1":False,"enter":False, "toggle_pause":False}
+        self.debug=False
+        # pantalla completa
+        if self.configuracion.get("pantalla_completa", False):
+            self.screen = pygame.display.set_mode((self.ancho, self.alto), pygame.FULLSCREEN)
+        else:
+            self.screen = pygame.display.set_mode((self.ancho, self.alto))
+
+        self.actions = {
+            "left": False,
+            "right": False,
+            "up": False,
+            "down": False,
+            "attack1": False,
+            "enter": False,
+            "esc": False
+        }
         self.dt, self.prev_time = 0,0
         self.running, self.playing = True, True
         self.clock = pygame.time.Clock()
@@ -87,6 +109,16 @@ class Juego():
                 if event.key == pygame.K_e:
                     self.actions["interact"] = True
                 if event.key == pygame.K_ESCAPE:
+                    self.actions["esc"] = True
+                if event.key == pygame.K_UP:
+                    self.actions["arrowUp"] = True
+                if event.key == pygame.K_DOWN:
+                    self.actions["arrowDown"] = True
+                if event.key == pygame.K_RIGHT:
+                    self.actions["arrowRight"] = True
+                if event.key == pygame.K_LEFT:
+                    self.actions["arrowLeft"] = True
+
                     self.actions["toggle_pause"] = True
                 if event.key == pygame.K_PERIOD:
                     self.debug = not self.debug
@@ -101,6 +133,15 @@ class Juego():
                     self.actions["down"] = False
                 if event.key == pygame.K_RETURN:
                     self.actions["enter"] = False
+                if event.key == pygame.K_UP:
+                    self.actions["arrowUp"] = False
+                if event.key == pygame.K_DOWN:
+                    self.actions["arrowDown"] = False
+                if event.key == pygame.K_RIGHT:
+                    self.actions["arrowRight"] = False
+                if event.key == pygame.K_LEFT:
+                    self.actions["arrowLeft"] = False
+
                 if event.key == pygame.K_e:
                     self.actions["interact"] = False
 
