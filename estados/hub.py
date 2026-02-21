@@ -6,6 +6,8 @@ from estados.area_experiment import AreaExperiment
 from personajes.blob import Blob
 from ui.adn_counter import ADNCounter
 from ui.player_health_bar import PlayerHealthBar
+from dialogos.interaction import Interaction
+
 DEBUG = True
 class Hub(Estado):
     def __init__(self, juego):
@@ -44,6 +46,11 @@ class Hub(Estado):
             self.player_health_bar.y - self.adn_counter.height - 8,
         )
 
+        # Se añade interaccion de Blob
+        self.append_interaction(
+            Interaction(self.blob, "Hablar [E]", self.blob.dialog, "interact")
+        )
+
     def actualizar(self, dt, acciones):
         if acciones.get("esc"):
             self.juego.actions["esc"] = False
@@ -53,10 +60,18 @@ class Hub(Estado):
         
         tiles = self.tmx_map.get_tiles()
         player_blockers = tiles + [self.blob] #Metemos colisiones de fondo y las colisiones de Blob
-        self.player.update(dt, acciones, player_blockers)
+
+        conditional_actions = {} # Para bloquear los movimientos del usuario si hay un dialogo o algo que interactua con el usuario
+        if self.is_interaction_active():
+            conditional_actions = {k:False for k in acciones}
+        else:
+            conditional_actions = acciones
+
+        self.player.update(dt, conditional_actions, player_blockers) 
         self.blob.update(dt, acciones, tiles)
         self.player_health_bar.update(dt, self.player.remaining_life, self.player.max_live)
-
+        self.update_interactions(self.player, acciones)
+        
         if self.player.body_hitbox.collidepoint(self._door_center):
             AreaExperiment(self.juego).entrar_estado()
             return
@@ -68,6 +83,7 @@ class Hub(Estado):
         self.player.render(pantalla)
         self.player_health_bar.draw(pantalla)
         self.adn_counter.draw(pantalla, self.juego.adn)
+        self.draw_interactions(pantalla)
         if self.juego.debug:
             self.player.debug_draw_hitbox(pantalla, (0,255, 0))
             pygame.draw.circle(pantalla, (255, 0, 255), self._door_center, 5)  # Punto Magenta

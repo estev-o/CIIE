@@ -1,4 +1,6 @@
 from personajes.character import Character
+from dialogos.estructuras.blob import hello_blob
+from dialogos.dialog import Dialog
 import pygame
 
 class Blob(Character):
@@ -18,6 +20,7 @@ class Blob(Character):
             hitbox_offset_y=17,
             asset_file="assets/Blob/SlimeIdleSheet.png",
         )
+        self.set_dialog(Dialog(hello_blob))
 
     def die(self):
         pass  # Blob no muere, es un NPC invencible
@@ -30,6 +33,10 @@ class Blob(Character):
             self.animate(dt, moving=True)
 
         self.rect.topleft = (int(self.pos_x), int(self.pos_y))
+
+        if self.has_dialog():
+            self.update_dialog(dt, acciones)
+
 
     def load_sprites(self):
         sheet = pygame.image.load(self._asset_file).convert_alpha()

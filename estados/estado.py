@@ -6,6 +6,7 @@ class Estado():
         self.estado_prev= None
         self.enemies = pygame.sprite.Group()
         self.objects = pygame.sprite.Group()
+        self.interactions = []
 
     def append_enemy(self, enemy):
         self.enemies.add(enemy)
@@ -23,3 +24,21 @@ class Estado():
 
     def salir_estado(self):
         self.juego.state_stack.pop()
+
+    def append_interaction(self, interaction):
+        self.interactions.append(interaction)
+
+    def update_interactions(self, player, actions):
+        for interaction in self.interactions:
+            interaction.update(player, actions)
+
+    def draw_interactions(self, screen):
+        for interaction in self.interactions:
+            interaction.draw(screen)
+
+    def is_interaction_active(self):
+        for interaction in self.interactions:
+            if interaction.is_active():
+                return True
+            
+        return False

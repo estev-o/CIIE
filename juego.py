@@ -89,7 +89,14 @@ class Juego():
             self.update()
             self.render()
 
+    def reset_not_manteinable_keys(self):
+        # Para evitar problemas en seleccion de dialogo
+        not_manteinable_keys = {"enter", "interact", "esc", "arrowUp", "arrowDown", "arrowRight", "arrowLeft"}
+        for k in not_manteinable_keys:
+            self.actions[k] = False
+
     def get_events(self):
+        self.reset_not_manteinable_keys()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False

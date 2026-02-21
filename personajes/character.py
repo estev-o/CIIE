@@ -35,6 +35,7 @@ class Character(pygame.sprite.Sprite, ABC):
         self._asset_file = asset_file
         self.max_live = max_live
         self._actual_life = max_live
+        self.dialog = None
 
         if asset_file is not None:
             self.load_sprites()
@@ -196,6 +197,9 @@ class Character(pygame.sprite.Sprite, ABC):
 
         # Actualizar rect
         self.rect.topleft = (int(self.pos_x), int(self.pos_y))
+        
+        if self.dialog:
+            self.dialog.update()
 
     def animate(self, dt, moving: bool):
         if self.facing == "right":
@@ -237,3 +241,14 @@ class Character(pygame.sprite.Sprite, ABC):
     
     def render(self, pantalla):
         pantalla.blit(self.image, self.rect.topleft)
+        if self.has_dialog():
+            self.dialog.draw(pantalla)
+
+    def set_dialog(self, dialog):
+        self.dialog = dialog
+
+    def has_dialog(self):
+        return self.dialog != None
+    
+    def update_dialog(self, dt, acciones):
+        return self.dialog.update(dt, acciones)
