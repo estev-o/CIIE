@@ -14,7 +14,7 @@ from personajes.constants import PLAYER_DEATH
 from personajes.player import Player
 from sistemas.acciones import ActionManager
 
-DEBUG = True
+DEBUG = False
 SKIP_HUB = False
 
 class Juego():
