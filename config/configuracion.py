@@ -9,6 +9,7 @@ class Configuracion:
         "volumen_musica": 70,
         "volumen_efectos": 50,
         "pantalla_completa": False,
+        "adn": 0,
         "mejoras_persistentes": []
     }
 

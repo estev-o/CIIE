@@ -47,7 +47,7 @@ class Juego():
         self.clock = pygame.time.Clock()
         self.running = True
         self._death_screen_requested = False
-        self.adn = 0
+        self.adn = int(self.configuracion.get("adn", 0) or 0)
         self.mejoras = MejorasManager(self.configuracion)
         self.player = Player(self)
         self.enemy_factory= EnemyFactory(self, "personajes/enemigos/enemy_list.json")
@@ -61,6 +61,7 @@ class Juego():
         if amount <= 0:
             return self.adn
         self.adn += amount
+        self.configuracion.set("adn", self.adn)
         return self.adn
 
     def spend_adn(self, amount):
@@ -70,6 +71,7 @@ class Juego():
         if self.adn < amount:
             return False
         self.adn -= amount
+        self.configuracion.set("adn", self.adn)
         return True
 
     def has_mejora(self, mejora_id):
