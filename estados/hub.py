@@ -1,14 +1,16 @@
 import os
+import random
 import pygame
 from assets.tiles import TiledTMX
 from estados.estado import Estado
 from estados.area_experiment import AreaExperiment
 from personajes.blob import Blob
+from objetos.mejoras.catalogo import listar_mejoras
 from ui.adn_counter import ADNCounter
 from ui.player_health_bar import PlayerHealthBar
 from dialogos.interaction import Interaction
 
-DEBUG = True
+DEBUG = False
 class Hub(Estado):
     def __init__(self, juego):
         Estado.__init__(self,juego)
@@ -51,13 +53,48 @@ class Hub(Estado):
             Interaction(self.blob, "Hablar [E]", self.blob.dialog, "interact")
         )
 
+        self.mejoras_tienda = self._generar_mejoras_tienda()
+
+    def _generar_mejoras_tienda(self):
+        spawns = self.tmx_map.get_objects(layer="spawn_mejoras")
+        pool = listar_mejoras()
+        if not spawns or not pool:
+            return []
+
+        if len(pool) >= len(spawns):
+            seleccion = random.sample(pool, len(spawns))
+        else:
+            seleccion = [random.choice(pool) for _ in spawns]
+
+        cache_imagenes = {}
+        mejoras_tienda = []
+        for spawn, mejora in zip(spawns, seleccion):
+            asset_path = mejora.get("asset_path")
+            if not asset_path:
+                continue
+
+            image = cache_imagenes.get(asset_path)
+            if image is None:
+                image = pygame.image.load(asset_path).convert_alpha()
+                cache_imagenes[asset_path] = image
+
+            rect = image.get_rect(center=(int(spawn.x), int(spawn.y)))
+            mejoras_tienda.append({
+                "mejora_id": mejora.get("id"),
+                "mejora": mejora,
+                "image": image,
+                "rect": rect,
+            })
+
+        return mejoras_tienda
+
     def actualizar(self, dt, acciones):
         if acciones.get("esc"):
             self.juego.actions["esc"] = False
             from estados.pausa import Pausa
             Pausa(self.juego).entrar_estado()
             return
-        
+
         tiles = self.tmx_map.get_tiles()
         player_blockers = tiles + [self.blob] #Metemos colisiones de fondo y las colisiones de Blob
 
@@ -71,7 +108,7 @@ class Hub(Estado):
         self.blob.update(dt, acciones, tiles)
         self.player_health_bar.update(dt, self.player.remaining_life, self.player.max_live)
         self.update_interactions(self.player, acciones)
-        
+
         if self.player.body_hitbox.collidepoint(self._door_center):
             AreaExperiment(self.juego).entrar_estado()
             return
@@ -84,6 +121,8 @@ class Hub(Estado):
         self.player_health_bar.draw(pantalla)
         self.adn_counter.draw(pantalla, self.juego.adn)
         self.draw_interactions(pantalla)
+        for item in self.mejoras_tienda:
+            pantalla.blit(item["image"], item["rect"])
         if self.juego.debug:
             self.player.debug_draw_hitbox(pantalla, (0,255, 0))
             pygame.draw.circle(pantalla, (255, 0, 255), self._door_center, 5)  # Punto Magenta

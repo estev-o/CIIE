@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="32" height="17" tilewidth="32" tileheight="32" infinite="0" nextlayerid="14" nextobjectid="56">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="32" height="17" tilewidth="32" tileheight="32" infinite="0" nextlayerid="15" nextobjectid="62">
  <editorsettings>
   <export target="hub.csv" format="csv"/>
  </editorsettings>
@@ -143,6 +143,17 @@
  </objectgroup>
  <objectgroup id="11" name="puerta">
   <object id="24" x="824.031" y="55.0449">
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="14" name="spawn_mejoras">
+  <object id="59" x="414" y="311.75">
+   <point/>
+  </object>
+  <object id="60" x="509.75" y="310.75">
+   <point/>
+  </object>
+  <object id="61" x="606.5" y="311.5">
    <point/>
   </object>
  </objectgroup>
