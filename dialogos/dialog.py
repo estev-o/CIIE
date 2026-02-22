@@ -25,6 +25,11 @@ class Dialog(Interactuable):
 
         self.are_options_available = False      # Si hay opciones en el nodo actual
         self.selected_option = 0                # Opcion seleccionada
+        
+        self.cooldown_nav = 0                   # Cooldown_nav preventing ultra-fast scroll
+        self.delay_nav = 0.15
+        
+        self.option_cooldown = 0                # Cooldown before an option can be selected
 
     def is_active(self):
         return self.active
@@ -84,8 +89,16 @@ class Dialog(Interactuable):
         self.finished = False
         self.are_options_available = False
         self.selected_option = 0
+        self.cooldown_nav = 0
+        self.option_cooldown = 0
 
     def update(self, dt, actions):
+        if self.cooldown_nav > 0:
+            self.cooldown_nav -= dt
+            
+        if self.option_cooldown > 0:
+            self.option_cooldown -= dt
+            
         self.handle_event(actions)
 
         if not self.active or self.finished:
@@ -103,6 +116,8 @@ class Dialog(Interactuable):
         if len(self.visible_text) >= len(self.complete_text):
             self.finished = True
             if "options" in self.actual_node:
+                if not self.are_options_available:
+                    self.option_cooldown = 0.5  # Set cooldown when options first appear
                 self.are_options_available = True
 
     def continue_writing(self):
@@ -111,6 +126,7 @@ class Dialog(Interactuable):
             self.finished = True
             if "options" in self.actual_node:
                 self.are_options_available = True
+                self.option_cooldown = 0.5  # Set cooldown when skipped to options
             return
 
         if "options" in self.actual_node:
@@ -186,8 +202,18 @@ class Dialog(Interactuable):
             return
 
         if continue_key in actions and actions[continue_key]:
-            self.continue_writing()
+            if self.are_options_available and self.option_cooldown > 0:
+                pass # Ignore 'enter' if options just appeared and are on cooldown
+            else:
+                actions[continue_key] = False
+                self.continue_writing()
         elif previous_key in actions and actions[previous_key]:
-            self.move_option(-1)
+            if self.cooldown_nav <= 0:
+                actions[previous_key] = False
+                self.move_option(-1)
+                self.cooldown_nav = self.delay_nav
         elif next_option in actions and actions[next_option]:
-            self.move_option(1)
+            if self.cooldown_nav <= 0:
+                actions[next_option] = False
+                self.move_option(1)
+                self.cooldown_nav = self.delay_nav

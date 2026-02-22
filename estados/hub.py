@@ -73,7 +73,7 @@ class Hub(Estado):
         self.player.update(dt, conditional_actions, player_blockers) 
         self.blob.update(dt, acciones, tiles)
         self.player_health_bar.update(dt, self.player.remaining_life, self.player.max_live)
-        self.update_interactions(self.player, acciones)
+        self.update_interactions(self.player, conditional_actions)
         
         if self.player.body_hitbox.collidepoint(self._door_center):
             AreaExperiment(self.juego).entrar_estado()
