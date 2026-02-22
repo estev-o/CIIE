@@ -34,12 +34,15 @@ class Pausa(Estado):
         if self.cooldown_nav > 0:
             self.cooldown_nav -= dt
 
-        if acciones.get("esc"):
-            self.juego.actions["esc"] = False
+        if acciones.get("back") or acciones.get("toggle_pause"):
+            if acciones.get("back"):
+                self.juego.actions["back"] = False
+            if acciones.get("toggle_pause"):
+                self.juego.actions["toggle_pause"] = False
             self.salir_estado()
             return
 
-        # teclado
+        # teclado / mando
         if self.cooldown_nav <= 0:
             if acciones.get("arrowUp"):
                 self.cambiar_seleccion(-1)

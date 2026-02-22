@@ -12,8 +12,9 @@ from estados.fonts import Fuentes
 from objetos.object_factory import ObjectFactory
 from personajes.constants import PLAYER_DEATH
 from personajes.player import Player
+from sistemas.acciones import ActionManager
 
-DEBUG = False
+DEBUG = True
 SKIP_HUB = False
 
 class Juego():
@@ -24,23 +25,18 @@ class Juego():
         self.ancho, self.alto = 1024, 544
         self.game_canvas = pygame.Surface((self.ancho, self.alto))
         self.screen = pygame.display.set_mode((self.ancho, self.alto))
-        self.actions = {"left":False, "right":False, "up":False, "down":False, "attack1":False,"enter":False, "toggle_pause":False}
-        self.debug=False
+        
+        self.action_manager = ActionManager()
+        self.actions = self.action_manager.actions
+
+        self.debug = DEBUG
+        self.skip_hub = SKIP_HUB
+        
         # pantalla completa
         if self.configuracion.get("pantalla_completa", False):
             self.screen = pygame.display.set_mode((self.ancho, self.alto), pygame.FULLSCREEN)
         else:
             self.screen = pygame.display.set_mode((self.ancho, self.alto))
-
-        self.actions = {
-            "left": False,
-            "right": False,
-            "up": False,
-            "down": False,
-            "attack1": False,
-            "enter": False,
-            "esc": False
-        }
         self.dt, self.prev_time = 0,0
         self.running, self.playing = True, True
         self.clock = pygame.time.Clock()
@@ -80,84 +76,25 @@ class Juego():
                 self.open_death_screen()
                 continue
             
-            # Capture and scale mouse position
-            mouse_pos = pygame.mouse.get_pos()
-            scale_x = self.game_canvas.get_width() / self.screen.get_width()
-            scale_y = self.game_canvas.get_height() / self.screen.get_height()
-            self.actions["mouse_pos"] = (mouse_pos[0] * scale_x, mouse_pos[1] * scale_y)
+            self.action_manager.process_mouse_and_aim(self.game_canvas, self.screen)
 
             self.update()
             self.render()
 
     def reset_not_manteinable_keys(self):
-        # Para evitar problemas en seleccion de dialogo
-        not_manteinable_keys = {"enter", "interact", "esc", "arrowUp", "arrowDown", "arrowRight", "arrowLeft"}
-        for k in not_manteinable_keys:
-            self.actions[k] = False
+        # Mantenido para compatibilidad si algo lo llama, pero el ActionManager ya lo hace internamente
+        self.action_manager.reset_not_maintainable_keys()
 
     def get_events(self):
-        self.reset_not_manteinable_keys()
-        for event in pygame.event.get():
+        events = self.action_manager.get_events()
+        for event in events:
             if event.type == pygame.QUIT:
                 self.running = False
             if event.type == PLAYER_DEATH:
                 self._death_screen_requested = True
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_a:
-                    self.actions["left"] = True
-                if event.key == pygame.K_d:
-                    self.actions["right"] = True
-                if event.key == pygame.K_w:
-                    self.actions["up"] = True
-                if event.key == pygame.K_s:
-                    self.actions["down"] = True
-                if event.key == pygame.K_RETURN:
-                    self.actions["enter"] = True
-                if event.key == pygame.K_e:
-                    self.actions["interact"] = True
-                if event.key == pygame.K_ESCAPE:
-                    self.actions["esc"] = True
-                if event.key == pygame.K_UP:
-                    self.actions["arrowUp"] = True
-                if event.key == pygame.K_DOWN:
-                    self.actions["arrowDown"] = True
-                if event.key == pygame.K_RIGHT:
-                    self.actions["arrowRight"] = True
-                if event.key == pygame.K_LEFT:
-                    self.actions["arrowLeft"] = True
-
-                    self.actions["toggle_pause"] = True
                 if event.key == pygame.K_PERIOD:
                     self.debug = not self.debug
-            if event.type == pygame.KEYUP:
-                if event.key == pygame.K_a:
-                    self.actions["left"] = False
-                if event.key == pygame.K_d:
-                    self.actions["right"] = False
-                if event.key == pygame.K_w:
-                    self.actions["up"] = False
-                if event.key == pygame.K_s:
-                    self.actions["down"] = False
-                if event.key == pygame.K_RETURN:
-                    self.actions["enter"] = False
-                if event.key == pygame.K_UP:
-                    self.actions["arrowUp"] = False
-                if event.key == pygame.K_DOWN:
-                    self.actions["arrowDown"] = False
-                if event.key == pygame.K_RIGHT:
-                    self.actions["arrowRight"] = False
-                if event.key == pygame.K_LEFT:
-                    self.actions["arrowLeft"] = False
-
-                if event.key == pygame.K_e:
-                    self.actions["interact"] = False
-
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    self.actions["attack1"] = True
-            if event.type == pygame.MOUSEBUTTONUP:
-                if event.button == 1:
-                    self.actions["attack1"] = False
     def update(self):
         self.state_stack[-1].actualizar(self.dt, self.actions)
 
@@ -168,6 +105,10 @@ class Juego():
             pygame.transform.scale(self.game_canvas, self.screen.get_size()),
             (0, 0),
         )
+        
+        if self.debug:
+            self.draw_text(self.screen, f"Mode: {self.action_manager.current_mode}", (255, 0, 0), 120, 20)
+            
         pygame.display.flip()
 
     def get_dt(self):
@@ -184,8 +125,7 @@ class Juego():
         pass
 
     def reset_keys(self):
-        for k in self.actions:
-            self.actions[k] = False
+        self.action_manager.reset_keys()
 
     def load_states(self):
         if self.debug and self.skip_hub:

@@ -75,8 +75,8 @@ class AreaExperiment(Estado):
         )
 
     def actualizar(self, dt, acciones):
-        if acciones.get("esc"):
-            self.juego.actions["esc"] = False
+        if acciones.get("toggle_pause"):
+            self.juego.actions["toggle_pause"] = False
             from estados.pausa import Pausa
             Pausa(self.juego).entrar_estado()
             return

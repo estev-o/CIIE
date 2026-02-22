@@ -74,7 +74,7 @@ class MenuConfiguracion(Estado):
         left  = acciones.get("arrowLeft")  and not self.prev.get("arrowLeft")
         right = acciones.get("arrowRight") and not self.prev.get("arrowRight")
         enter = acciones.get("enter")      and not self.prev.get("enter")
-        esc   = acciones.get("esc")        and not self.prev.get("esc")
+        back   = acciones.get("back")       and not self.prev.get("back")
 
         # -------- mouse posición escalada --------
         pos_mouse = pygame.mouse.get_pos()
@@ -141,7 +141,7 @@ class MenuConfiguracion(Estado):
             self.aplicar_fullscreen()
 
         # escape
-        if esc:
+        if back:
             self.guardar_y_salir()
             self.juego.reset_keys()
 

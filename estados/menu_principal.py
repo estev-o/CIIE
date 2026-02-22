@@ -39,7 +39,7 @@ class MenuPrincipal(Estado):
             elif acciones.get("arrowDown"):
                 self.cambiar_seleccion(1)
                 self.cooldown_nav = self.delay_nav
-            elif acciones.get("esc"):
+            elif acciones.get("back"):
                 self.juego.running = False
 
         if acciones.get("enter") or acciones.get("attack1"):

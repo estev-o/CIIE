@@ -52,8 +52,8 @@ class Hub(Estado):
         )
 
     def actualizar(self, dt, acciones):
-        if acciones.get("esc"):
-            self.juego.actions["esc"] = False
+        if acciones.get("toggle_pause"):
+            self.juego.actions["toggle_pause"] = False
             from estados.pausa import Pausa
             Pausa(self.juego).entrar_estado()
             return
@@ -64,6 +64,9 @@ class Hub(Estado):
         conditional_actions = {} # Para bloquear los movimientos del usuario si hay un dialogo o algo que interactua con el usuario
         if self.is_interaction_active():
             conditional_actions = {k:False for k in acciones}
+            conditional_actions["aim_axis"] = (0.0, 0.0)
+            conditional_actions["mouse_pos"] = (0, 0)
+            conditional_actions["current_mode"] = acciones.get("current_mode", "keyboard_mouse")
         else:
             conditional_actions = acciones
 

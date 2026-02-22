@@ -23,6 +23,8 @@ class Player(Character):
             hitbox_offset_y=45,
             asset_file=self._walk_asset_file,
         )
+        
+        self.last_aim_axis = pygame.math.Vector2(1, 0)
 
         self.attack_launcher1 = AttackPool(Azulejo, game)
     
@@ -32,24 +34,40 @@ class Player(Character):
 
     def attack(self, acciones):
         if self.attack_launcher1.is_ready():
-            mouse_pos = acciones.get("mouse_pos")
-            if mouse_pos:
-                player_center = pygame.math.Vector2(self.rect.center)
-                target = pygame.math.Vector2(mouse_pos)
-                direction = target - player_center
+            direction = pygame.math.Vector2(self.last_aim_axis)
+            if direction.length() > 0:
+                direction = direction.normalize()
+            else:
+                direction = pygame.math.Vector2(1, 0) # Fallback to right
                 
-                if direction.length() > 0:
-                    direction = direction.normalize()
-                    
-                attack = self.attack_launcher1.create(
-                    self.rect.centerx,
-                    self.rect.centery, 
-                    direction
-                    )
+            attack = self.attack_launcher1.create(
+                self.rect.centerx,
+                self.rect.centery, 
+                direction
+            )
 
     def update(self, dt, acciones,tiles):
         direction_x = acciones["right"] - acciones["left"]
         direction_y = acciones["down"] - acciones["up"]
+        
+        # Constantly update facing/aim direction
+        current_mode = acciones.get("current_mode", "keyboard_mouse")
+        aim_axis = acciones.get("aim_axis", (0.0, 0.0))
+
+        if aim_axis[0] != 0.0 or aim_axis[1] != 0.0:
+            self.last_aim_axis = pygame.math.Vector2(aim_axis)
+        elif current_mode == "controller" and (direction_x != 0 or direction_y != 0):
+            # Fallback to movement direction for D-pad users and general stick moving
+            self.last_aim_axis = pygame.math.Vector2(direction_x, direction_y)
+        elif current_mode == "keyboard_mouse":
+            mouse_pos = acciones.get("mouse_pos")
+            if mouse_pos:
+                player_center = pygame.math.Vector2(self.rect.center)
+                target = pygame.math.Vector2(mouse_pos)
+                self.last_aim_axis = target - player_center
+
+        if self.last_aim_axis.length() > 0:
+            self.last_aim_axis = self.last_aim_axis.normalize()
 
         if direction_x > 0:
             self.facing = "right"
@@ -63,8 +81,13 @@ class Player(Character):
         if acciones["attack1"]:
             self.attack(acciones)
 
-        dx = direction_x * self.speed * dt
-        dy = direction_y * self.speed * dt
+        # Normalize the movement vector to prevent going faster diagonally
+        move_vector = pygame.math.Vector2(direction_x, direction_y)
+        if move_vector.length() > 0:
+            move_vector = move_vector.normalize()
+            
+        dx = move_vector.x * self.speed * dt
+        dy = move_vector.y * self.speed * dt
 
         self.move_and_collide(dx, dy, tiles)
 
