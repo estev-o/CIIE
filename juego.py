@@ -10,6 +10,7 @@ from estados.titulo3 import Titulo #Version 2
 from personajes.enemigos.enemy_factory import EnemyFactory
 from estados.fonts import Fuentes
 from objetos.object_factory import ObjectFactory
+from objetos.mejoras.manager import MejorasManager
 from personajes.constants import PLAYER_DEATH
 from personajes.player import Player
 
@@ -47,6 +48,7 @@ class Juego():
         self.running = True
         self._death_screen_requested = False
         self.adn = 0
+        self.mejoras = MejorasManager(self.configuracion)
         self.player = Player(self)
         self.enemy_factory= EnemyFactory(self, "personajes/enemigos/enemy_list.json")
         self.object_factory = ObjectFactory("objetos/object_list.json")
@@ -69,6 +71,12 @@ class Juego():
             return False
         self.adn -= amount
         return True
+
+    def has_mejora(self, mejora_id):
+        return self.mejoras.has(mejora_id)
+
+    def desbloquear_mejora(self, mejora_id):
+        return self.mejoras.unlock(mejora_id)
 
     def game_loop(self):
         while self.running:
