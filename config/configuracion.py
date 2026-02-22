@@ -1,3 +1,4 @@
+import copy
 import json
 import os
 
@@ -7,7 +8,9 @@ class Configuracion:
     CONFIG_DEFAULT = {
         "volumen_musica": 70,
         "volumen_efectos": 50,
-        "pantalla_completa": False
+        "pantalla_completa": False,
+        "adn": 0,
+        "mejoras_persistentes": []
     }
 
     def __init__(self):
@@ -19,14 +22,14 @@ class Configuracion:
                 with open(self.ARCHIVO_CONFIG, 'r', encoding='utf-8') as f:
                     config_cargada = json.load(f)
                     # Mezclar con default para agregar nuevas opciones
-                    config_final = self.CONFIG_DEFAULT.copy()
+                    config_final = copy.deepcopy(self.CONFIG_DEFAULT)
                     config_final.update(config_cargada)
                     return config_final
             except Exception as e:
                 print(f"Error al cargar config: {e}")
-                return self.CONFIG_DEFAULT.copy()
+                return copy.deepcopy(self.CONFIG_DEFAULT)
         else:
-            return self.CONFIG_DEFAULT.copy()
+            return copy.deepcopy(self.CONFIG_DEFAULT)
 
     def guardar(self):
         try:
@@ -45,5 +48,5 @@ class Configuracion:
         self.guardar()
 
     def reset(self):
-        self.config = self.CONFIG_DEFAULT.copy()
+        self.config = copy.deepcopy(self.CONFIG_DEFAULT)
         self.guardar()

@@ -6,8 +6,17 @@ class AttackPool():
 
     def __init__(self, attack, *args, **kwargs):
         self.attacks = [attack(*args, **kwargs) for _ in range(self.MAX)]
-        self.cooldown = cooldowns[attack]
+        self.base_cooldown = cooldowns[attack]
+        self.cooldown_multiplier = 1.0
         self.last_use = 0
+
+    @property
+    def cooldown(self):
+        return max(1, int(self.base_cooldown * self.cooldown_multiplier))
+
+    def set_cooldown_multiplier(self, multiplier):
+        self.cooldown_multiplier = max(0.01, float(multiplier))
+        return self.cooldown
 
     def is_ready(self):
         now = get_ticks()

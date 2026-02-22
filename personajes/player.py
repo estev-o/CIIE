@@ -3,6 +3,7 @@ from personajes.constants import PLAYER_DEATH
 import pygame
 from personajes.ataques.azulejo import Azulejo
 from personajes.ataques.attack_pool import AttackPool
+from objetos.mejoras.catalogo import obtener_mejora
 
 class Player(Character):
     def __init__(self, game):
@@ -27,10 +28,23 @@ class Player(Character):
         self.last_aim_axis = pygame.math.Vector2(1, 0)
 
         self.attack_launcher1 = AttackPool(Azulejo, game)
+        self._aplicar_mejoras_persistentes()
     
     
     def die(self):
         pygame.event.post(pygame.event.Event(PLAYER_DEATH))
+
+    def _aplicar_mejoras_persistentes(self):
+        if not hasattr(self.game, "mejoras"):
+            return
+
+        for mejora_id in self.game.mejoras.owned_ids():
+            mejora = obtener_mejora(mejora_id)
+            if not mejora:
+                continue
+            aplicar = mejora.get("apply")
+            if callable(aplicar):
+                aplicar(self)
 
     def attack(self, acciones):
         if self.attack_launcher1.is_ready():

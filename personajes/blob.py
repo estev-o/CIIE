@@ -1,3 +1,4 @@
+import copy
 from personajes.character import Character
 from dialogos.estructuras.blob import hello_blob
 from dialogos.dialog import Dialog
@@ -20,7 +21,7 @@ class Blob(Character):
             hitbox_offset_y=17,
             asset_file="assets/Blob/SlimeIdleSheet.png",
         )
-        self.set_dialog(Dialog(hello_blob))
+        self.set_dialog(Dialog(copy.deepcopy(hello_blob), rect=(247, 330, 530, 210)))
 
     def die(self):
         pass  # Blob no muere, es un NPC invencible
