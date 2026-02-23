@@ -46,12 +46,7 @@ class MenuPrincipal(Estado):
             self.activar_opcion()
             self.juego.reset_keys()
 
-        pos_mouse = pygame.mouse.get_pos()
-        escala_x = self.juego.ancho / self.juego.screen.get_width()
-        escala_y = self.juego.alto / self.juego.screen.get_height()
-        pos_mouse_escalado = (int(pos_mouse[0] * escala_x), int(pos_mouse[1] * escala_y))
-
-        mouse_pressed = pygame.mouse.get_pressed()[0]
+        pos_mouse_escalado = acciones.get("mouse_pos", (0, 0))
 
         for i, boton in enumerate(self.botones):
             if boton.verificar_hover(pos_mouse_escalado):
@@ -60,14 +55,12 @@ class MenuPrincipal(Estado):
                     self.indice_seleccionado = i
                     self.botones[self.indice_seleccionado].seleccionado = True
 
-        if mouse_pressed and not self.mouse_pressed_prev:
+        if acciones.get("attack1"):
             for i, boton in enumerate(self.botones):
                 if boton.verificar_click(pos_mouse_escalado):
                     self.indice_seleccionado = i
                     self.activar_opcion()
                     break
-
-        self.mouse_pressed_prev = mouse_pressed
 
         for boton in self.botones:
             boton.actualizar(dt)
@@ -79,8 +72,7 @@ class MenuPrincipal(Estado):
 
     def activar_opcion(self):
         if self.indice_seleccionado == 0:
-            from estados.hub import Hub
-            Hub(self.juego).entrar_estado()
+            self.juego.start_new_run("hub")
 
         elif self.indice_seleccionado == 1:
             from estados.hub import Hub

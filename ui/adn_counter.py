@@ -23,7 +23,7 @@ class ADNCounter:
         )
         self.width = self.icon.get_width()
         self.height = self.icon.get_height()
-        self.font = pygame.font.Font(None, max(20, int(self.height * 0.9)))
+        self.font = pygame.font.Font("assets/fonts/Snowbell-Wp4g9.ttf", max(20, int(self.height * 0.3)))
 
     def set_position(self, x, y):
         self.x = int(x)

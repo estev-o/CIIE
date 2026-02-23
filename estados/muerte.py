@@ -1,56 +1,98 @@
-import pygame
-
 from estados.estado import Estado
+from estados.componentes import Boton
+import pygame
 
 
 class Muerte(Estado):
+
     def __init__(self, juego):
-        super().__init__(juego)
-        button_w = 340
-        button_h = 56
-        center_x = self.juego.ancho // 2
-        first_y = (self.juego.alto // 2) + 30
-        self.menu_rect = pygame.Rect(center_x - (button_w // 2), first_y, button_w, button_h)
-        self.hub_rect = pygame.Rect(center_x - (button_w // 2), first_y + button_h + 18, button_w, button_h)
-        self._click_was_down = False
+        Estado.__init__(self, juego)
+
+        font = self.juego.fonts
+
+        centro_x = juego.ancho // 2
+        self.botones = [
+            Boton(centro_x - 150, 200, 300, 60, "Nueva Partida", font.medium),
+            Boton(centro_x - 150, 280, 300, 60, "Menú principal", font.medium),
+        ]
+
+        self.indice_seleccionado = 0
+        self.botones[self.indice_seleccionado].seleccionado = True
+
+        self.cooldown_nav = 0
+        self.delay_nav = 0.15
 
     def actualizar(self, dt, acciones):
-        click_down = bool(acciones.get("attack1"))
-        mouse_pos = acciones.get("mouse_pos", (0, 0))
+        if self.cooldown_nav > 0:
+            self.cooldown_nav -= dt
 
-        if click_down and not self._click_was_down:
-            if self.menu_rect.collidepoint(mouse_pos):
-                self.juego.start_new_run(start_state="menu")
-                return
-            if self.hub_rect.collidepoint(mouse_pos):
-                self.juego.start_new_run(start_state="hub")
-                return
+        if self.cooldown_nav <= 0:
+            if acciones.get("arrowUp"):
+                self.cambiar_seleccion(-1)
+                self.cooldown_nav = self.delay_nav
+            elif acciones.get("arrowDown"):
+                self.cambiar_seleccion(1)
+                self.cooldown_nav = self.delay_nav
+            elif acciones.get("back"):
+                self.juego.running = False
 
-        self._click_was_down = click_down
+        if acciones.get("enter") or acciones.get("attack1"):
+            self.activar_opcion()
+            self.juego.reset_keys()
+
+        pos_mouse_escalado = acciones.get("mouse_pos", (0, 0))
+
+        for i, boton in enumerate(self.botones):
+            if boton.verificar_hover(pos_mouse_escalado):
+                if i != self.indice_seleccionado:
+                    self.botones[self.indice_seleccionado].seleccionado = False
+                    self.indice_seleccionado = i
+                    self.botones[self.indice_seleccionado].seleccionado = True
+
+        if acciones.get("attack1"):
+            for i, boton in enumerate(self.botones):
+                if boton.verificar_click(pos_mouse_escalado):
+                    self.indice_seleccionado = i
+                    self.activar_opcion()
+                    break
+
+        for boton in self.botones:
+            boton.actualizar(dt)
+
+    def cambiar_seleccion(self, direccion):
+        self.botones[self.indice_seleccionado].seleccionado = False
+        self.indice_seleccionado = (self.indice_seleccionado + direccion) % len(self.botones)
+        self.botones[self.indice_seleccionado].seleccionado = True
+
+    def activar_opcion(self):
+        if self.indice_seleccionado == 0:
+            self.juego.start_new_run("hub")
+
+        elif self.indice_seleccionado == 1:
+            from estados.menu_principal import MenuPrincipal
+            MenuPrincipal(self.juego).entrar_estado()
+
 
     def dibujar(self, pantalla):
-        pantalla.fill((24, 6, 6))
+        for y in range(pantalla.get_height()):
+            ratio = y / pantalla.get_height()
+            color = (
+                int(15 + ratio * 25),
+                int(15 + ratio * 35),
+                int(40 + ratio * 60)
+            )
+            pygame.draw.line(pantalla, color, (0, y), (pantalla.get_width(), y))
 
-        title_font = pygame.font.Font(None, 88)
-        body_font = pygame.font.Font(None, 34)
-        button_font = pygame.font.Font(None, 42)
+        titulo = self.juego.fonts.big.render("HAS MUERTO", False, (255, 255, 255))
+        titulo_rect = titulo.get_rect(center=(self.juego.ancho // 2, 100))
+        sombra = self.juego.fonts.big.render("HAS MUERTO", False, (50, 50, 80))
+        sombra_rect = sombra.get_rect(center=(self.juego.ancho // 2 + 4, 104))
+        adn_texto = self.juego.fonts.medium.render(f"ADN acumulado: {self.juego.adn}", False, (255, 255, 255))
+        adn_rect = adn_texto.get_rect(center=(self.juego.ancho // 2, 155))
 
-        title = title_font.render("HAS MUERTO", True, (255, 240, 240))
-        title_rect = title.get_rect(center=(self.juego.ancho // 2, (self.juego.alto // 2) - 90))
-        pantalla.blit(title, title_rect)
+        pantalla.blit(sombra, sombra_rect)
+        pantalla.blit(titulo, titulo_rect)
+        pantalla.blit(adn_texto, adn_rect)
 
-        info = body_font.render(f"ADN acumulado: {self.juego.adn}", True, (220, 220, 220))
-        info_rect = info.get_rect(center=(self.juego.ancho // 2, (self.juego.alto // 2) - 30))
-        pantalla.blit(info, info_rect)
-
-        mouse_pos = self.juego.actions.get("mouse_pos", (-1, -1))
-        menu_hover = self.menu_rect.collidepoint(mouse_pos)
-        hub_hover = self.hub_rect.collidepoint(mouse_pos)
-
-        pygame.draw.rect(pantalla, (210, 210, 210) if menu_hover else (175, 175, 175), self.menu_rect, border_radius=10)
-        pygame.draw.rect(pantalla, (210, 210, 210) if hub_hover else (175, 175, 175), self.hub_rect, border_radius=10)
-
-        menu_text = button_font.render("Volver al menu", True, (20, 20, 20))
-        hub_text = button_font.render("Ir al hub", True, (20, 20, 20))
-        pantalla.blit(menu_text, menu_text.get_rect(center=self.menu_rect.center))
-        pantalla.blit(hub_text, hub_text.get_rect(center=self.hub_rect.center))
+        for boton in self.botones:
+            boton.dibujar(pantalla)
