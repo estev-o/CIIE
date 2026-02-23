@@ -61,7 +61,7 @@ class Titulo(Estado):
 
         # Título con fade
         font_titulo = self.juego.fonts.big
-        titulo = font_titulo.render("GILBERTOV EVIL", False, (255, 255, 255))
+        titulo = font_titulo.render("MANOLO", False, (255, 255, 255))
         titulo_surface = pygame.Surface(titulo.get_size(), pygame.SRCALPHA)
         titulo_surface.blit(titulo, (0, 0))
         titulo_surface.set_alpha(int(self.alpha))

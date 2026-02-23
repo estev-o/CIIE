@@ -77,7 +77,7 @@ class Hub(Estado):
 
         cache_imagenes = {}
         mejoras_tienda = []
-        for spawn, mejora in zip(spawns, seleccion):
+        for slot_index, (spawn, mejora) in enumerate(zip(spawns, seleccion)):
             asset_path = mejora.get("asset_path")
             if not asset_path:
                 continue
@@ -89,6 +89,7 @@ class Hub(Estado):
 
             rect = image.get_rect(center=(int(spawn.x), int(spawn.y)))
             mejoras_tienda.append({
+                "slot_index": slot_index,
                 "mejora_id": mejora.get("id"),
                 "mejora": mejora,
                 "image": image,
@@ -106,21 +107,27 @@ class Hub(Estado):
         if not actual_node.get("carousel_options"):
             return None
 
-        visible_items = [item for item in self.mejoras_tienda if not item.get("vendida")]
+        options = actual_node.get("options") or []
         selected_index = getattr(dialog, "selected_option", 0)
-        if selected_index < 0 or selected_index >= len(visible_items):
+        if selected_index < 0 or selected_index >= len(options):
             return None
 
-        if selected_index >= len(self.SHOP_SELECTION_LAYERS):
+        selected_option = options[selected_index]
+        shop_item = selected_option.get("shop_item")
+        if not isinstance(shop_item, dict):
             return None
 
-        return self.SHOP_SELECTION_LAYERS[selected_index]
+        slot_index = int(shop_item.get("slot_index", -1))
+        if slot_index < 0 or slot_index >= len(self.SHOP_SELECTION_LAYERS):
+            return None
+
+        return self.SHOP_SELECTION_LAYERS[slot_index]
 
     def actualizar(self, dt, acciones):
-        
+
         if self.juego.debug:
             self.juego.adn = 100
-            
+
         if acciones.get("toggle_pause"):
             self.juego.actions["toggle_pause"] = False
             Pausa(self.juego).entrar_estado()
@@ -142,7 +149,6 @@ class Hub(Estado):
         self.blob.update(dt, acciones, tiles)
         self.player_health_bar.update(dt, self.player.remaining_life, self.player.max_live)
         self.update_interactions(self.player, conditional_actions)
-        
         if self.player.body_hitbox.collidepoint(self._door_center):
             AreaExperiment(self.juego).entrar_estado()
             return
@@ -151,9 +157,9 @@ class Hub(Estado):
         pantalla.fill((0, 0, 0))
         self.tmx_map.draw(pantalla, only=self.map_layer_order)
         selected_layer = self._selected_shop_layer()
-        self.blob.render(pantalla)
         self.player.render(pantalla)
         self.player_health_bar.draw(pantalla)
+        self.blob.render(pantalla)
         self.adn_counter.draw(pantalla, self.juego.adn)
         self.draw_interactions(pantalla)
         if selected_layer:
