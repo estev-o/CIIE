@@ -53,12 +53,19 @@ class Player(Character):
                 direction = direction.normalize()
             else:
                 direction = pygame.math.Vector2(1, 0) # Fallback to right
-                
-            attack = self.attack_launcher1.create(
-                self.rect.centerx,
-                self.rect.centery, 
-                direction
-            )
+
+            directions = [direction]
+            if getattr(self, "disparo_triple_activo", False):
+                spread_angle = 12
+                directions.append(direction.rotate(spread_angle))
+                directions.append(direction.rotate(-spread_angle))
+
+            for shot_direction in directions:
+                self.attack_launcher1.create(
+                    self.rect.centerx,
+                    self.rect.centery,
+                    shot_direction,
+                )
 
     def update(self, dt, acciones,tiles):
         direction_x = acciones["right"] - acciones["left"]

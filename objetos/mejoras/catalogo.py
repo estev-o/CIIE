@@ -10,6 +10,14 @@ def _aplicar_disparo_rapido(player):
     player._mejora_disparo_rapido_aplicada = True
 
 
+def _aplicar_disparo_triple(player):
+    if getattr(player, "_mejora_disparo_triple_aplicada", False):
+        return
+
+    player.disparo_triple_activo = True
+    player._mejora_disparo_triple_aplicada = True
+
+
 MEJORAS = {
     "disparo_rapido": {
         "id": "disparo_rapido",
@@ -18,6 +26,14 @@ MEJORAS = {
         "coste_adn": 10,
         "asset_path": "assets/mejoras/pocion_rapidez.png",
         "apply": _aplicar_disparo_rapido,
+    },
+    "disparo_triple": {
+        "id": "disparo_triple",
+        "nombre": "Disparo triple",
+        "descripcion": "Dispara 3 proyectiles con una apertura pequena, estilo escopeta.",
+        "coste_adn": 20,
+        "asset_path": "assets/mejoras/disparo_triple.png",
+        "apply": _aplicar_disparo_triple,
     },
 }
 
