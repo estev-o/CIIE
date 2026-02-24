@@ -15,7 +15,9 @@ class Enemy(Character):
             height,
             scale,
             speed,
+            damage,
             vision_range,
+            attack_range,
             anim_fps,
             hitbox_offset_x,
             hitbox_offset_y,
@@ -28,6 +30,8 @@ class Enemy(Character):
             anim_fps=anim_fps, hitbox_offset_x=hitbox_offset_x, hitbox_offset_y=hitbox_offset_y, asset_file=asset_file
         )
         self.vision_range = vision_range
+        self.attack_range= attack_range
+        self.damage = damage
         self.drop_table = list(drop_table or [])
         # VARIABLES PARA IDLE_MOVE
         self.idle_state = "wait"  # Puede ser "wait" o "move"
@@ -43,10 +47,10 @@ class Enemy(Character):
 
         self.ai_state = "idle"
         self.alert_timer = 0
-    def idle_move(self, dt, tiles=None):
+
+    def idle_behavior(self, dt, tiles=None):
         """
-        Gestiona el movimiento aleatorio.
-        Retorna (velocidad_x, velocidad_y) para aplicar al movimiento.
+        Proporciona al enemigo un movimiento aleatorio.
         """
         self.idle_timer -= dt
 
@@ -60,8 +64,6 @@ class Enemy(Character):
 
                 self.idle_dir_x = random.uniform(-1, 1)
                 self.idle_dir_y = random.uniform(-1, 1)
-                # Limitar espacio de movimiento
-
             else:
                 # CAMBIO A ESPERAR
                 self.idle_state = "wait"
@@ -98,12 +100,51 @@ class Enemy(Character):
         if self._asset_file is not None:
             moving = bool(self.idle_dir_x or self.idle_dir_y)
             self.animate(dt, moving)
-        return
 
     def alerted_behavior(self, player, dt, solid_tiles):
-        player.apply_damage(0.5)
+        """Comportamiento una vez detectado el jugador"""
+
+        #Calculamos posición y distancia del jugador
+        dx = player.rect.centerx - self.rect.centerx
+        dy = player.rect.centery - self.rect.centery
+        dist = math.hypot(dx, dy)
+
+        if dist > self.attack_range:
+            # Normalizamos el vector (para que no se mueva más rápido en diagonal)
+            dir_x = dx / dist
+            dir_y = dy / dist
+
+            if abs(dx) > abs(dy):
+                self.facing = "right" if dx > 0 else "left"
+            else:
+                self.facing = "down" if dy > 0 else "up"
+
+            # Calculamos y aplicamos el movimiento
+            move_x = dir_x * self.speed * dt
+            move_y = dir_y * self.speed * dt
+
+            self.pos_x += move_x
+            self.pos_y += move_y
+
+            if solid_tiles is not None:
+                self.pos_x -= move_x
+                self.pos_y -= move_y
+                self.move_and_collide(move_x, move_y, solid_tiles)
+
+            self.rect.topleft = (int(self.pos_x), int(self.pos_y))
+
+            if self._asset_file is not None:
+                self.animate(dt, moving=True)
+
+        # Lógica de ataque: Si está lo suficientemente cerca, ataca
+
+        if pygame.Rect.colliderect(self.hitbox, player.hitbox):
+            player.apply_damage(self.damage)
 
     def ai_behavior(self, player, dt, solid_tiles):
+        """
+        Gestor de estados para el comportamiento del enemigo.
+        """
         if self.alert_timer > 0:
             self.alert_timer -= dt
 
@@ -133,7 +174,7 @@ class Enemy(Character):
                 self.ai_state = "alert"
                 self.alert_timer = 0.7
             else:
-                self.idle_move(dt, solid_tiles)
+                self.idle_behavior(dt, solid_tiles)
 
     def die(self):
         self.drop()
