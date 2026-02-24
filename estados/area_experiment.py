@@ -30,9 +30,6 @@ class AreaExperiment(Estado):
 
         self.player = self.juego.player
 
-        # CODIGO DEBUG PARA PROBAR VIDA, BORRAR
-        if juego.debug:
-            self.player.apply_damage(15)
         
         r = self.player.get_rect()
         spawn = self.tmx_map.get_objects(layer="spawn_point")[0]
