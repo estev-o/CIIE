@@ -133,5 +133,6 @@ class AreaExperiment(Estado):
             text_rect = text.get_rect(topright=(pantalla.get_width() - 12, 10))
             pantalla.blit(text, text_rect)
             self.player.debug_draw_hitbox(pantalla, (0, 255 ,0))
+            self.player.attack_launcher1.debug_draw_hitbox(pantalla, (255, 255 ,0))
             for enemy in self.enemies:
                 enemy.debug_draw_hitbox(pantalla, (0, 255 ,255))
