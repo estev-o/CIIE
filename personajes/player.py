@@ -9,6 +9,7 @@ class Player(Character):
     def __init__(self, game):
         self._walk_asset_file = "assets/Blub/PNG/Slime1/Walk/Slime1_Walk_full.png"
         self._idle_asset_file = "assets/Blub/PNG/Slime1/Idle/Slime1_Idle_full.png"
+        self._hurt_asset_file = "assets/Blub/PNG/Slime1/Hurt/Slime1_Hurt_full.png"
         super().__init__(
             game=game,
             max_live=100,
@@ -24,7 +25,13 @@ class Player(Character):
             hitbox_offset_y=45,
             asset_file=self._walk_asset_file,
         )
-        
+
+        self.hurt_time = 0.5  # duración de la animación de daño
+        self.hurt_timer = 0.0
+        self.is_hurt = False
+        self.invencible_time=1.0
+        self.itimer=0
+
         self.last_aim_axis = pygame.math.Vector2(1, 0)
 
         self.attack_launcher1 = AttackPool(Azulejo, game)
@@ -59,11 +66,29 @@ class Player(Character):
                 self.rect.centery, 
                 direction
             )
+    def apply_damage(self, damage_amount):
+        if self.itimer > 0:
+            return
+        super().apply_damage(damage_amount)
+        self.itimer = self.invencible_time
+        self.is_hurt = True
+        self.hurt_timer = self.hurt_time
+
 
     def update(self, dt, acciones,tiles):
+        if self.itimer > 0:
+            self.itimer -= dt
+            if self.itimer < 0:
+                self.itimer = 0
+
+        if self.is_hurt:
+            self.hurt_timer -= dt
+            if self.hurt_timer <= 0:
+                self.is_hurt = False
+
         direction_x = acciones["right"] - acciones["left"]
         direction_y = acciones["down"] - acciones["up"]
-        
+
         # Constantly update facing/aim direction
         current_mode = acciones.get("current_mode", "keyboard_mouse")
         aim_axis = acciones.get("aim_axis", (0.0, 0.0))
@@ -119,6 +144,7 @@ class Player(Character):
     def load_sprites(self):
         walk_sheet = pygame.image.load(self._walk_asset_file).convert_alpha()
         idle_sheet = pygame.image.load(self._idle_asset_file).convert_alpha()
+        hurt_sheet = pygame.image.load(self._hurt_asset_file).convert_alpha()
 
         def build_directional_sets(sheet: pygame.Surface):
             cols = sheet.get_width() // self.frame_w
@@ -158,7 +184,7 @@ class Player(Character):
 
         self._walk_down_sprites, self._walk_up_sprites, self._walk_left_sprites, self._walk_right_sprites = build_directional_sets(walk_sheet)
         self._idle_down_sprites, self._idle_up_sprites, self._idle_left_sprites, self._idle_right_sprites = build_directional_sets(idle_sheet)
-
+        self._hurt_down_sprites, self._hurt_up_sprites, self._hurt_left_sprites, self._hurt_right_sprites = build_directional_sets(hurt_sheet)
         # Compatibilidad con Character: por defecto arranca con walk/down.
         self._down_sprites = self._walk_down_sprites
         self._up_sprites = self._walk_up_sprites
@@ -166,7 +192,16 @@ class Player(Character):
         self._right_sprites = self._walk_right_sprites
 
     def animate(self, dt, moving: bool):
-        if moving:
+        if self.is_hurt:
+            if self.facing == "right":
+                selected = self._hurt_right_sprites
+            elif self.facing == "left":
+                selected = self._hurt_left_sprites
+            elif self.facing == "up":
+                selected = self._hurt_up_sprites
+            else:
+                selected = self._hurt_down_sprites
+        elif moving:
             if self.facing == "right":
                 selected = self._walk_right_sprites
             elif self.facing == "left":
