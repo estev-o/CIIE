@@ -26,6 +26,8 @@ class Player(Character):
         )
         
         self.last_aim_axis = pygame.math.Vector2(1, 0)
+        self.escudo_activo = False
+        self.upgrade_cooldowns = {}
 
         self.attack_launcher1 = AttackPool(Azulejo, game)
         self._aplicar_mejoras_persistentes()
@@ -45,6 +47,68 @@ class Player(Character):
             aplicar = mejora.get("apply")
             if callable(aplicar):
                 aplicar(self)
+
+    def register_upgrade_cooldown(self, upgrade_id, duration_seconds, asset_path=None):
+        entry = self.upgrade_cooldowns.get(upgrade_id)
+        if entry is None:
+            image = None
+            if asset_path:
+                try:
+                    image = pygame.image.load(asset_path).convert_alpha()
+                except Exception:
+                    image = None
+            entry = {
+                "id": upgrade_id,
+                "duration": float(duration_seconds),
+                "remaining": 0.0,
+                "image": image,
+            }
+            self.upgrade_cooldowns[upgrade_id] = entry
+        else:
+            entry["duration"] = float(duration_seconds)
+            if asset_path and entry.get("image") is None:
+                try:
+                    entry["image"] = pygame.image.load(asset_path).convert_alpha()
+                except Exception:
+                    pass
+        return entry
+
+    def is_upgrade_cooldown_ready(self, upgrade_id):
+        entry = self.upgrade_cooldowns.get(upgrade_id)
+        if entry is None:
+            return True
+        return entry.get("remaining", 0.0) <= 0.0
+
+    def trigger_upgrade_cooldown(self, upgrade_id):
+        entry = self.upgrade_cooldowns.get(upgrade_id)
+        if entry is None:
+            return False
+        entry["remaining"] = float(entry.get("duration", 0.0))
+        return True
+
+    def _update_upgrade_cooldowns(self, dt):
+        for entry in self.upgrade_cooldowns.values():
+            remaining = float(entry.get("remaining", 0.0))
+            if remaining > 0.0:
+                entry["remaining"] = max(0.0, remaining - dt)
+
+    def _try_block_with_shield(self):
+        if not getattr(self, "escudo_activo", False):
+            return False
+        if not self.is_upgrade_cooldown_ready("escudo"):
+            return False
+        self.trigger_upgrade_cooldown("escudo")
+        return True
+
+    def apply_damage(self, damage_amount):
+        if damage_amount > 0 and self._try_block_with_shield():
+            return
+        super().apply_damage(damage_amount)
+
+    def apply_damage_percentage(self, damage_percentage):
+        if damage_percentage > 0 and self._try_block_with_shield():
+            return
+        super().apply_damage_percentage(damage_percentage)
 
     def attack(self, acciones):
         if self.attack_launcher1.is_ready():
@@ -68,6 +132,8 @@ class Player(Character):
                 )
 
     def update(self, dt, acciones,tiles):
+        self._update_upgrade_cooldowns(dt)
+
         direction_x = acciones["right"] - acciones["left"]
         direction_y = acciones["down"] - acciones["up"]
         
@@ -122,6 +188,44 @@ class Player(Character):
         pantalla.blit(self.image, self.rect)
 
         self.attack_launcher1.render(pantalla)
+
+    def render_upgrade_cooldowns(self, pantalla, x=25, y=25):
+        if not self.upgrade_cooldowns:
+            return
+
+        icon_size = 36
+        pad = 8
+        idx = 0
+        for entry in self.upgrade_cooldowns.values():
+            rect = pygame.Rect(x, y + idx * (icon_size + pad), icon_size, icon_size)
+            idx += 1
+
+            pygame.draw.rect(pantalla, (20, 20, 28), rect, border_radius=8)
+            pygame.draw.rect(pantalla, (190, 210, 255), rect, 2, border_radius=8)
+
+            image = entry.get("image")
+            if image is not None:
+                scaled = pygame.transform.scale(image, (icon_size - 6, icon_size - 6))
+                pantalla.blit(scaled, scaled.get_rect(center=rect.center))
+
+            duration = float(entry.get("duration", 0.0))
+            remaining = float(entry.get("remaining", 0.0))
+            if duration <= 0.0 or remaining <= 0.0:
+                continue
+
+            cooldown_progress = max(0.0, min(1.0, remaining / duration))
+            ready_progress = 1.0 - cooldown_progress
+
+            # Sombra sobre el icono mientras recarga
+            overlay = pygame.Surface((icon_size, icon_size), pygame.SRCALPHA)
+            overlay.fill((0, 0, 0, 90))
+            pantalla.blit(overlay, rect.topleft)
+
+            bar_rect = rect.inflate(-4, -4)
+            pygame.draw.rect(pantalla, (50, 50, 70), bar_rect, 1, border_radius=4)
+            fill_h = max(1, int(bar_rect.height * ready_progress))
+            fill_rect = pygame.Rect(bar_rect.x, bar_rect.bottom - fill_h, bar_rect.width, fill_h)
+            pygame.draw.rect(pantalla, (120, 200, 255), fill_rect, border_radius=4)
 
     def load_sprites(self):
         walk_sheet = pygame.image.load(self._walk_asset_file).convert_alpha()

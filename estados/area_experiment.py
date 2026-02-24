@@ -124,6 +124,7 @@ class AreaExperiment(Estado):
         self.health_bar_manager.draw(pantalla)
         self.player_health_bar.draw(pantalla)
         self.adn_counter.draw(pantalla, self.juego.adn)
+        self.player.render_upgrade_cooldowns(pantalla, x=25, y=25)
 
         if self.juego.debug:
             font = pygame.font.Font(None, 28)

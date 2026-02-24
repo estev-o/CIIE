@@ -40,6 +40,20 @@ def _aplicar_vida_extra_l(player):
     _aplicar_vida_extra(player, 100, "_mejora_vida_extra_l_aplicada")
 
 
+def _aplicar_escudo(player):
+    if getattr(player, "_mejora_escudo_aplicada", False):
+        return
+
+    player.escudo_activo = True
+    if hasattr(player, "register_upgrade_cooldown"):
+        player.register_upgrade_cooldown(
+            "escudo",
+            duration_seconds=300.0,
+            asset_path="assets/mejoras/escudo.png",
+        )
+    player._mejora_escudo_aplicada = True
+
+
 MEJORAS = {
     "disparo_rapido": {
         "id": "disparo_rapido",
@@ -80,6 +94,14 @@ MEJORAS = {
         "coste_adn": 120,
         "asset_path": "assets/mejoras/vida_extra_L.png",
         "apply": _aplicar_vida_extra_l,
+    },
+    "escudo": {
+        "id": "escudo",
+        "nombre": "Escudo",
+        "descripcion": "Bloquea un golpe y se recarga cada 5 minutos.",
+        "coste_adn": 45,
+        "asset_path": "assets/mejoras/escudo.png",
+        "apply": _aplicar_escudo,
     },
 }
 

@@ -161,6 +161,7 @@ class Hub(Estado):
         self.player_health_bar.draw(pantalla)
         self.blob.render(pantalla)
         self.adn_counter.draw(pantalla, self.juego.adn)
+        self.player.render_upgrade_cooldowns(pantalla, x=25, y=25)
         self.draw_interactions(pantalla)
         if selected_layer:
             self.tmx_map.draw(pantalla, only=[selected_layer])
