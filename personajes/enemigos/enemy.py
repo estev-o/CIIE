@@ -1,10 +1,9 @@
 import math
 import random
-from abc import ABC
-
 import pygame
 
 from personajes.character import Character
+
 
 class Enemy(Character):
     def __init__(
@@ -25,7 +24,8 @@ class Enemy(Character):
             drop_table=None,
     ):
         super().__init__(
-            game=game, max_live=max_live, x=x, y=y, width=width, height=height, scale=scale, speed=speed, anim_fps=anim_fps, hitbox_offset_x=hitbox_offset_x, hitbox_offset_y= hitbox_offset_y, asset_file=asset_file
+            game=game, max_live=max_live, x=x, y=y, width=width, height=height, scale=scale, speed=speed,
+            anim_fps=anim_fps, hitbox_offset_x=hitbox_offset_x, hitbox_offset_y=hitbox_offset_y, asset_file=asset_file
         )
         self.vision_range = vision_range
         self.drop_table = list(drop_table or [])
@@ -41,6 +41,8 @@ class Enemy(Character):
         self.move_time_min = 1.0
         self.move_time_max = 3.0
 
+        self.ai_state = "idle"
+        self.alert_timer = 0
     def idle_move(self, dt, tiles=None):
         """
         Gestiona el movimiento aleatorio.
@@ -58,7 +60,7 @@ class Enemy(Character):
 
                 self.idle_dir_x = random.uniform(-1, 1)
                 self.idle_dir_y = random.uniform(-1, 1)
-                #Limitar espacio de movimiento
+                # Limitar espacio de movimiento
 
             else:
                 # CAMBIO A ESPERAR
@@ -92,28 +94,47 @@ class Enemy(Character):
             self.pos_y -= move_y
             self.move_and_collide(move_x, move_y, tiles)
         self.rect.topleft = (int(self.pos_x), int(self.pos_y))
-        
+
         if self._asset_file is not None:
             moving = bool(self.idle_dir_x or self.idle_dir_y)
             self.animate(dt, moving)
         return
 
-    def ai_behavior(self, player, dt, solid_tiles):
-        dist = math.hypot(
-            player.rect.centerx - self.rect.centerx,
-            player.rect.centery - self.rect.centery
-        )
+    def alerted_behavior(self, player, dt, solid_tiles):
+        player.apply_damage(0.5)
 
-        if dist > self.vision_range:
-            # 1. ESTADO: IDLE / PATRULLA
-            # El jugador está lejos, deambulamos
-            self.idle_move(dt, solid_tiles)
+    def ai_behavior(self, player, dt, solid_tiles):
+        if self.alert_timer > 0:
+            self.alert_timer -= dt
+
+            dx = player.rect.centerx - self.rect.centerx
+            dy = player.rect.centery - self.rect.centery
+
+            # Calculamos la dirección del jugador
+            if abs(dx) > abs(dy):
+                self.facing = "right" if dx > 0 else "left"
+            else:
+                self.facing = "down" if dy > 0 else "up"
+
+            self.animate(0, False)
+
+        elif self.ai_state == "alert":
+            self.alerted_behavior(player, dt, solid_tiles)
+
         else:
-            # 2. ESTADO: PERSECUCIÓN / ATAQUE
-            # El jugador fue detectado
-            print("Ataque")
-            #Lógica de persecución
-        return
+            # Calculamos si el jugador está en su rango de visión o si ha recibido daño
+            dist = math.hypot(
+                player.rect.centerx - self.rect.centerx,
+                player.rect.centery - self.rect.centery
+            )
+            taken_damage = self.remaining_life < self.max_live
+
+            if dist <= self.vision_range or taken_damage:
+                self.ai_state = "alert"
+                self.alert_timer = 0.7
+            else:
+                self.idle_move(dt, solid_tiles)
+
     def die(self):
         self.drop()
         # Quitar sprite de los grupos
@@ -169,8 +190,9 @@ class Enemy(Character):
             if rows >= 4
             else [pygame.transform.flip(f, True, False) for f in self._left_sprites]
         )
+
     def debug_draw_hitbox(self, pantalla, color):
-        if self.remaining_life<=0:
+        if self.remaining_life <= 0:
             return
         pygame.draw.circle(
             pantalla,
@@ -180,3 +202,21 @@ class Enemy(Character):
             1
         )
         super().debug_draw_hitbox(pantalla, color)
+
+    def render(self, pantalla):
+        super().render(pantalla)
+
+        if self.ai_state == "alert" and self.alert_timer > 0:
+            if not hasattr(self, 'alert_icon_loaded'):
+                try:
+                    self.alert_icon = pygame.image.load("assets/enemies/Alert.png").convert_alpha()
+                    self.alert_icon = pygame.transform.scale(self.alert_icon, (15 * self.scale, 20 * self.scale))
+                    self.alert_icon_loaded = True
+                except:
+                    self.alert_icon = None
+
+            if self.alert_icon:
+                hb = self.hitbox
+                icon_x = hb.centerx - (self.alert_icon.get_width() // 2)
+                icon_y = hb.top - self.alert_icon.get_height() - 3
+                pantalla.blit(self.alert_icon, (icon_x, icon_y))

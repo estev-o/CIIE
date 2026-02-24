@@ -117,7 +117,9 @@ class AreaExperiment(Estado):
     def dibujar(self, pantalla):
         pantalla.fill((0, 0, 0))
         self.tmx_map.draw(pantalla, only=self.map_layer_order)
-        self.enemies.draw(pantalla)
+        for enemy in self.enemies:
+            enemy.render(pantalla)
+
         self.objects.draw(pantalla)
         self.player.render(pantalla)
         
