@@ -2,6 +2,7 @@ from personajes.character import Character
 from personajes.constants import PLAYER_DEATH
 import pygame
 from personajes.ataques.azulejo import Azulejo
+from personajes.ataques.lava_burst import LavaBurst
 from personajes.ataques.attack_pool import AttackPool
 from objetos.mejoras.catalogo import obtener_mejora
 
@@ -27,9 +28,11 @@ class Player(Character):
         
         self.last_aim_axis = pygame.math.Vector2(1, 0)
         self.escudo_activo = False
+        self.blub_lava_activo = False
         self.upgrade_cooldowns = {}
 
         self.attack_launcher1 = AttackPool(Azulejo, game)
+        self.lava_burst_attack = LavaBurst(game)
         self._aplicar_mejoras_persistentes()
     
     
@@ -100,6 +103,18 @@ class Player(Character):
         self.trigger_upgrade_cooldown("escudo")
         return True
 
+    def _try_use_lava_burst(self):
+        if not getattr(self, "blub_lava_activo", False):
+            return False
+        if not self.is_upgrade_cooldown_ready("blub_lava"):
+            return False
+        if self.lava_burst_attack.in_use():
+            return False
+        if not self.trigger_upgrade_cooldown("blub_lava"):
+            return False
+        self.lava_burst_attack.init(self.rect.centerx, self.rect.centery)
+        return True
+
     def apply_damage(self, damage_amount):
         if damage_amount > 0 and self._try_block_with_shield():
             return
@@ -167,6 +182,8 @@ class Player(Character):
 
         if acciones["attack1"]:
             self.attack(acciones)
+        if acciones.get("attack2"):
+            self._try_use_lava_burst()
 
         # Normalize the movement vector to prevent going faster diagonally
         move_vector = pygame.math.Vector2(direction_x, direction_y)
@@ -179,6 +196,7 @@ class Player(Character):
         self.move_and_collide(dx, dy, tiles)
 
         self.attack_launcher1.update(dt, tiles)
+        self.lava_burst_attack.update(dt, tiles)
 
         if self._asset_file is not None:
             moving = bool(direction_x or direction_y)
@@ -186,6 +204,7 @@ class Player(Character):
 
     def render(self, pantalla):
         pantalla.blit(self.image, self.rect)
+        self.lava_burst_attack.render(pantalla)
 
         self.attack_launcher1.render(pantalla)
 

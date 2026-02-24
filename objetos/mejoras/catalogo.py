@@ -53,6 +53,33 @@ def _aplicar_escudo(player):
         )
     player._mejora_escudo_aplicada = True
 
+def _aplicar_blub_lava(player):
+    if getattr(player, "_mejora_blub_lava_aplicada", False) or getattr(player, "_mejora_fuego_aplicada", False):
+        return
+
+    player.blub_lava_activo = True
+    if hasattr(player, "register_upgrade_cooldown"):
+        player.register_upgrade_cooldown(
+            "blub_lava",
+            duration_seconds=300.0,
+            asset_path="assets/mejoras/blub_lava.png",
+        )
+
+    player._walk_asset_file = "assets/Blub/PNG/Slime3/Walk/Slime3_Walk_full.png"
+    player._idle_asset_file = "assets/Blub/PNG/Slime3/Idle/Slime3_Idle_full.png"
+    # Mantener sincronizado con la comprobacion base de Character y recargar visual al instante.
+    player._asset_file = player._walk_asset_file
+    if hasattr(player, "load_sprites"):
+        player.load_sprites()
+    if hasattr(player, "animate"):
+        player._curr_anim_list = None
+        player._current_frame = 0
+        player._anim_timer = 0.0
+        player.animate(0.0, moving=False)
+
+    player._mejora_blub_lava_aplicada = True
+    player._mejora_fuego_aplicada = True
+
 
 MEJORAS = {
     "disparo_rapido": {
@@ -103,15 +130,32 @@ MEJORAS = {
         "asset_path": "assets/mejoras/escudo.png",
         "apply": _aplicar_escudo,
     },
+    "blub_lava": {
+        "id": "blub_lava",
+        "nombre": "Blub lava",
+        "descripcion": "Convierte a Blub en su version de lava. Desbloquea la base para su ataque especial.",
+        "coste_adn": 150,
+        "asset_path": "assets/mejoras/blub_lava.png",
+        "apply": _aplicar_blub_lava,
+    },
+}
+
+_MEJORA_ALIASES = {
+    "blub_fuego": "blub_lava",
+    "fuego": "blub_lava",
 }
 
 
+def _resolver_mejora_id(mejora_id):
+    return _MEJORA_ALIASES.get(mejora_id, mejora_id)
+
+
 def obtener_mejora(mejora_id):
-    return MEJORAS.get(mejora_id)
+    return MEJORAS.get(_resolver_mejora_id(mejora_id))
 
 
 def existe_mejora(mejora_id):
-    return mejora_id in MEJORAS
+    return _resolver_mejora_id(mejora_id) in MEJORAS
 
 
 def listar_mejoras():
