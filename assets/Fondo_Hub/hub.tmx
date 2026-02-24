@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="32" height="17" tilewidth="32" tileheight="32" infinite="0" nextlayerid="18" nextobjectid="62">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="32" height="17" tilewidth="32" tileheight="32" infinite="0" nextlayerid="18" nextobjectid="65">
  <editorsettings>
   <export target="hub.csv" format="csv"/>
  </editorsettings>
@@ -142,7 +142,7 @@
   </object>
  </objectgroup>
  <objectgroup id="11" name="puerta">
-  <object id="24" x="824.031" y="55.0449">
+  <object id="24" x="825.698" y="45.0449">
    <point/>
   </object>
  </objectgroup>
@@ -228,7 +228,7 @@
   </object>
   <object id="30" x="61.5" y="140.5" width="33.5" height="355.5"/>
   <object id="31" x="83.3333" y="4" width="716" height="220"/>
-  <object id="32" x="843.333" y="1.33333" width="22" height="63.3333"/>
+  <object id="32" x="842.818" y="1.33333" width="22.5152" height="63.3333"/>
   <object id="33" x="258.667" y="191.333" width="57.3333" height="65.3333"/>
   <object id="34" x="314.667" y="196.667" width="66" height="50.6667"/>
   <object id="35" x="418.667" y="194.667" width="91.3333" height="60.6667"/>
@@ -249,5 +249,7 @@
   <object id="52" x="161" y="239" width="77" height="47.5"/>
   <object id="53" x="331.75" y="479.625" width="635.938" height="12.625"/>
   <object id="54" x="931.667" y="266" width="55.3333" height="181.667"/>
+  <object id="62" x="791.5" y="-3.75" width="65.25" height="30.5"/>
+  <object id="63" x="790" y="-0.666667" width="13.0909" height="64.6667"/>
  </objectgroup>
 </map>
