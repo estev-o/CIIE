@@ -2,10 +2,13 @@ from personajes.character import Character
 from personajes.constants import PLAYER_DEATH
 import pygame
 from personajes.ataques.azulejo import Azulejo
+from personajes.ataques.lava_burst import LavaBurst
 from personajes.ataques.attack_pool import AttackPool
 from objetos.mejoras.catalogo import obtener_mejora
 
 class Player(Character):
+    SUPER_AZULEJO_DURATION = 20.0
+
     def __init__(self, game):
         self._walk_asset_file = "assets/Blub/PNG/Slime1/Walk/Slime1_Walk_full.png"
         self._idle_asset_file = "assets/Blub/PNG/Slime1/Idle/Slime1_Idle_full.png"
@@ -33,8 +36,14 @@ class Player(Character):
         self.itimer=0
 
         self.last_aim_axis = pygame.math.Vector2(1, 0)
+        self.escudo_activo = False
+        self.blub_lava_activo = False
+        self.super_azulejo_habilitado = False
+        self.super_azulejo_remaining = 0.0
+        self.upgrade_cooldowns = {}
 
         self.attack_launcher1 = AttackPool(Azulejo, game)
+        self.lava_burst_attack = LavaBurst(game)
         self._aplicar_mejoras_persistentes()
     
     
@@ -53,29 +62,145 @@ class Player(Character):
             if callable(aplicar):
                 aplicar(self)
 
-    def attack(self, acciones):
-        if self.attack_launcher1.is_ready():
-            direction = pygame.math.Vector2(self.last_aim_axis)
-            if direction.length() > 0:
-                direction = direction.normalize()
-            else:
-                direction = pygame.math.Vector2(1, 0) # Fallback to right
-                
-            attack = self.attack_launcher1.create(
-                self.rect.centerx,
-                self.rect.centery, 
-                direction
-            )
+    def register_upgrade_cooldown(self, upgrade_id, duration_seconds, asset_path=None, key_hint=None):
+        entry = self.upgrade_cooldowns.get(upgrade_id)
+        if entry is None:
+            image = None
+            if asset_path:
+                try:
+                    image = pygame.image.load(asset_path).convert_alpha()
+                except Exception:
+                    image = None
+            entry = {
+                "id": upgrade_id,
+                "duration": float(duration_seconds),
+                "remaining": 0.0,
+                "image": image,
+                "key_hint": (str(key_hint).upper() if key_hint else None),
+            }
+            self.upgrade_cooldowns[upgrade_id] = entry
+        else:
+            entry["duration"] = float(duration_seconds)
+            if asset_path and entry.get("image") is None:
+                try:
+                    entry["image"] = pygame.image.load(asset_path).convert_alpha()
+                except Exception:
+                    pass
+            if key_hint:
+                entry["key_hint"] = str(key_hint).upper()
+        return entry
+
+    def is_upgrade_cooldown_ready(self, upgrade_id):
+        entry = self.upgrade_cooldowns.get(upgrade_id)
+        if entry is None:
+            return True
+        return entry.get("remaining", 0.0) <= 0.0
+
+    def trigger_upgrade_cooldown(self, upgrade_id):
+        entry = self.upgrade_cooldowns.get(upgrade_id)
+        if entry is None:
+            return False
+        entry["remaining"] = float(entry.get("duration", 0.0))
+        return True
+
+    def _update_upgrade_cooldowns(self, dt):
+        for entry in self.upgrade_cooldowns.values():
+            remaining = float(entry.get("remaining", 0.0))
+            if remaining > 0.0:
+                entry["remaining"] = max(0.0, remaining - dt)
+
+    def _try_block_with_shield(self):
+        if not getattr(self, "escudo_activo", False):
+            return False
+        if not self.is_upgrade_cooldown_ready("escudo"):
+            return False
+        self.trigger_upgrade_cooldown("escudo")
+        return True
+
+    def _try_use_lava_burst(self):
+        if not getattr(self, "blub_lava_activo", False):
+            return False
+        if not self.is_upgrade_cooldown_ready("blub_lava"):
+            return False
+        if self.lava_burst_attack.in_use():
+            return False
+        if not self.trigger_upgrade_cooldown("blub_lava"):
+            return False
+        self.lava_burst_attack.init(self.rect.centerx, self.rect.centery)
+        return True
+
+    def _try_use_super_azulejo(self):
+        if not getattr(self, "super_azulejo_habilitado", False):
+            return False
+        if not self.is_upgrade_cooldown_ready("super_azulejo"):
+            return False
+        self.super_azulejo_remaining = float(self.SUPER_AZULEJO_DURATION)
+        self.trigger_upgrade_cooldown("super_azulejo")
+        return True
+
+    def _is_super_azulejo_active(self):
+        return self.super_azulejo_remaining > 0.0
+
     def apply_damage(self, damage_amount):
+        if damage_amount > 0 and self._try_block_with_shield():
+            return
         if self.itimer > 0:
             return
         super().apply_damage(damage_amount)
-        self.itimer = self.invencible_time
-        self.is_hurt = True
-        self.hurt_timer = self.hurt_time
+        if damage_amount > 0:
+            self.itimer = self.invencible_time
+            self.is_hurt = True
+            self.hurt_timer = self.hurt_time
 
+    def apply_damage_percentage(self, damage_percentage):
+        if damage_percentage > 0 and self._try_block_with_shield():
+            return
+        if self.itimer > 0:
+            return
+        super().apply_damage_percentage(damage_percentage)
+        if damage_percentage > 0:
+            self.itimer = self.invencible_time
+            self.is_hurt = True
+            self.hurt_timer = self.hurt_time
+
+    def attack(self, acciones):
+        if self.attack_launcher1.is_ready():
+            if self._is_super_azulejo_active():
+                directions = [
+                    pygame.math.Vector2(1, 0),
+                    pygame.math.Vector2(-1, 0),
+                    pygame.math.Vector2(0, 1),
+                    pygame.math.Vector2(0, -1),
+                    pygame.math.Vector2(1, 1).normalize(),
+                    pygame.math.Vector2(1, -1).normalize(),
+                    pygame.math.Vector2(-1, 1).normalize(),
+                    pygame.math.Vector2(-1, -1).normalize(),
+                ]
+            else:
+                direction = pygame.math.Vector2(self.last_aim_axis)
+                if direction.length() > 0:
+                    direction = direction.normalize()
+                else:
+                    direction = pygame.math.Vector2(1, 0) # Fallback to right
+
+                directions = [direction]
+                if getattr(self, "disparo_triple_activo", False):
+                    spread_angle = 12
+                    directions.append(direction.rotate(spread_angle))
+                    directions.append(direction.rotate(-spread_angle))
+
+            for shot_direction in directions:
+                self.attack_launcher1.create(
+                    self.rect.centerx,
+                    self.rect.centery,
+                    shot_direction
+                )
 
     def update(self, dt, acciones,tiles):
+        self._update_upgrade_cooldowns(dt)
+        if self.super_azulejo_remaining > 0.0:
+            self.super_azulejo_remaining = max(0.0, self.super_azulejo_remaining - dt)
+
         if self.itimer > 0:
             self.itimer -= dt
             if self.itimer < 0:
@@ -119,6 +244,10 @@ class Player(Character):
 
         if acciones["attack1"]:
             self.attack(acciones)
+        if acciones.get("attack2"):
+            self._try_use_lava_burst()
+        if acciones.get("attack3"):
+            self._try_use_super_azulejo()
 
         # Normalize the movement vector to prevent going faster diagonally
         move_vector = pygame.math.Vector2(direction_x, direction_y)
@@ -131,6 +260,7 @@ class Player(Character):
         self.move_and_collide(dx, dy, tiles)
 
         self.attack_launcher1.update(dt, tiles)
+        self.lava_burst_attack.update(dt, tiles)
 
         if self._asset_file is not None:
             moving = bool(direction_x or direction_y)
@@ -138,8 +268,61 @@ class Player(Character):
 
     def render(self, pantalla):
         pantalla.blit(self.image, self.rect)
+        self.lava_burst_attack.render(pantalla)
 
         self.attack_launcher1.render(pantalla)
+
+    def render_upgrade_cooldowns(self, pantalla, x=25, y=25):
+        if not self.upgrade_cooldowns:
+            return
+
+        icon_size = 36
+        pad = 8
+        font = pygame.font.Font(None, 20)
+        idx = 0
+        for entry in self.upgrade_cooldowns.values():
+            rect = pygame.Rect(x, y + idx * (icon_size + pad), icon_size, icon_size)
+            idx += 1
+
+            pygame.draw.rect(pantalla, (20, 20, 28), rect, border_radius=8)
+            pygame.draw.rect(pantalla, (190, 210, 255), rect, 2, border_radius=8)
+
+            image = entry.get("image")
+            if image is not None:
+                scaled = pygame.transform.scale(image, (icon_size - 6, icon_size - 6))
+                pantalla.blit(scaled, scaled.get_rect(center=rect.center))
+
+            key_hint = entry.get("key_hint")
+            if key_hint:
+                label = font.render(str(key_hint), True, (235, 240, 255))
+                badge_rect = pygame.Rect(
+                    rect.right + 6,
+                    rect.centery - 11,
+                    max(22, label.get_width() + 10),
+                    22,
+                )
+                pygame.draw.rect(pantalla, (20, 20, 28), badge_rect, border_radius=7)
+                pygame.draw.rect(pantalla, (190, 210, 255), badge_rect, 2, border_radius=7)
+                pantalla.blit(label, label.get_rect(center=badge_rect.center))
+
+            duration = float(entry.get("duration", 0.0))
+            remaining = float(entry.get("remaining", 0.0))
+            if duration <= 0.0 or remaining <= 0.0:
+                continue
+
+            cooldown_progress = max(0.0, min(1.0, remaining / duration))
+            ready_progress = 1.0 - cooldown_progress
+
+            # Sombra sobre el icono mientras recarga
+            overlay = pygame.Surface((icon_size, icon_size), pygame.SRCALPHA)
+            overlay.fill((0, 0, 0, 90))
+            pantalla.blit(overlay, rect.topleft)
+
+            bar_rect = rect.inflate(-4, -4)
+            pygame.draw.rect(pantalla, (50, 50, 70), bar_rect, 1, border_radius=4)
+            fill_h = max(1, int(bar_rect.height * ready_progress))
+            fill_rect = pygame.Rect(bar_rect.x, bar_rect.bottom - fill_h, bar_rect.width, fill_h)
+            pygame.draw.rect(pantalla, (120, 200, 255), fill_rect, border_radius=4)
 
     def load_sprites(self):
         walk_sheet = pygame.image.load(self._walk_asset_file).convert_alpha()

@@ -34,32 +34,42 @@
     "rarity": 1,
     "drop_pool_by_rarity": {
       "1": [
-        { "object": "health_potion_small", "weight": 0.3 },
+        { "object": "health_potion_small", "weight": 0.2 },
+        { "object": "adn_small", "weight": 0.1 },
         { "object": null, "weight": 0.7 }
       ],
       "2": [
-        { "object": "health_potion_small", "weight": 0.4 },
-        { "object": null, "weight": 0.6 }
-      ],
-      "3": [
-        { "object": "health_potion_small", "weight": 0.5 },
+        { "object": "health_potion_small", "weight": 0.25 },
+        { "object": "health_potion_large", "weight": 0.05 },
+        { "object": "adn_small", "weight": 0.2 },
         { "object": null, "weight": 0.5 }
       ],
+      "3": [
+        { "object": "health_potion_small", "weight": 0.25 },
+        { "object": "health_potion_large", "weight": 0.25 },
+        { "object": "adn_medium", "weight": 0.3 },
+        { "object": null, "weight": 0.2 }
+      ],
       "4": [
-        { "object": "health_potion_small", "weight": 0.6 },
-        { "object": null, "weight": 0.4 }
+        { "object": "health_potion_small", "weight": 0.15 },
+        { "object": "health_potion_large", "weight": 0.45 },
+        { "object": "adn_medium", "weight": 0.3 },
+        { "object": null, "weight": 0.1 }
       ],
       "5": [
-        { "object": "health_potion_small", "weight": 0.7 },
-        { "object": null, "weight": 0.3 }
+        { "object": "health_potion_small", "weight": 0.25 },
+        { "object": "health_potion_large", "weight": 0.15 },
+        { "object": "adn_medium", "weight": 0.35 },
+        { "object": null, "weight": 0.25 }
       ],
       "6": [
-        { "object": "health_potion_small", "weight": 0.85 },
-        { "object": null, "weight": 0.15 }
+        { "object": "health_potion_small", "weight": 0.1 },
+        { "object": "health_potion_large", "weight": 0.45 },
+        { "object": "adn_large", "weight": 0.45 }
       ],
       "7": [
-        { "object": "health_potion_small", "weight": 1.0 },
-        { "object": null, "weight": 0.0 }
+        { "object": "health_potion_large", "weight": 0.35 },
+        { "object": "adn_large", "weight": 0.65 }
       ]
     }
   }

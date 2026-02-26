@@ -121,7 +121,7 @@ class Titulo(Estado):
 
         # Título con zoom + glitch
         font = self.juego.fonts.big
-        texto = "GILBERTOV EVIL"
+        texto = "manolo cabezehuevo"
 
         render = font.render(texto, True, (255, 255, 255))
         w, h = render.get_size()
