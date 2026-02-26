@@ -1,8 +1,11 @@
 import math
 import random
+
 import pygame
 
 from personajes.character import Character
+from personajes.enemigos.attacks.melee_attack import MeleeAttack
+from personajes.enemigos.attacks.ranged_attack import RangedAttack
 
 
 class Enemy(Character):
@@ -18,6 +21,9 @@ class Enemy(Character):
             damage,
             vision_range,
             attack_range,
+            attack_type,
+            attack_cooldown,
+            attack_speed,
             anim_fps,
             hitbox_offset_x,
             hitbox_offset_y,
@@ -33,7 +39,18 @@ class Enemy(Character):
         self.attack_range= attack_range
         self.damage = damage
         self.drop_table = list(drop_table or [])
+
+        if attack_type=="melee":
+            self.attack_behavior = MeleeAttack(self)
+
+        elif attack_type== "ranged":
+            self.attack_behavior = RangedAttack(self)
+
+        self.attack_cooldown = attack_cooldown
+        self.attack_speed = attack_speed
+
         # VARIABLES PARA IDLE_MOVE
+        self.ai_state = "idle"
         self.idle_state = "wait"  # Puede ser "wait" o "move"
         self.idle_timer = 1.0  # Tiempo restante en el estado actual
         self.idle_dir_x = 0  # Dirección X actual
@@ -44,9 +61,48 @@ class Enemy(Character):
         self.wait_time_max = 2.0
         self.move_time_min = 1.0
         self.move_time_max = 3.0
-
-        self.ai_state = "idle"
         self.alert_timer = 0
+        self.cooldown_timer=0
+
+    def maintain_distance(self, player, dt, solid_tiles):
+        dx = player.rect.centerx - self.rect.centerx
+        dy = player.rect.centery - self.rect.centery
+        dist = math.hypot(dx, dy)
+
+        if dist == 0: dist = 0.1
+        move_dir = 0
+        if dist > self.attack_range - 10: #Intenta mantenerse dentro del área de ataque con un margen
+            move_dir = 1
+        elif dist < self.attack_range/2:
+            move_dir = -1
+
+        if move_dir != 0:
+            # Normalizamos y aplicamos dirección de movimiento
+            dir_x = (dx / dist) * move_dir
+            dir_y = (dy / dist) * move_dir
+
+            # Determinar hacia dónde mira
+            if abs(dx) > abs(dy):
+                self.facing = "right" if dx > 0 else "left"
+            else:
+                self.facing = "down" if dy > 0 else "up"
+
+            move_x = dir_x * self.speed * dt
+            move_y = dir_y * self.speed * dt
+
+            # Aplicar movimiento con colisiones
+            if solid_tiles is not None:
+                self.move_and_collide(move_x, move_y, solid_tiles)
+            else:
+                self.pos_x += move_x
+                self.pos_y += move_y
+                self.rect.topleft = (int(self.pos_x), int(self.pos_y))
+
+            if self._asset_file is not None:
+                self.animate(dt, moving=True)
+        else:
+            if self._asset_file is not None:
+                self.animate(dt, moving=False)
 
     def idle_behavior(self, dt, tiles=None):
         """
@@ -104,42 +160,21 @@ class Enemy(Character):
     def alerted_behavior(self, player, dt, solid_tiles):
         """Comportamiento una vez detectado el jugador"""
 
+        if pygame.Rect.colliderect(self.hitbox, player.hitbox):
+            player.apply_damage(self.damage)
+
         #Calculamos posición y distancia del jugador
         dx = player.rect.centerx - self.rect.centerx
         dy = player.rect.centery - self.rect.centery
         dist = math.hypot(dx, dy)
 
-        if dist > self.attack_range:
-            # Normalizamos el vector (para que no se mueva más rápido en diagonal)
-            dir_x = dx / dist
-            dir_y = dy / dist
+        if dist > self.attack_range or self.cooldown_timer>0:
+            self.cooldown_timer -= dt
+            self.maintain_distance(player,dt, solid_tiles)
+        # Lógica de ataque
+        else:
+            self.attack_behavior.execute(player, dt, solid_tiles)
 
-            if abs(dx) > abs(dy):
-                self.facing = "right" if dx > 0 else "left"
-            else:
-                self.facing = "down" if dy > 0 else "up"
-
-            # Calculamos y aplicamos el movimiento
-            move_x = dir_x * self.speed * dt
-            move_y = dir_y * self.speed * dt
-
-            self.pos_x += move_x
-            self.pos_y += move_y
-
-            if solid_tiles is not None:
-                self.pos_x -= move_x
-                self.pos_y -= move_y
-                self.move_and_collide(move_x, move_y, solid_tiles)
-
-            self.rect.topleft = (int(self.pos_x), int(self.pos_y))
-
-            if self._asset_file is not None:
-                self.animate(dt, moving=True)
-
-        # Lógica de ataque: Si está lo suficientemente cerca, ataca
-
-        if pygame.Rect.colliderect(self.hitbox, player.hitbox):
-            player.apply_damage(self.damage)
 
     def ai_behavior(self, player, dt, solid_tiles):
         """
@@ -209,7 +244,7 @@ class Enemy(Character):
                     row_index * self.frame_h,
                     self.frame_w,
                     self.frame_h,
-                )
+                    )
                 frame = sheet.subsurface(rect).copy()
                 if self.scale != 1:
                     frame = pygame.transform.scale(
@@ -235,13 +270,9 @@ class Enemy(Character):
     def debug_draw_hitbox(self, pantalla, color):
         if self.remaining_life <= 0:
             return
-        pygame.draw.circle(
-            pantalla,
-            (255, 0, 0),
-            self.rect.center,
-            int(self.vision_range),
-            1
-        )
+        pygame.draw.circle(pantalla,(255, 0, 255), self.rect.center, int(self.vision_range),1)
+        pygame.draw.circle(pantalla,(255, 0, 0), self.rect.center, int(self.attack_range),1)
+
         super().debug_draw_hitbox(pantalla, color)
 
     def render(self, pantalla):
