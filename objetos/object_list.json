@@ -4,9 +4,29 @@
     "heal_amount": 25,
     "sprite_path": "assets/objects/potion.png"
   },
+  "health_potion_large": {
+    "type": "health_potion",
+    "heal_amount": 50,
+    "sprite_path": "assets/objects/potion2.png"
+  },
   "adn": {
     "type": "adn",
     "amount": 1,
+    "sprite_path": "assets/UI/ADN/ADN.png"
+  },
+  "adn_small": {
+    "type": "adn",
+    "amount": 3,
+    "sprite_path": "assets/UI/ADN/ADN.png"
+  },
+  "adn_medium": {
+    "type": "adn",
+    "amount": 6,
+    "sprite_path": "assets/UI/ADN/ADN.png"
+  },
+  "adn_large": {
+    "type": "adn",
+    "amount": 12,
     "sprite_path": "assets/UI/ADN/ADN.png"
   }
 }
