@@ -68,6 +68,8 @@ def _aplicar_blub_lava(player):
 
     player._walk_asset_file = "assets/Blub/PNG/Slime3/Walk/Slime3_Walk_full.png"
     player._idle_asset_file = "assets/Blub/PNG/Slime3/Idle/Slime3_Idle_full.png"
+    if hasattr(player, "_hurt_asset_file"):
+        player._hurt_asset_file = "assets/Blub/PNG/Slime3/Hurt/Slime3_Hurt_full.png"
     # Mantener sincronizado con la comprobacion base de Character y recargar visual al instante.
     player._asset_file = player._walk_asset_file
     if hasattr(player, "load_sprites"):

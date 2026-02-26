@@ -30,9 +30,6 @@ class AreaExperiment(Estado):
 
         self.player = self.juego.player
 
-        # CODIGO DEBUG PARA PROBAR VIDA, BORRAR
-        if juego.debug:
-            self.player.apply_damage(15)
         
         r = self.player.get_rect()
         spawn = self.tmx_map.get_objects(layer="spawn_point")[0]
@@ -117,7 +114,9 @@ class AreaExperiment(Estado):
     def dibujar(self, pantalla):
         pantalla.fill((0, 0, 0))
         self.tmx_map.draw(pantalla, only=self.map_layer_order)
-        self.enemies.draw(pantalla)
+        for enemy in self.enemies:
+            enemy.render(pantalla)
+
         self.objects.draw(pantalla)
         self.player.render(pantalla)
         
@@ -132,5 +131,6 @@ class AreaExperiment(Estado):
             text_rect = text.get_rect(topright=(pantalla.get_width() - 12, 10))
             pantalla.blit(text, text_rect)
             self.player.debug_draw_hitbox(pantalla, (0, 255 ,0))
+            self.player.attack_launcher1.debug_draw_hitbox(pantalla, (255, 255 ,0))
             for enemy in self.enemies:
                 enemy.debug_draw_hitbox(pantalla, (0, 255 ,255))

@@ -1,3 +1,5 @@
+import pygame.draw
+
 from personajes.ataques.cooldowns import cooldowns
 from pygame.time import get_ticks
 
@@ -38,3 +40,7 @@ class AttackPool():
         for attack in self.attacks:
             if attack.in_use():
                 attack.render(screen)
+    def debug_draw_hitbox(self, screen, color):
+        for attack in self.attacks:
+            if attack.in_use():
+                pygame.draw.rect(screen, color, attack.rect, 1)

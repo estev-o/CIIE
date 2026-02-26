@@ -24,8 +24,8 @@ class PlayerHealthBar:
         self.height = self.bg_image.get_height()
         
         # HP Text Font
-        font_size = int(self.height * 0.8)
-        self.font = pygame.font.Font(None, font_size)
+        font_size = int(self.height * 0.4)
+        self.font = pygame.font.Font("assets/fonts/Snowbell-Wp4g9.ttf", font_size)
 
     def update(self, dt, target_hp, max_hp):
         self.max_hp = max_hp

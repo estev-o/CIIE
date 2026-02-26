@@ -61,40 +61,31 @@ class MenuConfiguracion(Estado):
             return 2
         return None
 
-
-
     def actualizar(self, dt, acciones):
 
         if not self.prev:
             self.prev = acciones.copy()
 
         # -------- teclado edge trigger --------
-        up    = acciones.get("arrowUp")    and not self.prev.get("arrowUp")
-        down  = acciones.get("arrowDown")  and not self.prev.get("arrowDown")
-        left  = acciones.get("arrowLeft")  and not self.prev.get("arrowLeft")
+        up = acciones.get("arrowUp") and not self.prev.get("arrowUp")
+        down = acciones.get("arrowDown") and not self.prev.get("arrowDown")
+        left = acciones.get("arrowLeft") and not self.prev.get("arrowLeft")
         right = acciones.get("arrowRight") and not self.prev.get("arrowRight")
-        enter = acciones.get("enter")      and not self.prev.get("enter")
-        back   = acciones.get("back")       and not self.prev.get("back")
+        enter = acciones.get("enter") and not self.prev.get("enter")
+        back = acciones.get("back") and not self.prev.get("back")
 
         # -------- mouse posición escalada --------
-        pos_mouse = pygame.mouse.get_pos()
-        escala_x = self.juego.ancho / self.juego.screen.get_width()
-        escala_y = self.juego.alto / self.juego.screen.get_height()
-        pos_mouse_escalado = (int(pos_mouse[0] * escala_x), int(pos_mouse[1] * escala_y))
+        pos_mouse_escalado = acciones.get("mouse_pos", (0, 0))
+        mouse_pressed = pygame.mouse.get_pressed()[0]
+        click = acciones.get("attack1")
 
-        # detectar movimiento
-        self.mouse_moviendose = pos_mouse != self.prev_mouse_pos
-        self.prev_mouse_pos = pos_mouse
+        self.mouse_moviendose = pos_mouse_escalado != self.prev_mouse_pos
+        self.prev_mouse_pos = pos_mouse_escalado
 
         # hover → foco
         hover = self.detectar_hover(pos_mouse_escalado)
         if self.mouse_moviendose and hover is not None:
             self.indice_nav = hover
-
-        # click real
-        mouse_pressed = pygame.mouse.get_pressed()[0]
-        click = mouse_pressed and not self.mouse_pressed_prev
-        self.mouse_pressed_prev = mouse_pressed
 
         # si el ratón se mueve, el teclado no manda
         if self.mouse_moviendose:
