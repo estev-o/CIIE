@@ -23,7 +23,7 @@ class ActionManager:
         self.current_mode = "keyboard_mouse"
         self.actions = {
             "left": False, "right": False, "up": False, "down": False,
-            "attack1": False, "attack2": False, "enter": False, "back": False, "interact": False,
+            "attack1": False, "attack2": False, "attack3": False, "enter": False, "back": False, "interact": False,
             "arrowUp": False, "arrowDown": False, "arrowRight": False, "arrowLeft": False,
             "toggle_pause": False, "mouse_pos": (0, 0), "aim_axis": (0.0, 0.0)
         }
@@ -47,6 +47,7 @@ class ActionManager:
             pygame.K_LEFT: ["arrowLeft"],
             pygame.K_SPACE: ["attack1"],
             pygame.K_f: ["attack2"],
+            pygame.K_r: ["attack3"],
         }
         
         self.controller_button_map = {
@@ -54,6 +55,7 @@ class ActionManager:
             pygame.CONTROLLER_BUTTON_B: ["back"],               # Circle / B
             pygame.CONTROLLER_BUTTON_X: ["attack1"],           # Square / X
             pygame.CONTROLLER_BUTTON_Y: ["attack2"],           # Triangle / Y
+            pygame.CONTROLLER_BUTTON_RIGHTSHOULDER: ["attack3"],  # R1 / RB
             pygame.CONTROLLER_BUTTON_START: ["toggle_pause"],  # Options / Start
             pygame.CONTROLLER_BUTTON_DPAD_UP: ["arrowUp"],
             pygame.CONTROLLER_BUTTON_DPAD_DOWN: ["arrowDown"],

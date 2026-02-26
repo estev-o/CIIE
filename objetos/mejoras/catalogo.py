@@ -63,6 +63,7 @@ def _aplicar_blub_lava(player):
             "blub_lava",
             duration_seconds=300.0,
             asset_path="assets/mejoras/blub_lava.png",
+            key_hint="F",
         )
 
     player._walk_asset_file = "assets/Blub/PNG/Slime3/Walk/Slime3_Walk_full.png"
@@ -79,6 +80,22 @@ def _aplicar_blub_lava(player):
 
     player._mejora_blub_lava_aplicada = True
     player._mejora_fuego_aplicada = True
+
+
+def _aplicar_super_azulejo(player):
+    if getattr(player, "_mejora_super_azulejo_aplicada", False):
+        return
+
+    player.super_azulejo_habilitado = True
+    if hasattr(player, "register_upgrade_cooldown"):
+        player.register_upgrade_cooldown(
+            "super_azulejo",
+            duration_seconds=180.0,
+            asset_path="assets/mejoras/super_azulejo.png",
+            key_hint="R",
+        )
+
+    player._mejora_super_azulejo_aplicada = True
 
 
 MEJORAS = {
@@ -137,6 +154,14 @@ MEJORAS = {
         "coste_adn": 150,
         "asset_path": "assets/mejoras/blub_lava.png",
         "apply": _aplicar_blub_lava,
+    },
+    "super_azulejo": {
+        "id": "super_azulejo",
+        "nombre": "Super azulejo",
+        "descripcion": "Activa 20s de disparo en 8 direcciones. Recarga en 3 minutos.",
+        "coste_adn": 120,
+        "asset_path": "assets/mejoras/super_azulejo.png",
+        "apply": _aplicar_super_azulejo,
     },
 }
 

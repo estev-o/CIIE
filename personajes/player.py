@@ -7,6 +7,8 @@ from personajes.ataques.attack_pool import AttackPool
 from objetos.mejoras.catalogo import obtener_mejora
 
 class Player(Character):
+    SUPER_AZULEJO_DURATION = 20.0
+
     def __init__(self, game):
         self._walk_asset_file = "assets/Blub/PNG/Slime1/Walk/Slime1_Walk_full.png"
         self._idle_asset_file = "assets/Blub/PNG/Slime1/Idle/Slime1_Idle_full.png"
@@ -29,6 +31,8 @@ class Player(Character):
         self.last_aim_axis = pygame.math.Vector2(1, 0)
         self.escudo_activo = False
         self.blub_lava_activo = False
+        self.super_azulejo_habilitado = False
+        self.super_azulejo_remaining = 0.0
         self.upgrade_cooldowns = {}
 
         self.attack_launcher1 = AttackPool(Azulejo, game)
@@ -51,7 +55,7 @@ class Player(Character):
             if callable(aplicar):
                 aplicar(self)
 
-    def register_upgrade_cooldown(self, upgrade_id, duration_seconds, asset_path=None):
+    def register_upgrade_cooldown(self, upgrade_id, duration_seconds, asset_path=None, key_hint=None):
         entry = self.upgrade_cooldowns.get(upgrade_id)
         if entry is None:
             image = None
@@ -65,6 +69,7 @@ class Player(Character):
                 "duration": float(duration_seconds),
                 "remaining": 0.0,
                 "image": image,
+                "key_hint": (str(key_hint).upper() if key_hint else None),
             }
             self.upgrade_cooldowns[upgrade_id] = entry
         else:
@@ -74,6 +79,8 @@ class Player(Character):
                     entry["image"] = pygame.image.load(asset_path).convert_alpha()
                 except Exception:
                     pass
+            if key_hint:
+                entry["key_hint"] = str(key_hint).upper()
         return entry
 
     def is_upgrade_cooldown_ready(self, upgrade_id):
@@ -115,6 +122,18 @@ class Player(Character):
         self.lava_burst_attack.init(self.rect.centerx, self.rect.centery)
         return True
 
+    def _try_use_super_azulejo(self):
+        if not getattr(self, "super_azulejo_habilitado", False):
+            return False
+        if not self.is_upgrade_cooldown_ready("super_azulejo"):
+            return False
+        self.super_azulejo_remaining = float(self.SUPER_AZULEJO_DURATION)
+        self.trigger_upgrade_cooldown("super_azulejo")
+        return True
+
+    def _is_super_azulejo_active(self):
+        return self.super_azulejo_remaining > 0.0
+
     def apply_damage(self, damage_amount):
         if damage_amount > 0 and self._try_block_with_shield():
             return
@@ -127,17 +146,29 @@ class Player(Character):
 
     def attack(self, acciones):
         if self.attack_launcher1.is_ready():
-            direction = pygame.math.Vector2(self.last_aim_axis)
-            if direction.length() > 0:
-                direction = direction.normalize()
+            if self._is_super_azulejo_active():
+                directions = [
+                    pygame.math.Vector2(1, 0),
+                    pygame.math.Vector2(-1, 0),
+                    pygame.math.Vector2(0, 1),
+                    pygame.math.Vector2(0, -1),
+                    pygame.math.Vector2(1, 1).normalize(),
+                    pygame.math.Vector2(1, -1).normalize(),
+                    pygame.math.Vector2(-1, 1).normalize(),
+                    pygame.math.Vector2(-1, -1).normalize(),
+                ]
             else:
-                direction = pygame.math.Vector2(1, 0) # Fallback to right
+                direction = pygame.math.Vector2(self.last_aim_axis)
+                if direction.length() > 0:
+                    direction = direction.normalize()
+                else:
+                    direction = pygame.math.Vector2(1, 0) # Fallback to right
 
-            directions = [direction]
-            if getattr(self, "disparo_triple_activo", False):
-                spread_angle = 12
-                directions.append(direction.rotate(spread_angle))
-                directions.append(direction.rotate(-spread_angle))
+                directions = [direction]
+                if getattr(self, "disparo_triple_activo", False):
+                    spread_angle = 12
+                    directions.append(direction.rotate(spread_angle))
+                    directions.append(direction.rotate(-spread_angle))
 
             for shot_direction in directions:
                 self.attack_launcher1.create(
@@ -148,6 +179,8 @@ class Player(Character):
 
     def update(self, dt, acciones,tiles):
         self._update_upgrade_cooldowns(dt)
+        if self.super_azulejo_remaining > 0.0:
+            self.super_azulejo_remaining = max(0.0, self.super_azulejo_remaining - dt)
 
         direction_x = acciones["right"] - acciones["left"]
         direction_y = acciones["down"] - acciones["up"]
@@ -184,6 +217,8 @@ class Player(Character):
             self.attack(acciones)
         if acciones.get("attack2"):
             self._try_use_lava_burst()
+        if acciones.get("attack3"):
+            self._try_use_super_azulejo()
 
         # Normalize the movement vector to prevent going faster diagonally
         move_vector = pygame.math.Vector2(direction_x, direction_y)
@@ -214,6 +249,7 @@ class Player(Character):
 
         icon_size = 36
         pad = 8
+        font = pygame.font.Font(None, 20)
         idx = 0
         for entry in self.upgrade_cooldowns.values():
             rect = pygame.Rect(x, y + idx * (icon_size + pad), icon_size, icon_size)
@@ -226,6 +262,19 @@ class Player(Character):
             if image is not None:
                 scaled = pygame.transform.scale(image, (icon_size - 6, icon_size - 6))
                 pantalla.blit(scaled, scaled.get_rect(center=rect.center))
+
+            key_hint = entry.get("key_hint")
+            if key_hint:
+                label = font.render(str(key_hint), True, (235, 240, 255))
+                badge_rect = pygame.Rect(
+                    rect.right + 6,
+                    rect.centery - 11,
+                    max(22, label.get_width() + 10),
+                    22,
+                )
+                pygame.draw.rect(pantalla, (20, 20, 28), badge_rect, border_radius=7)
+                pygame.draw.rect(pantalla, (190, 210, 255), badge_rect, 2, border_radius=7)
+                pantalla.blit(label, label.get_rect(center=badge_rect.center))
 
             duration = float(entry.get("duration", 0.0))
             remaining = float(entry.get("remaining", 0.0))
