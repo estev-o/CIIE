@@ -39,6 +39,8 @@ class Enemy(Character):
         self.attack_range= attack_range
         self.damage = damage
         self.drop_table = list(drop_table or [])
+        self.attack_cooldown = attack_cooldown
+        self.attack_speed = attack_speed
 
         if attack_type=="melee":
             self.attack_behavior = MeleeAttack(self)
@@ -46,8 +48,6 @@ class Enemy(Character):
         elif attack_type== "ranged":
             self.attack_behavior = RangedAttack(self)
 
-        self.attack_cooldown = attack_cooldown
-        self.attack_speed = attack_speed
 
         # VARIABLES PARA IDLE_MOVE
         self.ai_state = "idle"

@@ -30,15 +30,15 @@ class AreaExperiment(Estado):
 
         self.player = self.juego.player
 
-        
+
         r = self.player.get_rect()
         spawn = self.tmx_map.get_objects(layer="spawn_point")[0]
         self.player.pos_x = spawn.x - (r.width / 2)
         self.player.pos_y = spawn.y - (r.height / 2)
 
-        self.enemy = juego.enemy_factory.create_enemy("mock_enemy", 500, 300)
+        self.enemy = juego.enemy_factory.create_enemy("mock_enemy", 500, 350)
         self.append_enemy(self.enemy)
-        self.enemy = juego.enemy_factory.create_enemy("mock_enemy", 200, 300)
+        self.enemy = juego.enemy_factory.create_enemy("mock_archer_enemy", 250, 350)
         self.append_enemy(self.enemy)
 
         # contamos los enemigos de el área
@@ -86,6 +86,7 @@ class AreaExperiment(Estado):
         self.health_bar_manager.update()
         self.player_health_bar.update(dt, self.player.remaining_life, self.player.max_live)
 
+        self.enemy_projectiles.update(dt, solid_tiles)
         # Los cofres no cuentan como enemigos vivos para abrir la puerta.
         self.enemies_alive = sum(1 for enemy in self.enemies if enemy.__class__.__name__ != "Chest")
         
@@ -118,8 +119,9 @@ class AreaExperiment(Estado):
             enemy.render(pantalla)
 
         self.objects.draw(pantalla)
+        self.enemy_projectiles.draw(pantalla)
         self.player.render(pantalla)
-        
+
         self.health_bar_manager.draw(pantalla)
         self.player_health_bar.draw(pantalla)
         self.adn_counter.draw(pantalla, self.juego.adn)
@@ -133,3 +135,5 @@ class AreaExperiment(Estado):
             self.player.attack_launcher1.debug_draw_hitbox(pantalla, (255, 255 ,0))
             for enemy in self.enemies:
                 enemy.debug_draw_hitbox(pantalla, (0, 255 ,255))
+            for projectile in self.enemy_projectiles:
+                pygame.draw.rect(pantalla, (255, 0, 0), projectile.rect, 1)

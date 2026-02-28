@@ -52,7 +52,7 @@ class MeleeAttack(AttackBehavior):
             # Acumulamos la distancia que ya ha recorrido en este ataque
             self.distance_traveled += math.hypot(move_x, move_y)
 
-            # Comprobamos si se ha llegamo al jugador
+            # Comprobamos si se ha recorrido el salto
             if self.distance_traveled >= self.target_distance:
                 self._end_lunge()
 
