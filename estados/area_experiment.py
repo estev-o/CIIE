@@ -9,15 +9,25 @@ from ui.player_health_bar import PlayerHealthBar
 from ui.adn_counter import ADNCounter
 from personajes.enemigos.chest import Chest
 
-NIVEL_FORZADO = "area_exp3.tmx"  # Para pruebas, fuerza a entrar a esta área de experimentación específica
+NIVEL_FORZADO = "area_exp6.tmx"  # Para pruebas, fuerza a entrar a esta área de experimentación específica
 
 
 class AreaExperiment(Estado):
+    distintas_areas = ["area_exp1.tmx", "area_exp3.tmx","area_exp3.tmx", "area_exp4.tmx", "area_exp5.tmx", "area_exp6.tmx"]
+    areas_visitadas = []
+
     def __init__(self, juego):
         Estado.__init__(self,juego)
+        if len(AreaExperiment.distintas_areas) == 0:
+            AreaExperiment.distintas_areas, AreaExperiment.areas_visitadas = AreaExperiment.areas_visitadas, AreaExperiment.distintas_areas
+
         # Elige aleatoriamente entre los mapas de experimentación
-        distintas_areas = ["area_exp1.tmx", "area_exp2.tmx","area_exp3.tmx"]
-        tmx_elegido = random.choice(distintas_areas)
+        tmx_elegido = random.choice(AreaExperiment.distintas_areas)
+
+        # Eliminar el nivel elegido de las areas para no tenerlo en cuenta para el siguiente nivel
+        AreaExperiment.distintas_areas.remove(tmx_elegido)
+        AreaExperiment.areas_visitadas.append(tmx_elegido)
+
         tmx_path = os.path.join("assets", "area_experimentacion", tmx_elegido)
 
         # CODIGO DEBUG, BORRAR
