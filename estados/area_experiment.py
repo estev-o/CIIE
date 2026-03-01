@@ -36,9 +36,9 @@ class AreaExperiment(Estado):
         self.player.pos_x = spawn.x - (r.width / 2)
         self.player.pos_y = spawn.y - (r.height / 2)
 
-        self.enemy = juego.enemy_factory.create_enemy("mock_enemy", 500, 350)
+        self.enemy = juego.enemy_factory.create_enemy("mock_explosive", 500, 350)
         self.append_enemy(self.enemy)
-        self.enemy = juego.enemy_factory.create_enemy("mock_archer_enemy", 250, 350)
+        self.enemy = juego.enemy_factory.create_enemy("mock_ranger", 250, 350)
         self.append_enemy(self.enemy)
 
         # contamos los enemigos de el área

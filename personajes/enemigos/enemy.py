@@ -4,6 +4,7 @@ import random
 import pygame
 
 from personajes.character import Character
+from personajes.enemigos.attacks.explosive_attack import ExplosiveAttack
 from personajes.enemigos.attacks.melee_attack import MeleeAttack
 from personajes.enemigos.attacks.ranged_attack import RangedAttack
 
@@ -48,6 +49,8 @@ class Enemy(Character):
         elif attack_type== "ranged":
             self.attack_behavior = RangedAttack(self)
 
+        elif attack_type== "kamikaze":
+            self.attack_behavior = ExplosiveAttack(self)
 
         # VARIABLES PARA IDLE_MOVE
         self.ai_state = "idle"
@@ -64,45 +67,6 @@ class Enemy(Character):
         self.alert_timer = 0
         self.cooldown_timer=0
 
-    def maintain_distance(self, player, dt, solid_tiles):
-        dx = player.rect.centerx - self.rect.centerx
-        dy = player.rect.centery - self.rect.centery
-        dist = math.hypot(dx, dy)
-
-        if dist == 0: dist = 0.1
-        move_dir = 0
-        if dist > self.attack_range - 10: #Intenta mantenerse dentro del área de ataque con un margen
-            move_dir = 1
-        elif dist < self.attack_range/2:
-            move_dir = -1
-
-        if move_dir != 0:
-            # Normalizamos y aplicamos dirección de movimiento
-            dir_x = (dx / dist) * move_dir
-            dir_y = (dy / dist) * move_dir
-
-            # Determinar hacia dónde mira
-            if abs(dx) > abs(dy):
-                self.facing = "right" if dx > 0 else "left"
-            else:
-                self.facing = "down" if dy > 0 else "up"
-
-            move_x = dir_x * self.speed * dt
-            move_y = dir_y * self.speed * dt
-
-            # Aplicar movimiento con colisiones
-            if solid_tiles is not None:
-                self.move_and_collide(move_x, move_y, solid_tiles)
-            else:
-                self.pos_x += move_x
-                self.pos_y += move_y
-                self.rect.topleft = (int(self.pos_x), int(self.pos_y))
-
-            if self._asset_file is not None:
-                self.animate(dt, moving=True)
-        else:
-            if self._asset_file is not None:
-                self.animate(dt, moving=False)
 
     def idle_behavior(self, dt, tiles=None):
         """
@@ -175,6 +139,45 @@ class Enemy(Character):
         else:
             self.attack_behavior.execute(player, dt, solid_tiles)
 
+    def maintain_distance(self, player, dt, solid_tiles):
+        dx = player.rect.centerx - self.rect.centerx
+        dy = player.rect.centery - self.rect.centery
+        dist = math.hypot(dx, dy)
+
+        if dist == 0: dist = 0.1
+        move_dir = 0
+        if dist > self.attack_range - 10: #Intenta mantenerse dentro del área de ataque con un margen
+            move_dir = 1
+        elif dist < self.attack_range/2:
+            move_dir = -1
+
+        if move_dir != 0:
+            # Normalizamos y aplicamos dirección de movimiento
+            dir_x = (dx / dist) * move_dir
+            dir_y = (dy / dist) * move_dir
+
+            # Determinar hacia dónde mira
+            if abs(dx) > abs(dy):
+                self.facing = "right" if dx > 0 else "left"
+            else:
+                self.facing = "down" if dy > 0 else "up"
+
+            move_x = dir_x * self.speed * dt
+            move_y = dir_y * self.speed * dt
+
+            # Aplicar movimiento con colisiones
+            if solid_tiles is not None:
+                self.move_and_collide(move_x, move_y, solid_tiles)
+            else:
+                self.pos_x += move_x
+                self.pos_y += move_y
+                self.rect.topleft = (int(self.pos_x), int(self.pos_y))
+
+            if self._asset_file is not None:
+                self.animate(dt, moving=True)
+        else:
+            if self._asset_file is not None:
+                self.animate(dt, moving=False)
 
     def ai_behavior(self, player, dt, solid_tiles):
         """

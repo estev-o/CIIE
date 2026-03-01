@@ -1,10 +1,10 @@
 {
-  "mock_enemy": {
-    "max_live": 40,
+  "mock_melee": {
+    "max_live": 60,
     "width": 64,
     "height": 64,
     "scale": 1.75,
-    "speed": 200,
+    "speed": 175,
     "vision_range": 250,
     "attack_range": 100,
     "damage": 15,
@@ -20,7 +20,7 @@
       { "object": null, "weight": 0.1 }
     ]
   },
-  "mock_archer_enemy": {
+  "mock_ranger": {
     "max_live": 40,
     "width": 64,
     "height": 64,
@@ -32,6 +32,27 @@
     "attack_type": "ranged",
     "attack_cooldown": 0.5,
     "attack_speed": 250,
+    "anim_fps": 15,
+    "hitbox_offset_x": 40,
+    "hitbox_offset_y": 40,
+    "asset_file": "assets/Blub/PNG/Slime1/Walk/Slime1_Walk_full.png",
+    "drop_table": [
+      { "object": "adn", "weight": 0.9 },
+      { "object": null, "weight": 0.1 }
+    ]
+  },
+  "mock_explosive": {
+    "max_live": 40,
+    "width": 64,
+    "height": 64,
+    "scale": 1.75,
+    "speed": 175,
+    "vision_range": 250,
+    "attack_range": 150,
+    "damage": 40,
+    "attack_type": "kamikaze",
+    "attack_cooldown": 1,
+    "attack_speed": 300,
     "anim_fps": 15,
     "hitbox_offset_x": 40,
     "hitbox_offset_y": 40,
