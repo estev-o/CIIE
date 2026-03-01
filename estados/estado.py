@@ -6,6 +6,7 @@ class Estado():
         self.estado_prev= None
         self.enemies = pygame.sprite.Group()
         self.objects = pygame.sprite.Group()
+        self.enemy_projectiles = pygame.sprite.Group()
         self.interactions = []
 
     def append_enemy(self, enemy):
