@@ -46,7 +46,7 @@ class MenuConfiguracion(Estado):
         self.prev = {}
 
         # mouse
-        self.mouse_pressed_prev = False
+        self.mouse_pressed_prev = pygame.mouse.get_pressed()[0]
         self.prev_mouse_pos = (0, 0)
         self.mouse_moviendose = False
 
@@ -77,7 +77,8 @@ class MenuConfiguracion(Estado):
         # -------- mouse posición escalada --------
         pos_mouse_escalado = acciones.get("mouse_pos", (0, 0))
         mouse_pressed = pygame.mouse.get_pressed()[0]
-        click = acciones.get("attack1")
+        click_mouse = mouse_pressed and not self.mouse_pressed_prev
+        self.mouse_pressed_prev = mouse_pressed
 
         self.mouse_moviendose = pos_mouse_escalado != self.prev_mouse_pos
         self.prev_mouse_pos = pos_mouse_escalado
@@ -99,7 +100,7 @@ class MenuConfiguracion(Estado):
             self.slider_efectos.actualizar(pos_mouse_escalado, mouse_pressed)
 
         elif self.indice_nav == 2:
-            if click and self.opcion_fullscreen.obtener_rect().collidepoint(pos_mouse_escalado):
+            if click_mouse and self.opcion_fullscreen.obtener_rect().collidepoint(pos_mouse_escalado):
                 self.opcion_fullscreen.cambiar()
                 self.aplicar_fullscreen()
 

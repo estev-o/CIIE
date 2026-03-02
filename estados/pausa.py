@@ -28,7 +28,7 @@ class Pausa(Estado):
         self.cooldown_nav = 0
         self.delay_nav = 0.15
 
-        self.mouse_pressed_prev = False
+        self.mouse_pressed_prev = pygame.mouse.get_pressed()[0]
         self.pos_mouse_escalado = (0, 0)
         self.hover_mejora_index = None
 
@@ -98,9 +98,10 @@ class Pausa(Estado):
                 self.cambiar_seleccion(1)
                 self.cooldown_nav = self.delay_nav
 
-        if acciones.get("enter") or acciones.get("attack1"):
+        if acciones.get("enter") or acciones.get("interact"):
             self.activar_opcion()
             self.juego.reset_keys()
+            return
 
         # Mouse
         pos_mouse = pygame.mouse.get_pos()
@@ -129,7 +130,8 @@ class Pausa(Estado):
                 if boton.verificar_click(pos_mouse_escalado):
                     self.indice_seleccionado = i
                     self.activar_opcion()
-                    break
+                    self.juego.reset_keys()
+                    return
 
         self.mouse_pressed_prev = mouse_pressed
 

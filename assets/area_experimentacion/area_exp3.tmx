@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="32" height="17" tilewidth="32" tileheight="32" infinite="0" nextlayerid="14" nextobjectid="61">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="32" height="17" tilewidth="32" tileheight="32" infinite="0" nextlayerid="14" nextobjectid="69">
  <tileset firstgid="1" source="../pixel_cyberpunk_interior_free_1.0.1/pixel-cyberpunk-interior.tsx"/>
  <tileset firstgid="232" source="../tiles_laboratory_LandOfPixels/tilesStuff.tsx"/>
  <layer id="3" name="suelo" width="32" height="17">
@@ -175,6 +175,30 @@
    <point/>
   </object>
   <object id="60" x="473.336" y="50.6142">
+   <point/>
+  </object>
+  <object id="61" x="396.478" y="134.971">
+   <point/>
+  </object>
+  <object id="62" x="323.368" y="128.41">
+   <point/>
+  </object>
+  <object id="63" x="324.306" y="212.767">
+   <point/>
+  </object>
+  <object id="64" x="362.735" y="187.46">
+   <point/>
+  </object>
+  <object id="65" x="347.738" y="239.011">
+   <point/>
+  </object>
+  <object id="66" x="327.118" y="258.695">
+   <point/>
+  </object>
+  <object id="67" x="312.121" y="310.246">
+   <point/>
+  </object>
+  <object id="68" x="363.672" y="244.635">
    <point/>
   </object>
  </objectgroup>
