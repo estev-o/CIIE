@@ -109,10 +109,10 @@ class MenuPrincipal(Estado):
             pygame.draw.line(pantalla, color, (0, y), (pantalla.get_width(), y))
 
         # ---- TITULO ----
-        titulo = self.juego.fonts.big.render("GILBERTOV EVIL", False, (255, 255, 255))
+        titulo = self.juego.fonts.big.render("BINDING OF BLUB", False, (255, 255, 255))
         titulo_rect = titulo.get_rect(center=(self.juego.ancho // 2, 100))
 
-        sombra = self.juego.fonts.big.render("GILBERTOV EVIL", False, (50, 50, 80))
+        sombra = self.juego.fonts.big.render("BINDING OF BLUB", False, (50, 50, 80))
         sombra_rect = sombra.get_rect(center=(self.juego.ancho // 2 + 4, 104))
         pantalla.blit(sombra, sombra_rect)
         pantalla.blit(titulo, titulo_rect)

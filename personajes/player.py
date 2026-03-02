@@ -14,6 +14,7 @@ class Player(Character):
         self._walk_asset_file = "assets/Blub/PNG/Slime1/Walk/Slime1_Walk_full.png"
         self._idle_asset_file = "assets/Blub/PNG/Slime1/Idle/Slime1_Idle_full.png"
         self._hurt_asset_file = "assets/Blub/PNG/Slime1/Hurt/Slime1_Hurt_full.png"
+        self._death_asset_file = "assets/Blub/PNG/Slime1/Death/Slime1_Death_full.png"
         super().__init__(
             game=game,
             max_live=100,
@@ -33,6 +34,11 @@ class Player(Character):
         self.hurt_time = 0.5  # duración de la animación de daño
         self.hurt_timer = 0.0
         self.is_hurt = False
+
+        self.is_dying = False
+        self.death_timer = 0.0
+        self.death_duration = 1.0
+
         self.invencible_time=1.0
         self.itimer=0
 
@@ -46,10 +52,15 @@ class Player(Character):
         self.attack_launcher1 = AttackPool(Azulejo, game)
         self.lava_burst_attack = LavaBurst(game)
         self._aplicar_mejoras_persistentes()
-    
-    
+
     def die(self):
-        pygame.event.post(pygame.event.Event(PLAYER_DEATH))
+        if not self.is_dying:
+            self.is_dying = True
+            self._current_frame = 0
+            self._anim_timer = 0.0
+
+            num_frames = len(self._death_down_sprites)
+            self.death_timer = num_frames / self.anim_fps
 
     def _aplicar_mejoras_persistentes(self):
         if not hasattr(self.game, "mejoras"):
@@ -239,6 +250,12 @@ class Player(Character):
                 )
 
     def update(self, dt, acciones,tiles):
+        if self.is_dying:
+            self.animate(dt, False)  # Forzamos animación de muerte
+            self.death_timer -= dt
+            if self.death_timer <= 0:
+                pygame.event.post(pygame.event.Event(PLAYER_DEATH))
+            return
         self._update_upgrade_cooldowns(dt)
         if self.super_azulejo_remaining > 0.0:
             self.super_azulejo_remaining = max(0.0, self.super_azulejo_remaining - dt)
@@ -370,6 +387,7 @@ class Player(Character):
         walk_sheet = pygame.image.load(self._walk_asset_file).convert_alpha()
         idle_sheet = pygame.image.load(self._idle_asset_file).convert_alpha()
         hurt_sheet = pygame.image.load(self._hurt_asset_file).convert_alpha()
+        death_sheet = pygame.image.load(self._death_asset_file).convert_alpha()
 
         def build_directional_sets(sheet: pygame.Surface):
             cols = sheet.get_width() // self.frame_w
@@ -410,6 +428,7 @@ class Player(Character):
         self._walk_down_sprites, self._walk_up_sprites, self._walk_left_sprites, self._walk_right_sprites = build_directional_sets(walk_sheet)
         self._idle_down_sprites, self._idle_up_sprites, self._idle_left_sprites, self._idle_right_sprites = build_directional_sets(idle_sheet)
         self._hurt_down_sprites, self._hurt_up_sprites, self._hurt_left_sprites, self._hurt_right_sprites = build_directional_sets(hurt_sheet)
+        self._death_down_sprites, self._death_up_sprites, self._death_left_sprites, self._death_right_sprites = build_directional_sets(death_sheet)
         # Compatibilidad con Character: por defecto arranca con walk/down.
         self._down_sprites = self._walk_down_sprites
         self._up_sprites = self._walk_up_sprites
@@ -417,7 +436,16 @@ class Player(Character):
         self._right_sprites = self._walk_right_sprites
 
     def animate(self, dt, moving: bool):
-        if self.is_hurt:
+        if self.is_dying:
+            if self.facing == "right":
+                selected = self._death_right_sprites
+            elif self.facing == "left":
+                selected = self._death_left_sprites
+            elif self.facing == "up":
+                selected = self._death_up_sprites
+            else:
+                selected = self._death_down_sprites
+        elif self.is_hurt:
             if self.facing == "right":
                 selected = self._hurt_right_sprites
             elif self.facing == "left":
@@ -455,6 +483,10 @@ class Player(Character):
         frame_time = 1.0 / max(self.anim_fps, 1)
         while self._anim_timer >= frame_time:
             self._anim_timer -= frame_time
-            self._current_frame = (self._current_frame + 1) % len(self._curr_anim_list)
+
+            if self.is_dying:
+                self._current_frame = min(self._current_frame + 1, len(self._curr_anim_list) - 1)
+            else:
+                self._current_frame = (self._current_frame + 1) % len(self._curr_anim_list)
 
         self.image = self._curr_anim_list[self._current_frame]
