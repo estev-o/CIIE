@@ -9,7 +9,7 @@ from ui.player_health_bar import PlayerHealthBar
 from ui.adn_counter import ADNCounter
 from personajes.enemigos.chest import Chest
 
-NIVEL_FORZADO = "area_exp1.tmx"  # Para pruebas, fuerza a entrar a esta área de experimentación específica
+NIVEL_FORZADO = "area_exp3.tmx"  # Para pruebas, fuerza a entrar a esta área de experimentación específica
 
 
 class AreaExperiment(Estado):
