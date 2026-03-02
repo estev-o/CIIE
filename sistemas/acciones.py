@@ -29,15 +29,15 @@ class ActionManager:
         }
         
         self.not_maintainable_keys = {
-            "enter", "interact", "back", "arrowUp", "arrowDown", "arrowRight", "arrowLeft", "toggle_pause"
+            "enter", "interact", "back", "toggle_pause"
         }
 
         # Input maps
         self.keyboard_map = {
-            pygame.K_a: ["left"],
-            pygame.K_d: ["right"],
-            pygame.K_w: ["up"],
-            pygame.K_s: ["down"],
+            pygame.K_a: ["left", "arrowLeft"],
+            pygame.K_d: ["right", "arrowRight"],
+            pygame.K_w: ["up", "arrowUp"],
+            pygame.K_s: ["down", "arrowDown"],
             pygame.K_RETURN: ["enter"],
             pygame.K_e: ["interact"],
             pygame.K_ESCAPE: ["back", "toggle_pause"],
@@ -53,9 +53,9 @@ class ActionManager:
         self.controller_button_map = {
             pygame.CONTROLLER_BUTTON_A: ["interact", "enter"],          # Cross / A
             pygame.CONTROLLER_BUTTON_B: ["back"],               # Circle / B
-            pygame.CONTROLLER_BUTTON_X: ["attack1"],           # Square / X
-            pygame.CONTROLLER_BUTTON_Y: ["attack2"],           # Triangle / Y
-            pygame.CONTROLLER_BUTTON_RIGHTSHOULDER: ["attack3"],  # R1 / RB
+            pygame.CONTROLLER_BUTTON_X: ["attack2"],           # Square / X
+            pygame.CONTROLLER_BUTTON_Y: ["attack3"],           # Triangle / Y
+            pygame.CONTROLLER_BUTTON_RIGHTSHOULDER: ["attack1"],  # R1 / RB
             pygame.CONTROLLER_BUTTON_START: ["toggle_pause"],  # Options / Start
             pygame.CONTROLLER_BUTTON_DPAD_UP: ["arrowUp"],
             pygame.CONTROLLER_BUTTON_DPAD_DOWN: ["arrowDown"],
@@ -81,12 +81,8 @@ class ActionManager:
         if isinstance(action_data, list):
             for act in action_data:
                 self.actions[act] = is_down
-                if act == "arrowLeft" and is_down:
-                    self.actions["toggle_pause"] = True
         else:
             self.actions[action_data] = is_down
-            if action_data == "arrowLeft" and is_down:
-                self.actions["toggle_pause"] = True
 
     def get_events(self):
         events = pygame.event.get()
@@ -165,9 +161,6 @@ class ActionManager:
                 # Also trigger arrow actions to navigate menus
                 self.actions["arrowLeft"] = (value < 0)
                 self.actions["arrowRight"] = (value > 0)
-                
-                # Store aim X
-                self.actions["aim_axis"] = (value, self.actions["aim_axis"][1])
             
             elif axis == pygame.CONTROLLER_AXIS_LEFTY:
                 self.actions["up"] = (value < 0)
@@ -177,8 +170,17 @@ class ActionManager:
                 self.actions["arrowUp"] = (value < 0)
                 self.actions["arrowDown"] = (value > 0)
                 
+            elif axis == pygame.CONTROLLER_AXIS_RIGHTX:
+                # Store aim X
+                self.actions["aim_axis"] = (value, self.actions["aim_axis"][1])
+                
+            elif axis == pygame.CONTROLLER_AXIS_RIGHTY:
                 # Store aim Y
                 self.actions["aim_axis"] = (self.actions["aim_axis"][0], value)
+                
+            elif axis == pygame.CONTROLLER_AXIS_TRIGGERRIGHT:
+                # Basic attack using right trigger
+                self.actions["attack1"] = (value > 0.5)
 
     def process_mouse_and_aim(self, game_canvas, screen):
         """Calculates scaled mouse pos and provides it globally, 
