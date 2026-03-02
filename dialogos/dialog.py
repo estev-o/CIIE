@@ -7,10 +7,11 @@ small_font = pygame.font.SysFont("arial", 18)
 
 # ACTION KEYS
 continue_key = "enter"
-previous_key = "arrowUp"
-next_option = "arrowDown"
-previous_key_alt = "arrowLeft"
-next_option_alt = "arrowRight"
+back_key = "back"
+previous_key = "up"
+next_option = "down"
+previous_key_alt = "left"
+next_option_alt = "right"
 
 class Dialog(Interactuable):
     def __init__(self, structure, rect=(247,320,530,180)):
@@ -366,23 +367,37 @@ class Dialog(Interactuable):
         if not self.active:
             return
 
+        is_shop_carousel = bool(self.actual_node and self.actual_node.get("carousel_options"))
+        nav_prev_key = previous_key_alt if is_shop_carousel else previous_key
+        nav_next_key = next_option_alt if is_shop_carousel else next_option
+
+        if back_key in actions and actions[back_key]:
+            actions[back_key] = False
+            actual_key = next(
+                (key for key, value in self.dialog_structure.items() if value is self.actual_node),
+                None,
+            )
+            if actual_key == "init":
+                self.active = False
+            elif "init" in self.dialog_structure:
+                self._load_node("init")
+            else:
+                self.active = False
+            return
+
         if continue_key in actions and actions[continue_key]:
             if self.are_options_available and self.option_cooldown > 0:
                 pass # Ignore 'enter' if options just appeared and are on cooldown
             else:
                 actions[continue_key] = False
                 self.continue_writing()
-        elif (previous_key in actions and actions[previous_key]) or (
-            previous_key_alt in actions and actions[previous_key_alt]):
+        elif nav_prev_key in actions and actions[nav_prev_key]:
             if self.cooldown_nav <= 0:
-                actions[previous_key] = False
-                actions[previous_key_alt] = False
+                actions[nav_prev_key] = False
                 self.move_option(-1)
                 self.cooldown_nav = self.delay_nav
-        elif (next_option in actions and actions[next_option]) or (
-            next_option_alt in actions and actions[next_option_alt]):
+        elif nav_next_key in actions and actions[nav_next_key]:
             if self.cooldown_nav <= 0:
-                actions[next_option] = False
-                actions[next_option_alt] = False
+                actions[nav_next_key] = False
                 self.move_option(1)
                 self.cooldown_nav = self.delay_nav
