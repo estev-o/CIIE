@@ -78,23 +78,48 @@ class ExplosionSprite(pygame.sprite.Sprite):
     def __init__(self, x, y, radio):
         super().__init__()
 
-        size = int(radio * 2)
-        self.image = pygame.Surface((size, size), pygame.SRCALPHA)
+        size = int(radio * 3.5)
+        self.frames = []
 
-        # Dibujamos el círculo usando el radio
-        centro = (size // 2, size // 2)
-        pygame.draw.circle(self.image, (255, 100, 0), centro, int(radio))
+        # Cargar y escalar las 10 imágenes de la animación
+        for i in range(1, 11):
+            img_path = f"assets/enemies/explosion/Explosion_blue_circle{i}.png"
+            try:
+                # Usamos convert_alpha() para que las transparencias del PNG se vean bien
+                img = pygame.image.load(img_path).convert_alpha()
+                # Escalamos la imagen al área de daño de la explosión
+                img = pygame.transform.scale(img, (size, size))
+                self.frames.append(img)
+            except pygame.error as e:
+                print(f"Error cargando la imagen {img_path}: {e}")
+
+        # Control de la animación
+        self.current_frame = 0
+        if self.frames:
+            self.image = self.frames[self.current_frame]
+        else:
+            # Fallback (respaldo) por si falla la carga de imágenes: un cuadro vacío
+            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
+
         self.rect = self.image.get_rect(center=(x, y))
 
-        # Variables para a animación
-        # self.frames = []
-        self.current_frame = 0
-        self.anim_timer = 0.5
-        self.anim_fps = 15
+        # Variables para calcular cuándo pasar al siguiente frame
+        self.anim_fps = 15  # Velocidad de la animación (frames por segundo)
+        self.time_per_frame = 1.0 / self.anim_fps
+        self.time_accumulated = 0.0
 
     def update(self, player, dt):
-        self.anim_timer -= dt
+        # Acumulamos el tiempo transcurrido
+        self.time_accumulated += dt
 
-        # Hacer que desaparezca tras un rato
-        if self.anim_timer <=0:
-            self.kill()
+        # Si el tiempo supera lo que dura un frame, pasamos al siguiente
+        if self.time_accumulated >= self.time_per_frame:
+            self.time_accumulated -= self.time_per_frame
+            self.current_frame += 1
+
+            # Si ya mostramos el último frame, eliminamos la explosión
+            if self.current_frame >= len(self.frames):
+                self.kill()
+            else:
+                # Actualizamos la imagen actual a mostrar
+                self.image = self.frames[self.current_frame]
