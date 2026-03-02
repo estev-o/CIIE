@@ -9,7 +9,7 @@ from ui.player_health_bar import PlayerHealthBar
 from ui.adn_counter import ADNCounter
 from personajes.enemigos.chest import Chest
 
-NIVEL_FORZADO = "area_exp6.tmx"  # Para pruebas, fuerza a entrar a esta área de experimentación específica
+NIVEL_FORZADO = "area_exp3.tmx"  # Para pruebas, fuerza a entrar a esta área de experimentación específica
 
 
 class AreaExperiment(Estado):
@@ -46,10 +46,17 @@ class AreaExperiment(Estado):
         self.player.pos_x = spawn.x - (r.width / 2)
         self.player.pos_y = spawn.y - (r.height / 2)
 
-        self.enemy = juego.enemy_factory.create_enemy("mock_explosive", 500, 350)
-        self.append_enemy(self.enemy)
-        self.enemy = juego.enemy_factory.create_enemy("mock_ranger", 250, 350)
-        self.append_enemy(self.enemy)
+
+        enemy_names = ["mock_explosive", "mock_ranger", "mock_melee"]
+        # Enemies
+        for enemy_pos in list(self.tmx_map.get_objects(layer="spawn_enemies")):
+            enemy = juego.enemy_factory.create_enemy(random.choice(enemy_names), enemy_pos.x, enemy_pos.y)
+            self.append_enemy(enemy)
+
+        # self.enemy = juego.enemy_factory.create_enemy("mock_explosive", 500, 350)
+        # self.append_enemy(self.enemy)
+        # self.enemy = juego.enemy_factory.create_enemy("mock_ranger", 250, 350)
+        # self.append_enemy(self.enemy)
 
         # contamos los enemigos de el área
         self.total_enemies = len(self.enemies)
