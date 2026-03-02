@@ -3,9 +3,11 @@ import math
 from dialogos.dialog import font
 
 class Interaction:
-    def __init__(self, sprite, text, interactuable, launch_action, distance=120):
+    def __init__(self, sprite, text, interactuable, launch_action, distance=120, text_controller=None, game=None):
         self.sprite = sprite                    # Sprite con el que interactua
         self.text = text                        # Texto que se muestre sobre el sprite
+        self.text_controller = text_controller  # Texto alternativo para mando
+        self.game = game                        # Referencia al juego para consultar modo
         self.distance = distance                # Distancia a la que se vuelve visible
         self.visible = False
         self.interactuable = interactuable      # Clase interactuable (Dialogo...)
@@ -24,9 +26,16 @@ class Interaction:
                 self.interactuable.interact()
                 self.visible = False
 
+    def _display_text(self):
+        if self.text_controller and self.game:
+            mode = self.game.actions.get("current_mode", "keyboard_mouse")
+            if mode == "controller":
+                return self.text_controller
+        return self.text
+
     def draw(self, screen):
         if self.visible:
-            render = font.render(self.text, True, (255,255,255))
+            render = font.render(self._display_text(), True, (255,255,255))
             rect = render.get_rect()
             rect.centerx = self.sprite.rect.centerx
             rect.bottom = self.sprite.rect.top - 5

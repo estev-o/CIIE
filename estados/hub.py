@@ -61,7 +61,8 @@ class Hub(Estado):
 
         # Se añade interaccion de Blob
         self.append_interaction(
-            Interaction(self.blob, "Hablar [E]", self.blob.dialog, "interact")
+            Interaction(self.blob, "Hablar [E]", self.blob.dialog, "interact",
+                        text_controller="Hablar [A]", game=self.juego)
         )
 
     def _generar_mejoras_tienda(self):

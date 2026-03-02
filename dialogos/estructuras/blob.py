@@ -9,6 +9,7 @@ hello_blob = {
             {"text": "Marcho que teño que marchar", "next": None}
         ],
         "options_hint": "W/S para cambiar | ENTER para elegir | ESC para salir",
+        "options_hint_controller": "D-Pad para cambiar | A para elegir | B para salir",
         "f": None
     },
     "sitio": {
@@ -37,6 +38,7 @@ hello_blob = {
         ],
         "f": None,
         "options_hint": "A/D para cambiar | ENTER para elegir",
+        "options_hint_controller": "D-Pad para cambiar | A para elegir",
         "selected_option_name_in_text": True,
         "show_selected_option_info": True,
         "carousel_options": True

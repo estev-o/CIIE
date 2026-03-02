@@ -36,6 +36,12 @@ class Dialog(Interactuable):
         
         self.shop_items = []
 
+    def _get_current_mode(self):
+        game = getattr(self, "game", None)
+        if game and hasattr(game, "actions"):
+            return game.actions.get("current_mode", "keyboard_mouse")
+        return "keyboard_mouse"
+
     def is_active(self):
         return self.active
 
@@ -243,16 +249,21 @@ class Dialog(Interactuable):
                 self._draw_options(screen)
                 self._draw_selected_option_info(screen)
                 hint = self.actual_node.get("options_hint")
+                hint_ctrl = self.actual_node.get("options_hint_controller")
                 if hint:
-                    indicator = small_font.render(hint, True, (200,200,200))
+                    mode = self._get_current_mode()
+                    display_hint = hint_ctrl if (mode == "controller" and hint_ctrl) else hint
+                    indicator = small_font.render(display_hint, True, (200,200,200))
                     screen.blit(
                         indicator,
                         (self.rect.right - indicator.get_width() - 15, self.rect.y + 15),
                     )
 
             elif self.finished:
-                indicator = small_font.render("ENTER (continuar)", True, (200,200,200))
-                screen.blit(indicator, (self.rect.right - 165, self.rect.y+15))
+                mode = self._get_current_mode()
+                cont_text = "A (continuar)" if mode == "controller" else "ENTER (continuar)"
+                indicator = small_font.render(cont_text, True, (200,200,200))
+                screen.blit(indicator, (self.rect.right - indicator.get_width() - 15, self.rect.y+15))
 
     def _draw_text(self, screen, text, x, y):
         words = text.split(" ")
