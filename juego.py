@@ -15,8 +15,9 @@ from personajes.constants import PLAYER_DEATH
 from personajes.player import Player
 from sistemas.acciones import ActionManager
 
-DEBUG = False
+DEBUG = True
 SKIP_HUB = False
+INVINCIBLE = False
 
 class Juego():
     def __init__(self):
@@ -46,6 +47,9 @@ class Juego():
         self.adn = int(self.configuracion.get("adn", 0) or 0)
         self.mejoras = MejorasManager(self.configuracion)
         self.player = Player(self)
+        if INVINCIBLE:
+            self.player.max_live = 10000
+            self.player._actual_life = 10000
         self.enemy_factory= EnemyFactory(self, "personajes/enemigos/enemy_list.json")
         self.object_factory = ObjectFactory("objetos/object_list.json")
         self.state_stack = []
@@ -159,6 +163,9 @@ class Juego():
         self._death_screen_requested = False
         self.reset_keys()
         self.player = Player(self)
+        if INVINCIBLE:
+            self.player.max_live = 10000
+            self.player._actual_life = 10000
         self.state_stack = []
         if start_state == "hub":
             from estados.hub import Hub

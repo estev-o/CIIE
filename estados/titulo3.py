@@ -144,7 +144,9 @@ class Titulo(Estado):
         # Texto ENTER
         if self.fase == "idle":
             font2 = self.juego.fonts.medium
-            enter = font2.render("Presiona ENTER", True, (220, 220, 240))
+            current_mode = self.juego.actions.get("current_mode", "keyboard_mouse")
+            prompt_text = "Presiona A" if current_mode == "controller" else "Presiona ENTER"
+            enter = font2.render(prompt_text, True, (220, 220, 240))
             enter.set_alpha(int(self.enter_alpha))
             rect2 = enter.get_rect(center=(self.juego.ancho // 2, self.juego.alto // 2 + 80))
             pantalla.blit(enter, rect2)

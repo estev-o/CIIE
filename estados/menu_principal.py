@@ -27,6 +27,7 @@ class MenuPrincipal(Estado):
         self.delay_nav = 0.15
 
         self.mouse_pressed_prev = pygame.mouse.get_pressed()[0]
+        self._last_mouse_pos = None
 
     def actualizar(self, dt, acciones):
         if self.cooldown_nav > 0:
@@ -47,17 +48,23 @@ class MenuPrincipal(Estado):
             self.juego.reset_keys()
             return
 
+        current_mode = acciones.get("current_mode", "keyboard_mouse")
         pos_mouse_escalado = acciones.get("mouse_pos", (0, 0))
 
-        for i, boton in enumerate(self.botones):
-            if boton.verificar_hover(pos_mouse_escalado):
-                if i != self.indice_seleccionado:
-                    self.botones[self.indice_seleccionado].seleccionado = False
-                    self.indice_seleccionado = i
-                    self.botones[self.indice_seleccionado].seleccionado = True
-
         mouse_pressed = pygame.mouse.get_pressed()[0]
-        if mouse_pressed and not self.mouse_pressed_prev:
+        mouse_moved = (self._last_mouse_pos is not None
+                       and pos_mouse_escalado != self._last_mouse_pos)
+        self._last_mouse_pos = pos_mouse_escalado
+
+        if current_mode == "keyboard_mouse" and mouse_moved:
+            for i, boton in enumerate(self.botones):
+                if boton.verificar_hover(pos_mouse_escalado):
+                    if i != self.indice_seleccionado:
+                        self.botones[self.indice_seleccionado].seleccionado = False
+                        self.indice_seleccionado = i
+                        self.botones[self.indice_seleccionado].seleccionado = True
+
+        if current_mode == "keyboard_mouse" and mouse_pressed and not self.mouse_pressed_prev:
             for i, boton in enumerate(self.botones):
                 if boton.verificar_click(pos_mouse_escalado):
                     self.indice_seleccionado = i
@@ -114,8 +121,13 @@ class MenuPrincipal(Estado):
             boton.dibujar(pantalla)
 
         # ---- INFO ----
+        current_mode = self.juego.actions.get("current_mode", "keyboard_mouse")
+        if current_mode == "controller":
+            info_text = "A: Seleccionar  |  B: Salir"
+        else:
+            info_text = "ENTER: Seleccionar  |  ESC: Salir"
         info = self.juego.fonts.small.render(
-            "ENTER: Seleccionar  |  ESC: Salir",
+            info_text,
             False, (150, 150, 180)
         )
         info_rect = info.get_rect(center=(self.juego.ancho // 2, self.juego.alto - 25))

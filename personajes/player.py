@@ -1,3 +1,4 @@
+import math
 from personajes.character import Character
 from personajes.constants import PLAYER_DEATH
 import pygame
@@ -8,7 +9,7 @@ from objetos.mejoras.catalogo import obtener_mejora
 
 class Player(Character):
     SUPER_AZULEJO_DURATION = 20.0
-
+    
     def __init__(self, game):
         self._walk_asset_file = "assets/Blub/PNG/Slime1/Walk/Slime1_Walk_full.png"
         self._idle_asset_file = "assets/Blub/PNG/Slime1/Idle/Slime1_Idle_full.png"
@@ -163,6 +164,47 @@ class Player(Character):
             self.is_hurt = True
             self.hurt_timer = self.hurt_time
 
+    def aim_assist(self, aim_dir, max_angle_deg=20.0):
+        """If aim_dir points within max_angle_deg of a living enemy,
+        snap aim toward the closest such enemy.
+        Returns the (possibly corrected) direction vector."""
+        state = getattr(self.game, "actual_state", None)
+        if state is None:
+            return aim_dir
+        enemies = getattr(state, "enemies", None)
+        if not enemies:
+            return aim_dir
+
+        player_center = pygame.math.Vector2(self.rect.center)
+        best_enemy = None
+        best_dist = float("inf")
+
+        for enemy in enemies:
+            if enemy.__class__.__name__ == "Chest":
+                continue
+            if getattr(enemy, "remaining_life", 0) <= 0:
+                continue
+
+            to_enemy = pygame.math.Vector2(enemy.rect.center) - player_center
+            dist = to_enemy.length()
+            if dist == 0:
+                continue
+
+            # Angle between current aim and direction to enemy
+            dot = aim_dir.dot(to_enemy.normalize())
+            angle = math.degrees(math.acos(max(-1.0, min(1.0, dot))))
+
+            if angle <= max_angle_deg and dist < best_dist:
+                best_dist = dist
+                best_enemy = enemy
+
+        if best_enemy is not None:
+            corrected = pygame.math.Vector2(best_enemy.rect.center) - player_center
+            if corrected.length() > 0:
+                return corrected.normalize()
+
+        return aim_dir
+
     def attack(self, acciones):
         if self.attack_launcher1.is_ready():
             if self._is_super_azulejo_active():
@@ -220,9 +262,6 @@ class Player(Character):
 
         if aim_axis[0] != 0.0 or aim_axis[1] != 0.0:
             self.last_aim_axis = pygame.math.Vector2(aim_axis)
-        elif current_mode == "controller" and (direction_x != 0 or direction_y != 0):
-            # Fallback to movement direction for D-pad users and general stick moving
-            self.last_aim_axis = pygame.math.Vector2(direction_x, direction_y)
         elif current_mode == "keyboard_mouse":
             mouse_pos = acciones.get("mouse_pos")
             if mouse_pos:
@@ -232,6 +271,9 @@ class Player(Character):
 
         if self.last_aim_axis.length() > 0:
             self.last_aim_axis = self.last_aim_axis.normalize()
+
+        # Aim assist: snap toward nearby enemy if aiming close enough
+        self.last_aim_axis = self.aim_assist(self.last_aim_axis)
 
         if direction_x > 0:
             self.facing = "right"

@@ -82,6 +82,8 @@ class Titulo(Estado):
         # Texto "Presiona ENTER" parpadeante
         if not self.fade_in and self.timer > 0.5 and self.mostrar_texto:
             font_sub = self.juego.fonts.medium
-            subtitulo = font_sub.render("Presiona ENTER", False, (200, 200, 220))
+            current_mode = self.juego.actions.get("current_mode", "keyboard_mouse")
+            prompt_text = "Presiona A" if current_mode == "controller" else "Presiona ENTER"
+            subtitulo = font_sub.render(prompt_text, False, (200, 200, 220))
             subtitulo_rect = subtitulo.get_rect(center=(self.juego.ancho // 2, self.juego.alto // 2 + 80))
             pantalla.blit(subtitulo, subtitulo_rect)

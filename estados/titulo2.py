@@ -313,16 +313,19 @@ class Titulo(Estado):
 
         pantalla.blit(titulo_surface, titulo_rect)
 
-        # Texto "Presiona ENTER" parpadeante con efecto de terminal
+        # Texto "Presiona ENTER/A" parpadeante con efecto de terminal
         if not self.fade_in and self.timer > 0.5 and self.mostrar_texto:
             # Efecto de brillo verde pulsante
             brillo_alpha = int(120 + math.sin(self.tiempo_total * 6) * 80)
 
-            subtitulo = self.juego.fonts.medium.render("Presiona ENTER", False, (200, 255, 200))
+            current_mode = self.juego.actions.get("current_mode", "keyboard_mouse")
+            prompt_text = "Presiona A" if current_mode == "controller" else "Presiona ENTER"
+
+            subtitulo = self.juego.fonts.medium.render(prompt_text, False, (200, 255, 200))
             subtitulo_rect = subtitulo.get_rect(center=(self.juego.ancho // 2, self.juego.alto // 2 + 80))
 
             # Sombra verde brillante
-            sombra_sub = self.juego.fonts.medium.render("Presiona ENTER", False, (0, 255, 0))
+            sombra_sub = self.juego.fonts.medium.render(prompt_text, False, (0, 255, 0))
             sombra_sub_surface = pygame.Surface(sombra_sub.get_size(), pygame.SRCALPHA)
             sombra_sub_surface.blit(sombra_sub, (0, 0))
             sombra_sub_surface.set_alpha(brillo_alpha)
