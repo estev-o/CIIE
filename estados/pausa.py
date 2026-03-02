@@ -31,6 +31,7 @@ class Pausa(Estado):
         self.mouse_pressed_prev = pygame.mouse.get_pressed()[0]
         self.pos_mouse_escalado = (0, 0)
         self.hover_mejora_index = None
+        self._last_mouse_pos = None
 
         self.sidebar_rect = pygame.Rect(self.juego.ancho - 250, centro_y - 150, 220, 400)
         self.upgrade_icon_size = 46
@@ -103,7 +104,8 @@ class Pausa(Estado):
             self.juego.reset_keys()
             return
 
-        # Mouse
+        # Mouse (solo en modo teclado/ratón para no interferir con el mando)
+        current_mode = acciones.get("current_mode", "keyboard_mouse")
         pos_mouse = pygame.mouse.get_pos()
         escala_x = self.juego.ancho / self.juego.screen.get_width()
         escala_y = self.juego.alto / self.juego.screen.get_height()
@@ -111,21 +113,25 @@ class Pausa(Estado):
         self.pos_mouse_escalado = pos_mouse_escalado
 
         mouse_pressed = pygame.mouse.get_pressed()[0]
+        mouse_moved = (self._last_mouse_pos is not None
+                       and pos_mouse_escalado != self._last_mouse_pos)
+        self._last_mouse_pos = pos_mouse_escalado
 
-        for i, boton in enumerate(self.botones):
-            if boton.verificar_hover(pos_mouse_escalado):
-                if i != self.indice_seleccionado:
-                    self.botones[self.indice_seleccionado].seleccionado = False
-                    self.indice_seleccionado = i
-                    self.botones[self.indice_seleccionado].seleccionado = True
+        if current_mode == "keyboard_mouse" and mouse_moved:
+            for i, boton in enumerate(self.botones):
+                if boton.verificar_hover(pos_mouse_escalado):
+                    if i != self.indice_seleccionado:
+                        self.botones[self.indice_seleccionado].seleccionado = False
+                        self.indice_seleccionado = i
+                        self.botones[self.indice_seleccionado].seleccionado = True
 
-        self.hover_mejora_index = None
-        for i, item in enumerate(self.upgrade_items):
-            if item["rect"].collidepoint(pos_mouse_escalado):
-                self.hover_mejora_index = i
-                break
+            self.hover_mejora_index = None
+            for i, item in enumerate(self.upgrade_items):
+                if item["rect"].collidepoint(pos_mouse_escalado):
+                    self.hover_mejora_index = i
+                    break
 
-        if mouse_pressed and not self.mouse_pressed_prev:
+        if current_mode == "keyboard_mouse" and mouse_pressed and not self.mouse_pressed_prev:
             for i, boton in enumerate(self.botones):
                 if boton.verificar_click(pos_mouse_escalado):
                     self.indice_seleccionado = i
@@ -188,11 +194,13 @@ class Pausa(Estado):
         for boton in self.botones:
             boton.dibujar(pantalla)
 
-        # Instrucciones
-        info = self.juego.fonts.small.render(
-            "ESC: Continuar | ENTER: Seleccionar",
-            True, (180, 180, 200)
-        )
+        # Instrucciones (cambian según el modo de entrada)
+        current_mode = self.juego.actions.get("current_mode", "keyboard_mouse")
+        if current_mode == "controller":
+            info_text = "B: Atrás | A: Seleccionar"
+        else:
+            info_text = "ESC: Atrás | ENTER: Seleccionar"
+        info = self.juego.fonts.small.render(info_text, True, (180, 180, 200))
         info_rect = info.get_rect(center=(centro_x, self.juego.alto - 40))
         pantalla.blit(info, info_rect)
 

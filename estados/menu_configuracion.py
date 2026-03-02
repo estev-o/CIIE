@@ -184,8 +184,10 @@ class MenuConfiguracion(Estado):
         pygame.draw.circle(pantalla, (255, 200, 100), (60, y), 8)
         pygame.draw.circle(pantalla, (255, 255, 255), (60, y), 8, 2)
 
+        current_mode = self.juego.actions.get("current_mode", "keyboard_mouse")
+        info_text = "B: Volver" if current_mode == "controller" else "ESC: Volver"
         info = self.juego.fonts.small.render(
-            "ESC: Volver",
+            info_text,
             False, (150, 150, 180)
         )
         pantalla.blit(info, info.get_rect(center=(self.juego.ancho // 2, self.juego.alto - 40)))
