@@ -21,6 +21,7 @@ class Muerte(Estado):
 
         self.cooldown_nav = 0
         self.delay_nav = 0.15
+        self.mouse_pressed_prev = pygame.mouse.get_pressed()[0]
 
     def actualizar(self, dt, acciones):
         if self.cooldown_nav > 0:
@@ -36,9 +37,10 @@ class Muerte(Estado):
             elif acciones.get("back"):
                 self.juego.running = False
 
-        if acciones.get("enter") or acciones.get("attack1"):
+        if acciones.get("enter") or acciones.get("interact"):
             self.activar_opcion()
             self.juego.reset_keys()
+            return
 
         pos_mouse_escalado = acciones.get("mouse_pos", (0, 0))
 
@@ -49,12 +51,16 @@ class Muerte(Estado):
                     self.indice_seleccionado = i
                     self.botones[self.indice_seleccionado].seleccionado = True
 
-        if acciones.get("attack1"):
+        mouse_pressed = pygame.mouse.get_pressed()[0]
+        if mouse_pressed and not self.mouse_pressed_prev:
             for i, boton in enumerate(self.botones):
                 if boton.verificar_click(pos_mouse_escalado):
                     self.indice_seleccionado = i
                     self.activar_opcion()
-                    break
+                    self.juego.reset_keys()
+                    return
+        
+        self.mouse_pressed_prev = mouse_pressed
 
         for boton in self.botones:
             boton.actualizar(dt)
