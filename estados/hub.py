@@ -129,9 +129,12 @@ class Hub(Estado):
             self.juego.adn = 100
 
         if acciones.get("toggle_pause"):
-            self.juego.actions["toggle_pause"] = False
-            Pausa(self.juego).entrar_estado()
-            return
+            if self.is_interaction_active():
+                self.juego.actions["toggle_pause"] = False
+            else:
+                self.juego.actions["toggle_pause"] = False
+                Pausa(self.juego).entrar_estado()
+                return
 
         tiles = self.tmx_map.get_tiles()
         player_blockers = tiles + [self.blob] #Metemos colisiones de fondo y las colisiones de Blob

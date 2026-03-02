@@ -8,6 +8,7 @@ hello_blob = {
             {"text": "¿Que mejoras vendes aqui?", "next": "tienda"},
             {"text": "Marcho que teño que marchar", "next": None}
         ],
+        "options_hint": "W/S para cambiar | ENTER para elegir | ESC para salir",
         "f": None
     },
     "sitio": {
@@ -35,7 +36,7 @@ hello_blob = {
             {"text": "Ahora mismo no tengo stock", "next": "init"}
         ],
         "f": None,
-        "options_hint": "Flechas para cambiar | ENTER para elegir",
+        "options_hint": "A/D para cambiar | ENTER para elegir",
         "selected_option_name_in_text": True,
         "show_selected_option_info": True,
         "carousel_options": True
