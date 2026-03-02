@@ -1,10 +1,11 @@
-import math
 import pygame
 
 from personajes.ataques.attack import Attack
 
 
 class LavaBurst(Attack):
+    DURATION_SECONDS = 3.4
+
     def __init__(self, game):
         # Superficie dummy; el render real se dibuja proceduralmente.
         image = pygame.Surface((2, 2), pygame.SRCALPHA)
@@ -12,20 +13,21 @@ class LavaBurst(Attack):
 
         self.center = pygame.math.Vector2(0, 0)
         self.radius = 0.0
-        self.max_radius = 170.0
         self.expansion_speed = 360.0
         self.ring_thickness = 18.0
+        self.elapsed = 0.0
         self._hit_enemy_ids = set()
 
     def init(self, x, y, *_args, **_kwargs):
         self.activate()
         self.center.update(float(x), float(y))
         self.radius = 0.0
+        self.elapsed = 0.0
         self._hit_enemy_ids.clear()
         self._sync_rect()
 
     def _sync_rect(self):
-        r = int(math.ceil(self.radius))
+        r = int(self.radius)
         self.rect = pygame.Rect(int(self.center.x - r), int(self.center.y - r), r * 2, r * 2)
 
     def _circle_intersects_rect(self, radius: float, rect: pygame.Rect) -> bool:
@@ -34,42 +36,6 @@ class LavaBurst(Attack):
         dx = self.center.x - closest_x
         dy = self.center.y - closest_y
         return (dx * dx + dy * dy) <= (radius * radius)
-
-    def _rect_fully_inside_circle(self, radius: float, rect: pygame.Rect) -> bool:
-        if radius <= 0.0:
-            return False
-        corners = (
-            (rect.left, rect.top),
-            (rect.right, rect.top),
-            (rect.left, rect.bottom),
-            (rect.right, rect.bottom),
-        )
-        radius_sq = radius * radius
-        for x, y in corners:
-            dx = x - self.center.x
-            dy = y - self.center.y
-            if (dx * dx + dy * dy) > radius_sq:
-                return False
-        return True
-
-    def _ring_intersects_rect(self, rect: pygame.Rect) -> bool:
-        outer = self.radius
-        inner = max(0.0, self.radius - self.ring_thickness)
-        if not self._circle_intersects_rect(outer, rect):
-            return False
-        # Si el rect entero queda dentro del radio interior, ya fue sobrepasado por la onda.
-        return not self._rect_fully_inside_circle(inner, rect)
-
-    def _collides_with_walls(self, tiles) -> bool:
-        if not tiles:
-            return False
-        for tile in tiles:
-            hitbox = getattr(tile, "hitbox", None)
-            if hitbox is None:
-                continue
-            if self._ring_intersects_rect(hitbox):
-                return True
-        return False
 
     def _damage_enemies(self):
         state = getattr(self.game, "actual_state", None)
@@ -88,7 +54,8 @@ class LavaBurst(Attack):
             if enemy_hitbox is None:
                 continue
 
-            if self._ring_intersects_rect(enemy_hitbox):
+            # Golpea a todo enemigo que entre en el area de la explosion.
+            if self._circle_intersects_rect(self.radius, enemy_hitbox):
                 enemy.apply_damage(self.damage)
                 self._hit_enemy_ids.add(enemy_id)
 
@@ -96,16 +63,13 @@ class LavaBurst(Attack):
         if not self.in_use():
             return
 
-        self.radius += self.expansion_speed * dt
+        self.elapsed += dt
+        self.radius = self.expansion_speed * self.elapsed
         self._sync_rect()
 
         self._damage_enemies()
 
-        if self._collides_with_walls(tiles):
-            self.deactivate()
-            return
-
-        if self.radius >= self.max_radius:
+        if self.elapsed >= self.DURATION_SECONDS:
             self.deactivate()
 
     def render(self, screen):
@@ -118,8 +82,7 @@ class LavaBurst(Attack):
         fx = pygame.Surface((size, size), pygame.SRCALPHA)
         local_center = (size // 2, size // 2)
 
-        # Caída visual conforme se expande.
-        fade = max(0.0, min(1.0, 1.0 - (self.radius / max(self.max_radius, 1.0))))
+        fade = max(0.0, min(1.0, 1.0 - (self.elapsed / self.DURATION_SECONDS)))
         edge_alpha = int(220 * fade + 30)
         fill_alpha = int(70 * fade)
 
