@@ -153,7 +153,11 @@ class Hub(Estado):
         self.player_health_bar.update(dt, self.player.remaining_life, self.player.max_live)
         self.update_interactions(self.player, conditional_actions)
         if self.player.body_hitbox.collidepoint(self._door_center):
-            AreaExperiment(self.juego).entrar_estado()
+            if self.juego.debug:
+                from estados.boss_final import BossFinal
+                BossFinal(self.juego).entrar_estado()
+            else:
+                AreaExperiment(self.juego).entrar_estado()
             return
 
     def dibujar(self, pantalla):
