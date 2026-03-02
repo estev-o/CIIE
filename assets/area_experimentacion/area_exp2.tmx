@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="32" height="17" tilewidth="32" tileheight="32" infinite="0" nextlayerid="15" nextobjectid="68">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="32" height="17" tilewidth="32" tileheight="32" infinite="0" nextlayerid="16" nextobjectid="78">
  <tileset firstgid="1" source="../pixel_cyberpunk_interior_free_1.0.1/pixel-cyberpunk-interior.tsx"/>
  <tileset firstgid="232" source="../tiles_laboratory_LandOfPixels/tilesStuff.tsx"/>
  <layer id="1" name="Tile Layer 1" width="32" height="17">
@@ -128,7 +128,39 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup id="8" name="hitbox_fondo">
+ <objectgroup id="15" name="spawn_enemies">
+  <object id="68" x="878.25" y="439.594">
+   <point/>
+  </object>
+  <object id="69" x="867.003" y="357.111">
+   <point/>
+  </object>
+  <object id="70" x="875.438" y="280.253">
+   <point/>
+  </object>
+  <object id="71" x="853.88" y="155.592">
+   <point/>
+  </object>
+  <object id="72" x="713.286" y="413.349">
+   <point/>
+  </object>
+  <object id="73" x="557.694" y="418.973">
+   <point/>
+  </object>
+  <object id="74" x="355.236" y="423.66">
+   <point/>
+  </object>
+  <object id="75" x="143.407" y="407.725">
+   <point/>
+  </object>
+  <object id="76" x="83.4197" y="418.973">
+   <point/>
+  </object>
+  <object id="77" x="184.648" y="366.485">
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="8" name="hitbox_fondo" visible="0">
   <object id="11" x="255.507" y="7.39409" width="573.055" height="438.318"/>
   <object id="13" x="991.63" y="78.8703" width="26.2901" height="451.861"/>
   <object id="15" gid="85" x="831.75" y="543.75" width="32" height="32"/>
@@ -164,16 +196,16 @@
   <object id="49" x="854" y="319">
    <point/>
   </object>
-  <object id="50" x="853" y="442">
+  <object id="50" x="864.248" y="397.947">
    <point/>
   </object>
-  <object id="51" x="945" y="183">
+  <object id="51" x="931.878" y="181.125">
    <point/>
   </object>
-  <object id="53" x="941" y="312">
+  <object id="53" x="935.376" y="311.063">
    <point/>
   </object>
-  <object id="54" x="938" y="439">
+  <object id="54" x="918.317" y="434.314">
    <point/>
   </object>
  </objectgroup>

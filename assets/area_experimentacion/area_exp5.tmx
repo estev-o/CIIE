@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="32" height="17" tilewidth="32" tileheight="32" infinite="0" nextlayerid="27" nextobjectid="94">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="32" height="17" tilewidth="32" tileheight="32" infinite="0" nextlayerid="28" nextobjectid="106">
  <tileset firstgid="1" source="../pixel_cyberpunk_interior_free_1.0.1/pixel-cyberpunk-interior.tsx"/>
  <tileset firstgid="232" source="../tiles_laboratory_LandOfPixels/tilesStuff.tsx"/>
  <layer id="21" name="suelo" width="32" height="17">
@@ -128,6 +128,44 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
+ <objectgroup id="27" name="spawn_enemies">
+  <object id="94" x="455.528" y="222.14">
+   <point/>
+  </object>
+  <object id="95" x="519.264" y="221.203">
+   <point/>
+  </object>
+  <object id="96" x="517.389" y="199.645">
+   <point/>
+  </object>
+  <object id="97" x="453.653" y="283.065">
+   <point/>
+  </object>
+  <object id="98" x="509.891" y="239.949">
+   <point/>
+  </object>
+  <object id="99" x="503.33" y="303.686">
+   <point/>
+  </object>
+  <object id="100" x="478.96" y="354.299">
+   <point/>
+  </object>
+  <object id="101" x="509.891" y="254.009">
+   <point/>
+  </object>
+  <object id="102" x="463.963" y="107.789">
+   <point/>
+  </object>
+  <object id="103" x="487.396" y="109.664">
+   <point/>
+  </object>
+  <object id="104" x="473.336" y="139.658">
+   <point/>
+  </object>
+  <object id="105" x="494.894" y="151.843">
+   <point/>
+  </object>
+ </objectgroup>
  <objectgroup id="6" name="spawn_point">
   <object id="1" x="342.693" y="469.254">
    <point/>
