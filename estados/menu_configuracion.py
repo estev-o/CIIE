@@ -95,9 +95,11 @@ class MenuConfiguracion(Estado):
         # -------- interacción ratón --------
         if self.indice_nav == 0:
             self.slider_musica.actualizar(pos_mouse_escalado, mouse_pressed)
+            self.juego.sound_engine.set_music_volume(self.slider_musica.valor)
 
         elif self.indice_nav == 1:
             self.slider_efectos.actualizar(pos_mouse_escalado, mouse_pressed)
+            self.juego.sound_engine.set_sfx_volume(self.slider_efectos.valor)
 
         elif self.indice_nav == 2:
             if click_mouse and self.opcion_fullscreen.obtener_rect().collidepoint(pos_mouse_escalado):
@@ -123,9 +125,11 @@ class MenuConfiguracion(Estado):
 
             if self.indice_nav == 0:
                 self.slider_musica.set_valor(self.slider_musica.valor + direccion * 5)
+                self.juego.sound_engine.set_music_volume(self.slider_musica.valor)
 
             elif self.indice_nav == 1:
                 self.slider_efectos.set_valor(self.slider_efectos.valor + direccion * 5)
+                self.juego.sound_engine.set_sfx_volume(self.slider_efectos.valor)
 
         # enter teclado
         if enter and self.indice_nav == 2:

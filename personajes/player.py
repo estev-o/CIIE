@@ -42,6 +42,9 @@ class Player(Character):
         self.invencible_time=1.0
         self.itimer=0
 
+        self.footstep_timer = 0.0
+        self.footstep_interval = 0.6
+
         self.last_aim_axis = pygame.math.Vector2(1, 0)
         self.escudo_activo = False
         self.blub_lava_activo = False
@@ -324,6 +327,13 @@ class Player(Character):
         if self._asset_file is not None:
             moving = bool(direction_x or direction_y)
             self.animate(dt, moving)
+            if moving:
+                self.footstep_timer -= dt
+                if self.footstep_timer <= 0:
+                    self.game.sound_engine.play("movement")
+                    self.footstep_timer = self.footstep_interval
+            else:
+                self.footstep_timer = 0
 
     def render(self, pantalla):
         pantalla.blit(self.image, self.rect)

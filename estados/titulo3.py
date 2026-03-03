@@ -1,7 +1,6 @@
 from estados.estado import Estado
 import pygame
 import random
-import math
 
 
 class Titulo(Estado):
@@ -9,6 +8,8 @@ class Titulo(Estado):
 
     def __init__(self, juego):
         super().__init__(juego)
+
+        juego.sound_engine.play_music_if_changed("menu",2500)
 
         # Fade general
         self.alpha = 0

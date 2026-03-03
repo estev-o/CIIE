@@ -10,6 +10,8 @@ class Muerte(Estado):
 
         font = self.juego.fonts
 
+        juego.sound_engine.play_music_if_changed("dead", 2500)
+
         centro_x = juego.ancho // 2
         self.botones = [
             Boton(centro_x - 150, 200, 300, 60, "Nueva Partida", font.medium),

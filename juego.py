@@ -11,6 +11,7 @@ from objetos.mejoras.manager import MejorasManager
 from personajes.constants import PLAYER_DEATH
 from personajes.player import Player
 from sistemas.acciones import ActionManager
+from sistemas.sound_engine import SoundEngine
 
 DEBUG = True
 SKIP_HUB = False
@@ -18,6 +19,7 @@ INVINCIBLE = False
 
 class Juego():
     def __init__(self):
+        pygame.mixer.pre_init(44100, 16, 2, 512)
         pygame.init()
         self.configuracion=Configuracion()
         self.fonts=Fuentes()
@@ -27,6 +29,8 @@ class Juego():
         
         self.action_manager = ActionManager()
         self.actions = self.action_manager.actions
+
+        self.sound_engine=SoundEngine(self.configuracion)
 
         self.debug = DEBUG
         self.skip_hub = SKIP_HUB

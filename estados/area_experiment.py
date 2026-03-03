@@ -106,11 +106,13 @@ class AreaExperiment(Estado):
         self.enemy_projectiles.update(dt, solid_tiles)
         # Los cofres no cuentan como enemigos vivos para abrir la puerta.
         self.enemies_alive = sum(1 for enemy in self.enemies if enemy.__class__.__name__ != "Chest")
-        
+
         if self.enemies_alive == 0 and not self._door_open:
             self._door_open = True
+            self.juego.sound_engine.play("door")  # sonido puerta
             # Abrir puerta: ocultar el layer de puerta cerrada.
             self.map_layer_order = [name for name in self.map_layer_order if name != "puerta_cerrada"]
+
             
             # Desbloquear cofres
             for enemy in self.enemies:
