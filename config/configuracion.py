@@ -6,8 +6,8 @@ class Configuracion:
     ARCHIVO_CONFIG = "config.json"
 
     CONFIG_DEFAULT = {
-        "volumen_musica": 70,
-        "volumen_efectos": 50,
+        "volumen_musica": 60,
+        "volumen_efectos": 40,
         "pantalla_completa": False,
         "adn": 0,
         "mejoras_persistentes": []
