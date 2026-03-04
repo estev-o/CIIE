@@ -19,7 +19,7 @@ class Hub(Estado):
     def __init__(self, juego):
         Estado.__init__(self,juego)
 
-        juego.sound_engine.play_music_if_changed("main",2500)
+        juego.sound_engine.play_music_if_changed("main",3000)
 
         # guarda el mapa desde Tiled como TMX (layers en CSV) en esta ruta.
         tmx_path = os.path.join("assets", "Fondo_Hub", "hub.tmx")

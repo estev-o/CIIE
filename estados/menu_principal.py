@@ -8,7 +8,7 @@ class MenuPrincipal(Estado):
     def __init__(self, juego):
         Estado.__init__(self, juego)
 
-        juego.sound_engine.play_music_if_changed("menu",2500)
+        juego.sound_engine.play_music_if_changed("menu",3000)
 
         font = self.juego.fonts
 

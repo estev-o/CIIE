@@ -9,7 +9,7 @@ class Titulo(Estado):
     def __init__(self, juego):
         super().__init__(juego)
 
-        juego.sound_engine.play_music_if_changed("menu",2500)
+        juego.sound_engine.play_music_if_changed("menu",3000)
 
         # Fade general
         self.alpha = 0
