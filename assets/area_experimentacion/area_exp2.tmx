@@ -192,44 +192,23 @@
    <point/>
   </object>
  </objectgroup>
- <objectgroup id="11" name="spawn_cofre" visible="0">
-  <object id="47" x="847" y="186">
+ <objectgroup id="11" name="spawn_cofre">
+  <object id="49" x="843.333" y="246.667">
    <point/>
   </object>
-  <object id="49" x="854" y="319">
+  <object id="50" x="847.581" y="304.614">
    <point/>
   </object>
-  <object id="50" x="864.248" y="397.947">
+  <object id="51" x="843.865" y="113.798">
    <point/>
   </object>
-  <object id="51" x="897.198" y="151.131">
+  <object id="53" x="835.759" y="178.898">
    <point/>
   </object>
-  <object id="53" x="899.759" y="303.565">
-   <point/>
-  </object>
-  <object id="54" x="897.696" y="392.136">
-   <point/>
-  </object>
-  <object id="78" x="702.038" y="406.788">
+  <object id="54" x="853.696" y="405.469">
    <point/>
   </object>
   <object id="79" x="753.589" y="410.537">
-   <point/>
-  </object>
-  <object id="80" x="619.555" y="408.663">
-   <point/>
-  </object>
-  <object id="81" x="483.647" y="401.164">
-   <point/>
-  </object>
-  <object id="82" x="413.349" y="402.102">
-   <point/>
-  </object>
-  <object id="83" x="316.807" y="399.29">
-   <point/>
-  </object>
-  <object id="84" x="281.19" y="397.415">
    <point/>
   </object>
  </objectgroup>
