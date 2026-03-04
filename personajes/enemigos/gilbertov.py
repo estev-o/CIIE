@@ -7,6 +7,7 @@ from personajes.enemigos.enemy import Enemy
 
 class Gilbertov(Enemy):
     """Boss final usando la ultima fila del spritesheet de Gilbertov."""
+    DAMAGE_FLASH_DURATION = 0.12
 
     def __init__(self, game, x, y):
         super().__init__(
@@ -32,6 +33,7 @@ class Gilbertov(Enemy):
         )
         self.vulnerable = True
         self.damage_multiplier = 1.0
+        self._damage_flash_timer = 0.0
 
     def load_sprites(self):
         sheet = pygame.image.load(self._asset_file).convert_alpha()
@@ -73,6 +75,9 @@ class Gilbertov(Enemy):
         self._right_sprites = list(frames)
 
     def ai_behavior(self, player, dt, solid_tiles):
+        if self._damage_flash_timer > 0:
+            self._damage_flash_timer = max(0.0, self._damage_flash_timer - dt)
+
         if not hasattr(self, "_anchor_pos"):
             self._anchor_pos = (float(self.pos_x), float(self.pos_y))
 
@@ -108,7 +113,10 @@ class Gilbertov(Enemy):
         scaled_damage = damage_amount * self.damage_multiplier
         if scaled_damage <= 0:
             return
+        prev_life = self.remaining_life
         super().apply_damage(scaled_damage)
+        if self.remaining_life < prev_life:
+            self._damage_flash_timer = self.DAMAGE_FLASH_DURATION
 
     def apply_damage_percentage(self, damage_percentage):
         if not self.vulnerable:
@@ -116,4 +124,19 @@ class Gilbertov(Enemy):
         scaled_percentage = damage_percentage * self.damage_multiplier
         if scaled_percentage <= 0:
             return
+        prev_life = self.remaining_life
         super().apply_damage_percentage(scaled_percentage)
+        if self.remaining_life < prev_life:
+            self._damage_flash_timer = self.DAMAGE_FLASH_DURATION
+
+    def render(self, pantalla):
+        if self._damage_flash_timer <= 0:
+            super().render(pantalla)
+            return
+
+        original = self.image
+        flashed = original.copy()
+        flashed.fill((120, 0, 0, 0), special_flags=pygame.BLEND_RGBA_ADD)
+        self.image = flashed
+        super().render(pantalla)
+        self.image = original
