@@ -18,7 +18,7 @@ class Gilbertov(Enemy):
             height=100,
             scale=1,
             speed=150,
-            damage=20,
+            damage=55,
             vision_range=2000,
             attack_range=150,
             attack_type="melee",
@@ -27,7 +27,7 @@ class Gilbertov(Enemy):
             anim_fps=7,
             hitbox_offset_x=4,
             hitbox_offset_y=6,
-            max_live=600,
+            max_live=3000,
             asset_file="assets/Gilvertov/Gilvertov.png",
             drop_table=[],
         )
@@ -130,6 +130,18 @@ class Gilbertov(Enemy):
             self._damage_flash_timer = self.DAMAGE_FLASH_DURATION
 
     def render(self, pantalla):
+        radius = int(self.attack_range)
+        overlay_size = radius * 2
+        overlay = pygame.Surface((overlay_size, overlay_size), pygame.SRCALPHA)
+        pygame.draw.circle(
+            overlay,
+            (255, 0, 0, 40),
+            (radius, radius),
+            radius,
+        )
+        pantalla.blit(overlay, (self.rect.centerx - radius, self.rect.centery - radius))
+        pygame.draw.circle(pantalla, (255, 0, 0), self.rect.center, radius, 2)
+
         if self._damage_flash_timer <= 0:
             super().render(pantalla)
             return
