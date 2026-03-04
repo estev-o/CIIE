@@ -58,6 +58,7 @@ class Muerte(Estado):
                         self.botones[self.indice_seleccionado].seleccionado = False
                         self.indice_seleccionado = i
                         self.botones[self.indice_seleccionado].seleccionado = True
+                        self.juego.sound_engine.play("menu_select")
 
         mouse_pressed = pygame.mouse.get_pressed()[0]
         if mouse_pressed and not self.mouse_pressed_prev:
@@ -77,10 +78,12 @@ class Muerte(Estado):
         self.botones[self.indice_seleccionado].seleccionado = False
         self.indice_seleccionado = (self.indice_seleccionado + direccion) % len(self.botones)
         self.botones[self.indice_seleccionado].seleccionado = True
+        self.juego.sound_engine.play("menu_select")
 
     def activar_opcion(self):
         if self.indice_seleccionado == 0:
             self.juego.start_new_run("hub")
+            self.juego.sound_engine.play("menu_confirm")
 
         elif self.indice_seleccionado == 1:
             from estados.menu_principal import MenuPrincipal

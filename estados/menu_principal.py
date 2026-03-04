@@ -65,6 +65,8 @@ class MenuPrincipal(Estado):
                         self.botones[self.indice_seleccionado].seleccionado = False
                         self.indice_seleccionado = i
                         self.botones[self.indice_seleccionado].seleccionado = True
+                        self.juego.sound_engine.play("menu_select")
+
 
         if current_mode == "keyboard_mouse" and mouse_pressed and not self.mouse_pressed_prev:
             for i, boton in enumerate(self.botones):
@@ -83,8 +85,10 @@ class MenuPrincipal(Estado):
         self.botones[self.indice_seleccionado].seleccionado = False
         self.indice_seleccionado = (self.indice_seleccionado + direccion) % len(self.botones)
         self.botones[self.indice_seleccionado].seleccionado = True
+        self.juego.sound_engine.play("menu_select")
 
     def activar_opcion(self):
+        self.juego.sound_engine.play("menu_confirm")
         if self.indice_seleccionado == 0:
             self.juego.start_new_run("hub")
 

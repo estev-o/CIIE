@@ -18,6 +18,11 @@ class SoundEngine:
         self.sfx = {
             "movement": pygame.mixer.Sound("assets/sounds/movement.mp3"),
             "door": pygame.mixer.Sound("assets/sounds/door.mp3"),
+            "menu_select": pygame.mixer.Sound("assets/sounds/menu_select.mp3"),
+            "menu_confirm":pygame.mixer.Sound("assets/sounds/menu_accept.mp3"),
+            "dead": pygame.mixer.Sound("assets/sounds/deadsfx.mp3"),
+            "attack":pygame.mixer.Sound("assets/sounds/attack.wav"),
+           # "attack":pygame.mixer.Sound("assets/sounds/attack2.wav"), elegir uno u otro
         }
 
         for sound in self.sfx.values():

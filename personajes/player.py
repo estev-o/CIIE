@@ -61,6 +61,8 @@ class Player(Character):
             self.is_dying = True
             self._current_frame = 0
             self._anim_timer = 0.0
+            self.game.sound_engine.play("dead")
+
 
             num_frames = len(self._death_down_sprites)
             self.death_timer = num_frames / self.anim_fps

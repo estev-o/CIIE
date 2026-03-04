@@ -43,6 +43,9 @@ class Enemy(Character):
         self.attack_cooldown = attack_cooldown
         self.attack_speed = attack_speed
 
+        self._footstep_timer = 0.0
+        self._footstep_interval = 0.4
+
         if attack_type=="melee":
             self.attack_behavior = MeleeAttack(self)
 
@@ -120,6 +123,13 @@ class Enemy(Character):
         if self._asset_file is not None:
             moving = bool(self.idle_dir_x or self.idle_dir_y)
             self.animate(dt, moving)
+            if moving:
+                self._footstep_timer -= dt
+                if self._footstep_timer <= 0:
+                    self.game.sound_engine.play("movement")
+                    self._footstep_timer = self._footstep_interval
+            else:
+                self._footstep_timer = self._footstep_interval
 
     def alerted_behavior(self, player, dt, solid_tiles):
         """Comportamiento una vez detectado el jugador"""
@@ -175,6 +185,10 @@ class Enemy(Character):
 
             if self._asset_file is not None:
                 self.animate(dt, moving=True)
+                self._footstep_timer -= dt
+                if self._footstep_timer <= 0:
+                    self.game.sound_engine.play("movement")
+                    self._footstep_timer = self._footstep_interval
         else:
             if self._asset_file is not None:
                 self.animate(dt, moving=False)
@@ -215,6 +229,7 @@ class Enemy(Character):
                 self.idle_behavior(dt, solid_tiles)
 
     def die(self):
+        self.game.sound_engine.play("dead")
         self.drop()
         # Quitar sprite de los grupos
         self.kill()

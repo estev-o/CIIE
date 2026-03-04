@@ -19,6 +19,7 @@ class Azulejo(Attack):
         self.angle = 0
         self.original_image = self.image
 
+
     def init(self, x, y, direction):
         self.activate()
         self.direction_x = direction.x
@@ -26,6 +27,7 @@ class Azulejo(Attack):
         self.angle = 0
     
         self.rect.center = (x, y)
+        self.game.sound_engine.play("attack")
 
     def update(self, dt, tiles=None):
         screen_x, screen_y = self.game.screen.get_size()

@@ -86,7 +86,10 @@ class MenuConfiguracion(Estado):
         # hover → foco
         hover = self.detectar_hover(pos_mouse_escalado)
         if self.mouse_moviendose and hover is not None:
+            if hover != self.indice_nav:
+                self.juego.sound_engine.play("menu_select")
             self.indice_nav = hover
+
 
         # si el ratón se mueve, el teclado no manda
         if self.mouse_moviendose:
@@ -103,6 +106,7 @@ class MenuConfiguracion(Estado):
 
         elif self.indice_nav == 2:
             if click_mouse and self.opcion_fullscreen.obtener_rect().collidepoint(pos_mouse_escalado):
+                self.juego.sound_engine.play("menu_confirm")
                 self.opcion_fullscreen.cambiar()
                 self.aplicar_fullscreen()
 
@@ -114,10 +118,12 @@ class MenuConfiguracion(Estado):
             if up:
                 self.indice_nav = (self.indice_nav - 1) % self.elementos_navegables
                 self.cooldown_nav = self.delay_nav
+                self.juego.sound_engine.play("menu_select")
 
             elif down:
                 self.indice_nav = (self.indice_nav + 1) % self.elementos_navegables
                 self.cooldown_nav = self.delay_nav
+                self.juego.sound_engine.play("menu_select")
 
         # sliders teclado
         if left or right:
