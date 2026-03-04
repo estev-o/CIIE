@@ -44,7 +44,7 @@ class Enemy(Character):
         self.attack_speed = attack_speed
 
         self._footstep_timer = 0.0
-        self._footstep_interval = 0.4
+        self._footstep_interval = 0.6
 
         if attack_type=="melee":
             self.attack_behavior = MeleeAttack(self)

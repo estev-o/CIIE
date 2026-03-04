@@ -168,6 +168,7 @@ class Player(Character):
             self.itimer = self.invencible_time
             self.is_hurt = True
             self.hurt_timer = self.hurt_time
+            self.game.sound_engine.play("damage")
 
     def apply_damage_percentage(self, damage_percentage):
         if damage_percentage > 0 and self._try_block_with_shield():
