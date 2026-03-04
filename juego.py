@@ -192,7 +192,7 @@ class Juego():
             self.state_stack.append(Titulo(self))
 
     #fading
-    def fade_to(self, callback, duration=0.65):
+    def fade_to(self, callback, duration=0.5):
         self._fade_alpha = 0
         self._fade_duration = duration
         self._fade_callback = callback

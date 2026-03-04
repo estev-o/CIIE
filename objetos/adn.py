@@ -16,4 +16,5 @@ class ADN(pygame.sprite.Sprite):
             return
         if self.rect.colliderect(player.body_hitbox):
             player.game.add_adn(self.amount)
+            player.game.sound_engine.play("collect")
             self.kill()

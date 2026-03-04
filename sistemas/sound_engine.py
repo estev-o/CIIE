@@ -21,6 +21,7 @@ class SoundEngine:
             "dead":         "enemy_death",
             "movement":     "movement",
             "door":         "world",
+            "collect":      "world",
         }
 
         self.music = {
@@ -36,6 +37,7 @@ class SoundEngine:
             "menu_confirm":pygame.mixer.Sound("assets/sounds/menu_accept.mp3"),
             "dead":        pygame.mixer.Sound("assets/sounds/deadsfx.wav"),
             "attack":      pygame.mixer.Sound("assets/sounds/attack.wav"),
+            "collect":     pygame.mixer.Sound("assets/sounds/collect.mp3"),
         }
 
         for sound in self.sfx.values():
