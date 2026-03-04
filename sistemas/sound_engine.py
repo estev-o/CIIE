@@ -13,16 +13,13 @@ class SoundEngine:
             "attack":      pygame.mixer.Channel(0),
             "enemy_death": pygame.mixer.Channel(1),
             "movement":    pygame.mixer.Channel(2),
-            "ui":          pygame.mixer.Channel(3),
-            "world":       pygame.mixer.Channel(4),
+            "world":       pygame.mixer.Channel(3),
         }
 
         self.sfx_channel = {
             "attack":       "attack",
             "dead":         "enemy_death",
             "movement":     "movement",
-            "menu_select":  "ui",
-            "menu_confirm": "ui",
             "door":         "world",
         }
 
