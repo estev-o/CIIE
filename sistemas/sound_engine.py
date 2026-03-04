@@ -9,27 +9,50 @@ class SoundEngine:
         self.sfx_volume = (self.config.get("volumen_efectos", 50) / 100) ** 2
         self.current_music = None
 
+        self.channels = {
+            "attack":      pygame.mixer.Channel(0),
+            "enemy_death": pygame.mixer.Channel(1),
+            "movement":    pygame.mixer.Channel(2),
+            "ui":          pygame.mixer.Channel(3),
+            "world":       pygame.mixer.Channel(4),
+        }
+
+        self.sfx_channel = {
+            "attack":       "attack",
+            "dead":         "enemy_death",
+            "movement":     "movement",
+            "menu_select":  "ui",
+            "menu_confirm": "ui",
+            "door":         "world",
+        }
+
         self.music = {
-            "menu":   "assets/sounds/Menu theme.mp3",
+            "menu": "assets/sounds/Menu theme.mp3",
             "main": "assets/sounds/Main theme.mp3",
-            "dead": "assets/sounds/dead.mp3",
+            "dead": "assets/sounds/Dead theme.mp3",
         }
 
         self.sfx = {
-            "movement": pygame.mixer.Sound("assets/sounds/movement.mp3"),
-            "door": pygame.mixer.Sound("assets/sounds/door.mp3"),
+            "movement":    pygame.mixer.Sound("assets/sounds/movement.mp3"),
+            "door":        pygame.mixer.Sound("assets/sounds/door.mp3"),
             "menu_select": pygame.mixer.Sound("assets/sounds/menu_select.mp3"),
             "menu_confirm":pygame.mixer.Sound("assets/sounds/menu_accept.mp3"),
-            "dead": pygame.mixer.Sound("assets/sounds/deadsfx.mp3"),
-            "attack":pygame.mixer.Sound("assets/sounds/attack.wav"),
-           # "attack":pygame.mixer.Sound("assets/sounds/attack2.wav"), elegir uno u otro
+            "dead":        pygame.mixer.Sound("assets/sounds/deadsfx.wav"),
+            "attack":      pygame.mixer.Sound("assets/sounds/attack.wav"),
         }
 
         for sound in self.sfx.values():
             sound.set_volume(self.sfx_volume)
 
     def play(self, name):
-        if name in self.sfx:
+        if name not in self.sfx:
+            return
+        channel_name = self.sfx_channel.get(name)
+        if channel_name:
+            channel = self.channels[channel_name]
+            if not channel.get_busy():
+                channel.play(self.sfx[name])
+        else:
             self.sfx[name].play()
 
     def play_music(self, name, fade_ms=500):
@@ -39,11 +62,11 @@ class SoundEngine:
             pygame.mixer.music.set_volume(self.music_volume)
             pygame.mixer.music.play(-1, fade_ms=fade_ms)
 
-    def play_music_if_changed(self, name,fade_ms=500):
+    def play_music_if_changed(self, name, fade_ms=500):
         if name == self.current_music:
             return
         self.current_music = name
-        self.play_music(name,fade_ms)
+        self.play_music(name, fade_ms)
 
     def set_sfx_volume(self, v):
         self.sfx_volume = (v / 100) ** 2
