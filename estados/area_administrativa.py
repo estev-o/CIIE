@@ -8,33 +8,27 @@ from ui.health_bar import HealthBarManager
 from ui.player_health_bar import PlayerHealthBar
 from ui.adn_counter import ADNCounter
 from personajes.enemigos.chest import Chest
-from estados.area_administrativa import AreaAdministrativa
 
-NIVEL_FORZADO = "area_exp3.tmx"  # Para pruebas, fuerza a entrar a esta área de experimentación específica
+NIVEL_FORZADO = "area_exp1.tmx"  # Para pruebas, fuerza a entrar a esta área de experimentación específica
 
 
-class AreaExperiment(Estado):
-    niveles = ["area_exp1.tmx", "area_exp2.tmx","area_exp3.tmx", "area_exp4.tmx", "area_exp5.tmx", "area_exp6.tmx"]
+class AreaAdministrativa(Estado):
+    niveles = ["area_exp1.tmx", "area_exp3.tmx","area_exp3.tmx", "area_exp4.tmx", "area_exp5.tmx", "area_exp6.tmx"]
     distintas_areas = niveles.copy()
     areas_visitadas = []
     areas_to_continue = 3
 
-    def __init__(self, juego, reset= False):
+    def __init__(self, juego):
         Estado.__init__(self,juego)
-
-        if reset:
-            AreaExperiment.distintas_areas = AreaExperiment.niveles.copy()
-            AreaExperiment.areas_visitadas.clear()
-
-        if len(AreaExperiment.distintas_areas) == 0:
-            AreaExperiment.distintas_areas, AreaExperiment.areas_visitadas = AreaExperiment.areas_visitadas, AreaExperiment.distintas_areas
+        if len(AreaAdministrativa.distintas_areas) == 0:
+            AreaAdministrativa.distintas_areas, AreaAdministrativa.areas_visitadas = AreaAdministrativa.areas_visitadas, AreaAdministrativa.distintas_areas
 
         # Elige aleatoriamente entre los mapas de experimentación
-        tmx_elegido = random.choice(AreaExperiment.distintas_areas)
+        tmx_elegido = random.choice(AreaAdministrativa.distintas_areas)
 
         # Eliminar el nivel elegido de las areas para no tenerlo en cuenta para el siguiente nivel
-        AreaExperiment.distintas_areas.remove(tmx_elegido)
-        AreaExperiment.areas_visitadas.append(tmx_elegido)
+        AreaAdministrativa.distintas_areas.remove(tmx_elegido)
+        AreaAdministrativa.areas_visitadas.append(tmx_elegido)
 
         tmx_path = os.path.join("assets", "area_experimentacion", tmx_elegido)
 
@@ -45,7 +39,7 @@ class AreaExperiment(Estado):
         self.tmx_map = TiledTMX(tmx_path)
         self.map_layer_order = list(self.tmx_map.layer_names)
         self._door_open = False
-        self.iniciar_texto_nivel(f"AREA EXPERIMANTACION ({len(AreaExperiment.areas_visitadas)}/{self.areas_to_continue})", 2000)
+        self.iniciar_texto_nivel(f"AREA ADMINISTRATIVA ({len(AreaAdministrativa.areas_visitadas)}/{self.areas_to_continue})", 2000)
 
         self.player = self.juego.player
 
@@ -57,17 +51,15 @@ class AreaExperiment(Estado):
 
 
         enemy_names = ["mock_explosive", "mock_ranger", "mock_melee"]
-        enemy_probabilities = [10, 50, 40]
-        
         # Enemies
-        spawns = list(self.tmx_map.get_objects(layer="spawn_enemies"))
-        select_number = int((len(AreaExperiment.areas_visitadas) / AreaExperiment.areas_to_continue) * len(spawns))
-        
-        positions = random.sample(spawns, select_number)
-        enemy_types = random.choices(enemy_names, weights=enemy_probabilities, k=select_number)
-        for i in range(select_number):
-            enemy = juego.enemy_factory.create_enemy(enemy_types[i], positions[i].x, positions[i].y)
+        for enemy_pos in list(self.tmx_map.get_objects(layer="spawn_enemies")):
+            enemy = juego.enemy_factory.create_enemy(random.choice(enemy_names), enemy_pos.x, enemy_pos.y)
             self.append_enemy(enemy)
+
+        # self.enemy = juego.enemy_factory.create_enemy("mock_explosive", 500, 350)
+        # self.append_enemy(self.enemy)
+        # self.enemy = juego.enemy_factory.create_enemy("mock_ranger", 250, 350)
+        # self.append_enemy(self.enemy)
 
         # contamos los enemigos de el área
         self.total_enemies = len(self.enemies)
@@ -132,11 +124,9 @@ class AreaExperiment(Estado):
 
         if self.enemies_alive == 0:
             if self.player.body_hitbox.collidepoint(self._door_center):
-                
-                if len(AreaExperiment.areas_visitadas) == AreaExperiment.areas_to_continue:
-                    AreaAdministrativa(self.juego).entrar_estado()
-                else:
-                    AreaExperiment(self.juego).entrar_estado()
+                if len(AreaAdministrativa.areas_visitadas) == AreaAdministrativa.areas_to_continue:
+                    print("llegaste al final... por ahora")
+                    exit()
 
         # Interacción con cofres
         if acciones.get("interact"):

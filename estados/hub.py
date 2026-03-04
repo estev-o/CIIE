@@ -156,7 +156,7 @@ class Hub(Estado):
         self.player_health_bar.update(dt, self.player.remaining_life, self.player.max_live)
         self.update_interactions(self.player, conditional_actions)
         if self.player.body_hitbox.collidepoint(self._door_center):
-            AreaExperiment(self.juego).entrar_estado()
+            AreaExperiment(self.juego, reset=True).entrar_estado()
             return
 
     def dibujar(self, pantalla):

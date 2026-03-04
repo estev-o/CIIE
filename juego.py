@@ -13,7 +13,7 @@ from personajes.player import Player
 from sistemas.acciones import ActionManager
 from sistemas.sound_engine import SoundEngine
 
-DEBUG = True
+DEBUG = False
 SKIP_HUB = False
 INVINCIBLE = False
 

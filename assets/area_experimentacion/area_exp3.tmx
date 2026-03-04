@@ -2,6 +2,8 @@
 <map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="32" height="17" tilewidth="32" tileheight="32" infinite="0" nextlayerid="14" nextobjectid="69">
  <tileset firstgid="1" source="../pixel_cyberpunk_interior_free_1.0.1/pixel-cyberpunk-interior.tsx"/>
  <tileset firstgid="232" source="../tiles_laboratory_LandOfPixels/tilesStuff.tsx"/>
+ <tileset firstgid="824" source="../referencias/referencias_1.tsx"/>
+ <tileset firstgid="1055" source="../Fondo_Hub/pixel-cyberpunk-modified_1.tsx"/>
  <layer id="3" name="suelo" width="32" height="17">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -26,8 +28,8 @@
  <layer id="1" name="bordes_y_pared" width="32" height="17">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,86,87,87,87,87,87,87,87,87,87,87,87,88,89,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,106,107,3,3,3,3,3,4,5,5,5,5,5,109,110,89,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,106,107,3,24,24,24,24,24,24,25,26,26,26,26,5,109,110,89,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,106,107,826,3,3,3,3,4,5,5,5,5,5,109,110,89,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,106,107,3,847,24,24,24,24,24,25,26,26,26,26,5,109,110,89,0,0,0,0,0,0,0,0,
 0,0,0,0,0,106,107,3,24,0,0,0,0,0,0,0,0,0,0,0,26,5,109,110,89,0,0,0,0,0,0,0,
 0,0,0,0,106,107,3,24,0,0,0,0,0,0,0,0,0,0,0,0,0,26,5,109,110,89,0,0,0,0,0,0,
 0,0,0,106,107,3,24,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,26,5,109,110,89,0,0,0,0,0,
@@ -68,7 +70,7 @@
  <layer id="11" name="decoracion" width="32" height="17">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,812,154,155,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,1137,0,812,154,155,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,554,0,0,6,6,0,0,0,0,175,176,0,554,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,554,591,0,0,0,0,0,0,0,0,0,0,0,591,554,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,554,591,628,0,0,0,0,0,0,0,0,0,0,0,628,591,554,0,0,0,0,0,0,0,0,0,
@@ -150,64 +152,55 @@
 </data>
  </layer>
  <objectgroup id="13" name="spawn_enemies">
-  <object id="52" x="301.81" y="276.504">
-   <point/>
-  </object>
-  <object id="53" x="352.425" y="317.745">
-   <point/>
-  </object>
-  <object id="54" x="440.531" y="290.563">
+  <object id="53" x="291.925" y="291.245">
    <point/>
   </object>
   <object id="55" x="476.148" y="293.375">
    <point/>
   </object>
-  <object id="56" x="567.067" y="300.874">
+  <object id="56" x="542.4" y="288.207">
    <point/>
   </object>
-  <object id="57" x="630.803" y="284.002">
+  <object id="57" x="561.803" y="246.002">
    <point/>
   </object>
-  <object id="58" x="513.64" y="282.127">
+  <object id="58" x="455.14" y="223.627">
    <point/>
   </object>
-  <object id="59" x="387.105" y="257.757">
+  <object id="59" x="382.105" y="239.257">
    <point/>
   </object>
-  <object id="60" x="473.336" y="50.6142">
+  <object id="60" x="424.565" y="115.073">
    <point/>
   </object>
   <object id="61" x="396.478" y="134.971">
    <point/>
   </object>
-  <object id="62" x="323.368" y="128.41">
+  <object id="63" x="422.806" y="336.1">
    <point/>
   </object>
-  <object id="63" x="324.306" y="212.767">
+  <object id="64" x="366.235" y="173.46">
    <point/>
   </object>
-  <object id="64" x="362.735" y="187.46">
+  <object id="65" x="317.738" y="214.011">
    <point/>
   </object>
-  <object id="65" x="347.738" y="239.011">
+  <object id="66" x="458.785" y="338.862">
    <point/>
   </object>
-  <object id="66" x="327.118" y="258.695">
+  <object id="67" x="204.621" y="235.746">
    <point/>
   </object>
-  <object id="67" x="312.121" y="310.246">
-   <point/>
-  </object>
-  <object id="68" x="363.672" y="244.635">
+  <object id="68" x="349.839" y="337.302">
    <point/>
   </object>
  </objectgroup>
  <objectgroup id="6" name="spawn_point">
-  <object id="1" x="599.026" y="122.588">
+  <object id="1" x="564.526" y="117.588">
    <point/>
   </object>
  </objectgroup>
- <objectgroup id="7" name="hitbox_fondo">
+ <objectgroup id="7" name="hitbox_fondo" visible="0">
   <object id="2" x="394.917" y="16.75" width="284.083" height="79.5"/>
   <object id="3" x="640" y="46" width="54" height="117"/>
   <object id="4" x="672.25" y="71" width="59.5" height="123.5"/>
@@ -240,35 +233,35 @@
    <point/>
   </object>
  </objectgroup>
- <objectgroup id="10" name="spawn_cofre" visible="0">
-  <object id="35" x="589.333" y="160.667">
+ <objectgroup id="10" name="spawn_cofre">
+  <object id="35" x="491.666" y="123.167">
    <point/>
   </object>
-  <object id="36" x="671.333" y="226">
+  <object id="36" x="543" y="198.167">
    <point/>
   </object>
-  <object id="37" x="720" y="288.667">
+  <object id="37" x="534" y="226.167">
    <point/>
   </object>
-  <object id="38" x="652" y="367.333">
+  <object id="38" x="539.333" y="310.5">
    <point/>
   </object>
-  <object id="39" x="590.667" y="414.667">
+  <object id="39" x="503.334" y="331.834">
    <point/>
   </object>
-  <object id="40" x="312.667" y="412.667">
+  <object id="40" x="270.667" y="325.834">
    <point/>
   </object>
-  <object id="41" x="258" y="366">
+  <object id="41" x="218.5" y="319">
    <point/>
   </object>
-  <object id="42" x="192" y="309.333">
+  <object id="42" x="164" y="268.833">
    <point/>
   </object>
-  <object id="43" x="249.333" y="242">
+  <object id="43" x="260.333" y="203">
    <point/>
   </object>
-  <object id="44" x="314" y="181.333">
+  <object id="44" x="311.833" y="138.833">
    <point/>
   </object>
  </objectgroup>
