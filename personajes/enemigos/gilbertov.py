@@ -1,3 +1,5 @@
+import math
+
 import pygame
 
 from personajes.enemigos.enemy import Enemy
@@ -22,12 +24,14 @@ class Gilbertov(Enemy):
             attack_cooldown=0.8,
             attack_speed=250,
             anim_fps=7,
-            hitbox_offset_x=20,
-            hitbox_offset_y=10,
+            hitbox_offset_x=4,
+            hitbox_offset_y=6,
             max_live=600,
             asset_file="assets/Gilvertov/Gilvertov.png",
             drop_table=[],
         )
+        self.vulnerable = True
+        self.damage_multiplier = 1.0
 
     def load_sprites(self):
         sheet = pygame.image.load(self._asset_file).convert_alpha()
@@ -67,3 +71,49 @@ class Gilbertov(Enemy):
         self._up_sprites = list(frames)
         self._left_sprites = list(frames)
         self._right_sprites = list(frames)
+
+    def ai_behavior(self, player, dt, solid_tiles):
+        if not hasattr(self, "_anchor_pos"):
+            self._anchor_pos = (float(self.pos_x), float(self.pos_y))
+
+        self.pos_x, self.pos_y = self._anchor_pos
+        self.rect.topleft = (int(self.pos_x), int(self.pos_y))
+
+        dx = player.rect.centerx - self.rect.centerx
+        dy = player.rect.centery - self.rect.centery
+        dist = math.hypot(dx, dy)
+
+        # Sprite siempre orientado hacia abajo.
+        self.facing = "down"
+
+        # Ataque estatico: sin desplazarse, pero hace dano por cercania.
+        if self.cooldown_timer > 0:
+            self.cooldown_timer = max(0, self.cooldown_timer - dt)
+        elif dist <= self.attack_range or self.hitbox.colliderect(player.hitbox):
+            player.apply_damage(self.damage)
+            self.cooldown_timer = self.attack_cooldown
+
+        # Mantener animacion activa aunque no se desplace.
+        self.animate(dt, moving=True)
+
+    def set_vulnerable(self, vulnerable: bool):
+        self.vulnerable = bool(vulnerable)
+
+    def set_damage_multiplier(self, multiplier: float):
+        self.damage_multiplier = max(0.0, float(multiplier))
+
+    def apply_damage(self, damage_amount):
+        if not self.vulnerable:
+            return
+        scaled_damage = damage_amount * self.damage_multiplier
+        if scaled_damage <= 0:
+            return
+        super().apply_damage(scaled_damage)
+
+    def apply_damage_percentage(self, damage_percentage):
+        if not self.vulnerable:
+            return
+        scaled_percentage = damage_percentage * self.damage_multiplier
+        if scaled_percentage <= 0:
+            return
+        super().apply_damage_percentage(scaled_percentage)
