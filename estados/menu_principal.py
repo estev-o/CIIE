@@ -2,6 +2,8 @@ from estados.estado import Estado
 from estados.componentes import Boton
 import pygame
 
+from estados.hub import Hub
+
 
 class MenuPrincipal(Estado):
 
@@ -90,16 +92,12 @@ class MenuPrincipal(Estado):
     def activar_opcion(self):
         self.juego.sound_engine.play("menu_confirm")
         if self.indice_seleccionado == 0:
-            self.juego.start_new_run("hub")
-
+            self.juego.fade_to(lambda: self.juego.start_new_run("hub"))
         elif self.indice_seleccionado == 1:
-            from estados.hub import Hub
-            Hub(self.juego).entrar_estado()
-
+            self.juego.fade_to(lambda: Hub(self.juego).entrar_estado())
         elif self.indice_seleccionado == 2:
             from estados.menu_configuracion import MenuConfiguracion
             MenuConfiguracion(self.juego).entrar_estado()
-
         elif self.indice_seleccionado == 3:
             self.juego.running = False
 

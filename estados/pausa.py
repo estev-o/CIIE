@@ -153,19 +153,21 @@ class Pausa(Estado):
 
     def activar_opcion(self):
         if self.indice_seleccionado == 0:
-            self.juego.sound_engine.play("menu_confirm")# Continuar
+            self.juego.sound_engine.play("menu_confirm")
             self.salir_estado()
 
-        elif self.indice_seleccionado == 1:  # Configuración
+        elif self.indice_seleccionado == 1:
             from estados.menu_configuracion import MenuConfiguracion
             MenuConfiguracion(self.juego).entrar_estado()
 
-        elif self.indice_seleccionado == 2:  # Menú Principal
-            while len(self.juego.state_stack) > 1:
-                self.juego.state_stack.pop()
+        elif self.indice_seleccionado == 2:
+            def _ir_a_menu():
+                while len(self.juego.state_stack) > 1:
+                    self.juego.state_stack.pop()
+                from estados.menu_principal import MenuPrincipal
+                MenuPrincipal(self.juego).entrar_estado()
 
-            from estados.menu_principal import MenuPrincipal
-            MenuPrincipal(self.juego).entrar_estado()
+            self.juego.fade_to(_ir_a_menu)
 
     def dibujar(self, pantalla):
         # Dibujar estado anterior (el juego)

@@ -54,6 +54,13 @@ class Juego():
         self.enemy_factory= EnemyFactory(self, "personajes/enemigos/enemy_list.json")
         self.object_factory = ObjectFactory("objetos/object_list.json")
         self.state_stack = []
+
+        #fading entre estados
+        self._fading = False
+        self._fade_alpha = 0
+        self._fade_duration = 0.5
+        self._fade_callback = None
+
         self.load_assets()
         self.load_states()
 
@@ -114,16 +121,26 @@ class Juego():
         self.state_stack[-1].actualizar(self.dt, self.actions)
 
     def render(self):
-        # Render current state to the canvas, then scale to the screen (como el ejemplo)
         self.state_stack[-1].dibujar(self.game_canvas)
+
+        if self._fading:
+            self._fade_alpha += (255 / self._fade_duration) * self.dt
+            if self._fade_alpha >= 255:
+                self._fading = False
+                self._fade_alpha = 0
+                self._fade_callback()
+            else:
+                overlay = pygame.Surface((self.ancho, self.alto))
+                overlay.set_alpha(int(self._fade_alpha))
+                overlay.fill((0, 0, 0))
+                self.game_canvas.blit(overlay, (0, 0))
+
         self.screen.blit(
             pygame.transform.scale(self.game_canvas, self.screen.get_size()),
             (0, 0),
         )
-        
         if self.debug:
             self.draw_text(self.screen, f"Mode: {self.action_manager.current_mode}", (255, 0, 0), 120, 20)
-            
         pygame.display.flip()
 
     def get_dt(self):
@@ -173,6 +190,13 @@ class Juego():
             self.state_stack.append(Hub(self))
         else:
             self.state_stack.append(Titulo(self))
+
+    #fading
+    def fade_to(self, callback, duration=0.65):
+        self._fade_alpha = 0
+        self._fade_duration = duration
+        self._fade_callback = callback
+        self._fading = True
 
     @property
     def actual_state(self):
