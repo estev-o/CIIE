@@ -3,9 +3,9 @@ import pygame
 class HealthBar:
     def __init__(self, entity, width=30, height=4, offset_y=10):
         self.entity = entity
-        self.width = width
-        self.height = height
-        self.offset_y = offset_y
+        self.width = int(getattr(entity, "health_bar_width", width))
+        self.height = int(getattr(entity, "health_bar_height", height))
+        self.offset_y = int(getattr(entity, "health_bar_offset_y", offset_y))
         self.border_color = (0, 0, 0)
         self.bg_color = (60, 60, 60)
 
