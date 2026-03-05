@@ -70,6 +70,7 @@ class Chest(Enemy):
             self._open_timer -= frame_time
             self._open_frame += 1
             self.image = self._open_frames[self._open_frame]
+            self.game.sound_engine.play("chest")
         if self._open_frame >= len(self._open_frames) - 1:
             self.opening = False
             self.opened = True

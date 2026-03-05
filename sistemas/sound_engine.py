@@ -38,6 +38,8 @@ class SoundEngine:
             "attack":      pygame.mixer.Sound("assets/sounds/attack.wav"),
             "collect":     pygame.mixer.Sound("assets/sounds/collect.mp3"),
             "damage":      pygame.mixer.Sound("assets/sounds/damage.wav"),
+            "chest":       pygame.mixer.Sound("assets/sounds/chest.wav"),
+            "heal":       pygame.mixer.Sound("assets/sounds/heal.wav")
         }
 
         for sound in self.sfx.values():

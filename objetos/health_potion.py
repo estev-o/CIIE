@@ -16,4 +16,5 @@ class HealthPotion(pygame.sprite.Sprite):
             return
         if self.rect.colliderect(player.body_hitbox):
             player.heal(self.heal_amount)
+            player.game.sound_engine.play("heal")
             self.kill()
