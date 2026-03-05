@@ -45,6 +45,7 @@ class BossFinal(Estado):
 
         self._cycle_elapsed = 0.0
         self._spawn_accumulator = 0.0
+        self._victory_screen_opened = False
         self._update_door_state(force=True)
         self._set_boss_vulnerable(True)
         self._set_boss_damage_multiplier(self.SUMMON_DAMAGE_MULTIPLIER)
@@ -167,6 +168,15 @@ class BossFinal(Estado):
             player_tiles.extend(self.tmx_map.get_tiles("hitbox_puerta_cerrada"))
         blockers = player_tiles + list(self.enemies)
         self.player.update(dt, acciones, blockers)
+
+        if (
+            not self._victory_screen_opened
+            and (not self.boss.alive() or self.boss.remaining_life <= 0)
+        ):
+            self._victory_screen_opened = True
+            from estados.final_screen import FinalScreen
+            FinalScreen(self.juego).entrar_estado()
+            return
 
         for enemy in self.enemies:
             enemy.ai_behavior(self.player, dt, enemy_tiles)
