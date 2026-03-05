@@ -21,7 +21,6 @@ class Juego():
     def __init__(self):
         pygame.mixer.pre_init(44100, 16, 2, 512)
         pygame.init()
-        pygame.mouse.set_visible(False)
         self.configuracion=Configuracion()
         self.fonts=Fuentes()
         self.ancho, self.alto = 1024, 544
@@ -123,8 +122,6 @@ class Juego():
 
     def render(self):
         self.state_stack[-1].dibujar(self.game_canvas)
-        if self.state_stack[-1].cursor_img and self.action_manager.current_mode != "controller":
-            self.state_stack[-1].dibujar_cursor(self.game_canvas)
         if self._fading:
             self._fade_alpha += (255 / self._fade_duration) * self.dt
             if self._fade_alpha >= 255:
@@ -168,6 +165,7 @@ class Juego():
         else:
             self.title_screen = Titulo(self)
             self.state_stack.append(self.title_screen)
+        self.actual_state.set_cursor()
 
     def open_death_screen(self):
         self._death_screen_requested = False

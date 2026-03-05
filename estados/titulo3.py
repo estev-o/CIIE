@@ -9,6 +9,9 @@ class Titulo(Estado):
     def __init__(self, juego):
         super().__init__(juego)
 
+        imagen_original = pygame.image.load("assets/UI/cursor/cursor.png").convert_alpha()
+        self.cursor_img = pygame.transform.scale(imagen_original, (30, 30))
+
         juego.sound_engine.play_music_if_changed("menu",3000)
 
         # Fade general

@@ -9,8 +9,6 @@ class Estado():
         self.enemy_projectiles = pygame.sprite.Group()
         self.interactions = []
         self.cursor_img= None
-        self.cursor_rect= None
-
     def append_enemy(self, enemy):
         self.enemies.add(enemy)
 
@@ -24,10 +22,11 @@ class Estado():
         if len(self.juego.state_stack) > 0:
             self.estado_prev = self.juego.state_stack[-1]
         self.juego.state_stack.append(self)
-
+        self.set_cursor()
     def salir_estado(self):
         self.juego.state_stack.pop()
-
+        if len(self.juego.state_stack) > 0:
+            self.juego.state_stack[-1].set_cursor()
     def append_interaction(self, interaction):
         self.interactions.append(interaction)
 
@@ -80,7 +79,9 @@ class Estado():
         ))
 
         pantalla.blit(texto, rect)
-
-    def dibujar_cursor(self, pantalla):
-        self.cursor_rect.center = pygame.mouse.get_pos()
-        pantalla.blit(self.cursor_img, self.cursor_rect)
+    def set_cursor(self):
+        if self.cursor_img:
+            cursor = pygame.cursors.Cursor((0, 0), self.cursor_img)
+            pygame.mouse.set_cursor(cursor)
+        else: # Si no existe que pinte el cursor original
+            pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
