@@ -49,6 +49,10 @@ class Chest(Enemy):
             return
         self.die()
 
+    def is_active(self):
+        # Compatibilidad con Interaction: los cofres no tienen diálogo activo.
+        return False
+
     def die(self):
         if self.opened or self.opening:
             return

@@ -3,7 +3,17 @@ import math
 from dialogos.dialog import font
 
 class Interaction:
-    def __init__(self, sprite, text, interactuable, launch_action, distance=120, text_controller=None, game=None):
+    def __init__(
+        self,
+        sprite,
+        text,
+        interactuable,
+        launch_action,
+        distance=120,
+        text_controller=None,
+        game=None,
+        availability_check=None,
+    ):
         self.sprite = sprite                    # Sprite con el que interactua
         self.text = text                        # Texto que se muestre sobre el sprite
         self.text_controller = text_controller  # Texto alternativo para mando
@@ -12,11 +22,16 @@ class Interaction:
         self.visible = False
         self.interactuable = interactuable      # Clase interactuable (Dialogo...)
         self.launch_action = launch_action      # Accion (actions de juego.py) que ejecuta la lanza la clase interactuable
+        self.availability_check = availability_check
 
     def is_launchable(self, actions):
         return self.visible and self.launch_action in actions and actions[self.launch_action]
 
     def update(self, player, actions):
+        if callable(self.availability_check) and not self.availability_check():
+            self.visible = False
+            return
+
         if not self.interactuable.is_active():
             dx = player.rect.centerx - self.sprite.rect.centerx
             dy = player.rect.centery - self.sprite.rect.centery
