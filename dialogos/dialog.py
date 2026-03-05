@@ -8,10 +8,10 @@ small_font = pygame.font.SysFont("arial", 18)
 # ACTION KEYS
 continue_key = "enter"
 back_key = "back"
-previous_key = "up"
-next_option = "down"
-previous_key_alt = "left"
-next_option_alt = "right"
+previous_key = "arrowUp"
+next_option = "arrowDown"
+previous_key_alt = "arrowLeft"
+next_option_alt = "arrowRight"
 
 class Dialog(Interactuable):
     def __init__(self, structure, rect=(247,320,530,180)):
