@@ -7,7 +7,7 @@ class Configuracion:
 
     CONFIG_DEFAULT = {
         "volumen_musica": 30,
-        "volumen_efectos": 50,
+        "volumen_efectos": 40,
         "pantalla_completa": False,
         "adn": 0,
         "mejoras_persistentes": []
