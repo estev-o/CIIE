@@ -98,6 +98,7 @@ class AreaExperiment(Estado):
                         "Abrir [E]",
                         chest,
                         "interact",
+                        distance=50,
                         text_controller="Abrir [A]",
                         game=self.juego,
                         availability_check=lambda c=chest: (not c.locked and not c.opened and not c.opening),

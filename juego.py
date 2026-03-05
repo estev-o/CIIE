@@ -123,7 +123,7 @@ class Juego():
 
     def render(self):
         self.state_stack[-1].dibujar(self.game_canvas)
-        if self.state_stack[-1].cursor_img:
+        if self.state_stack[-1].cursor_img and self.action_manager.current_mode != "controller":
             self.state_stack[-1].dibujar_cursor(self.game_canvas)
         if self._fading:
             self._fade_alpha += (255 / self._fade_duration) * self.dt
