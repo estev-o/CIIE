@@ -9,6 +9,7 @@ from ui.player_health_bar import PlayerHealthBar
 from ui.adn_counter import ADNCounter
 from personajes.enemigos.chest import Chest
 from estados.area_administrativa import AreaAdministrativa
+from estados.boss_final import BossFinal
 
 NIVEL_FORZADO = "area_exp3.tmx"  # Para pruebas, fuerza a entrar a esta área de experimentación específica
 
@@ -137,7 +138,7 @@ class AreaExperiment(Estado):
             if self.player.body_hitbox.collidepoint(self._door_center):
                 
                 if len(AreaExperiment.areas_visitadas) == AreaExperiment.areas_to_continue:
-                    AreaAdministrativa(self.juego).entrar_estado()
+                    BossFinal(self.juego).entrar_estado()
                 else:
                     AreaExperiment(self.juego).entrar_estado()
 
