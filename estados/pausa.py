@@ -212,7 +212,6 @@ class Pausa(Estado):
         pantalla.blit(info, info_rect)
 
         self._dibujar_barra_mejoras(pantalla)
-        self.dibujar_cursor(pantalla)
 
     def _dibujar_barra_mejoras(self, pantalla):
         pygame.draw.rect(pantalla, (24, 24, 40), self.sidebar_rect, border_radius=12)

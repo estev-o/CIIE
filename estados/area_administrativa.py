@@ -166,5 +166,3 @@ class AreaAdministrativa(Estado):
                 enemy.debug_draw_hitbox(pantalla, (0, 255 ,255))
             for projectile in self.enemy_projectiles:
                 pygame.draw.rect(pantalla, (255, 0, 0), projectile.rect, 1)
-        if self.juego.state_stack[-1] == self:
-            self.dibujar_cursor(pantalla)

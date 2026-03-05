@@ -118,4 +118,3 @@ class Muerte(Estado):
 
         for boton in self.botones:
             boton.dibujar(pantalla)
-        self.dibujar_cursor(pantalla)

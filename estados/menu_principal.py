@@ -140,4 +140,3 @@ class MenuPrincipal(Estado):
         )
         info_rect = info.get_rect(center=(self.juego.ancho // 2, self.juego.alto - 25))
         pantalla.blit(info, info_rect)
-        self.dibujar_cursor(pantalla)

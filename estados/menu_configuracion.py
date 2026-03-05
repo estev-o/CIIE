@@ -204,4 +204,3 @@ class MenuConfiguracion(Estado):
             False, (150, 150, 180)
         )
         pantalla.blit(info, info.get_rect(center=(self.juego.ancho // 2, self.juego.alto - 40)))
-        self.dibujar_cursor(pantalla)

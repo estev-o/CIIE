@@ -181,5 +181,3 @@ class Hub(Estado):
         if self.juego.debug:
             self.player.debug_draw_hitbox(pantalla, (0,255, 0))
             pygame.draw.circle(pantalla, (255, 0, 255), self._door_center, 5)  # Punto Magenta
-        if self.juego.state_stack[-1] == self:
-            self.dibujar_cursor(pantalla)
