@@ -22,6 +22,9 @@ class AreaExperiment(Estado):
     def __init__(self, juego, reset= False):
         Estado.__init__(self,juego)
 
+        imagen_original = pygame.image.load("assets/UI/cursor/crosshair.png").convert_alpha()
+        self.cursor_img = pygame.transform.scale(imagen_original, (30, 30))
+        self.cursor_rect = self.cursor_img.get_rect()
         if reset:
             AreaExperiment.distintas_areas = AreaExperiment.niveles.copy()
             AreaExperiment.areas_visitadas.clear()
@@ -173,3 +176,5 @@ class AreaExperiment(Estado):
                 enemy.debug_draw_hitbox(pantalla, (0, 255 ,255))
             for projectile in self.enemy_projectiles:
                 pygame.draw.rect(pantalla, (255, 0, 0), projectile.rect, 1)
+        if self.juego.state_stack[-1] == self:
+            self.dibujar_cursor(pantalla)

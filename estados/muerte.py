@@ -11,6 +11,9 @@ class Muerte(Estado):
         font = self.juego.fonts
 
         juego.sound_engine.play_music_if_changed("dead", 3000)
+        imagen_original = pygame.image.load("assets/UI/cursor/cursor.png").convert_alpha()
+        self.cursor_img = pygame.transform.scale(imagen_original, (30, 30))
+        self.cursor_rect = self.cursor_img.get_rect()
 
         centro_x = juego.ancho // 2
         self.botones = [
@@ -115,3 +118,4 @@ class Muerte(Estado):
 
         for boton in self.botones:
             boton.dibujar(pantalla)
+        self.dibujar_cursor(pantalla)

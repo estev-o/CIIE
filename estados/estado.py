@@ -8,6 +8,8 @@ class Estado():
         self.objects = pygame.sprite.Group()
         self.enemy_projectiles = pygame.sprite.Group()
         self.interactions = []
+        self.cursor_img= None
+        self.cursor_rect= None
 
     def append_enemy(self, enemy):
         self.enemies.add(enemy)
@@ -78,3 +80,7 @@ class Estado():
         ))
 
         pantalla.blit(texto, rect)
+
+    def dibujar_cursor(self, pantalla):
+        self.cursor_rect.center = pygame.mouse.get_pos()
+        pantalla.blit(self.cursor_img, self.cursor_rect)

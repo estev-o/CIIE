@@ -10,6 +10,10 @@ class MenuPrincipal(Estado):
     def __init__(self, juego):
         Estado.__init__(self, juego)
 
+        imagen_original = pygame.image.load("assets/UI/cursor/cursor.png").convert_alpha()
+        self.cursor_img = pygame.transform.scale(imagen_original, (30, 30))
+        self.cursor_rect = self.cursor_img.get_rect()
+
         juego.sound_engine.play_music_if_changed("menu",3000)
 
         font = self.juego.fonts
@@ -136,3 +140,4 @@ class MenuPrincipal(Estado):
         )
         info_rect = info.get_rect(center=(self.juego.ancho // 2, self.juego.alto - 25))
         pantalla.blit(info, info_rect)
+        self.dibujar_cursor(pantalla)

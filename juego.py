@@ -21,6 +21,7 @@ class Juego():
     def __init__(self):
         pygame.mixer.pre_init(44100, 16, 2, 512)
         pygame.init()
+        pygame.mouse.set_visible(False)
         self.configuracion=Configuracion()
         self.fonts=Fuentes()
         self.ancho, self.alto = 1024, 544

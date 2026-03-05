@@ -8,6 +8,9 @@ class MenuConfiguracion(Estado):
     def __init__(self, juego):
         Estado.__init__(self, juego)
 
+        imagen_original = pygame.image.load("assets/UI/cursor/cursor.png").convert_alpha()
+        self.cursor_img = pygame.transform.scale(imagen_original, (30, 30))
+        self.cursor_rect = self.cursor_img.get_rect()
         font = self.juego.fonts
         self.config = juego.configuracion
         centro_x = juego.ancho // 2
@@ -201,3 +204,4 @@ class MenuConfiguracion(Estado):
             False, (150, 150, 180)
         )
         pantalla.blit(info, info.get_rect(center=(self.juego.ancho // 2, self.juego.alto - 40)))
+        self.dibujar_cursor(pantalla)

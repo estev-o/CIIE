@@ -18,6 +18,9 @@ class Hub(Estado):
 
     def __init__(self, juego):
         Estado.__init__(self,juego)
+        imagen_original = pygame.image.load("assets/UI/cursor/crosshair.png").convert_alpha()
+        self.cursor_img = pygame.transform.scale(imagen_original, (30, 30))
+        self.cursor_rect = self.cursor_img.get_rect()
 
         juego.sound_engine.play_music_if_changed("main",3000)
 
@@ -178,3 +181,5 @@ class Hub(Estado):
         if self.juego.debug:
             self.player.debug_draw_hitbox(pantalla, (0,255, 0))
             pygame.draw.circle(pantalla, (255, 0, 255), self._door_center, 5)  # Punto Magenta
+        if self.juego.state_stack[-1] == self:
+            self.dibujar_cursor(pantalla)

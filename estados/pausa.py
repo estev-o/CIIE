@@ -11,7 +11,9 @@ class Pausa(Estado):
         Estado.__init__(self, juego)
 
         font = self.juego.fonts
-
+        imagen_original = pygame.image.load("assets/UI/cursor/cursor.png").convert_alpha()
+        self.cursor_img = pygame.transform.scale(imagen_original, (30, 30))
+        self.cursor_rect = self.cursor_img.get_rect()
         #botones
         centro_x = juego.ancho // 2
         centro_y = juego.alto // 2
@@ -210,6 +212,7 @@ class Pausa(Estado):
         pantalla.blit(info, info_rect)
 
         self._dibujar_barra_mejoras(pantalla)
+        self.dibujar_cursor(pantalla)
 
     def _dibujar_barra_mejoras(self, pantalla):
         pygame.draw.rect(pantalla, (24, 24, 40), self.sidebar_rect, border_radius=12)
