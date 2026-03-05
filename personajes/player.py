@@ -366,7 +366,15 @@ class Player(Character):
 
             key_hint = entry.get("key_hint")
             if key_hint:
-                label = font.render(str(key_hint), True, (235, 240, 255))
+                display_hint = str(key_hint)
+                if hasattr(self, "game") and hasattr(self.game, "action_manager"):
+                    if getattr(self.game.action_manager, "current_mode", "") == "controller":
+                        if display_hint == "F":
+                            display_hint = "X"
+                        elif display_hint == "R":
+                            display_hint = "Y"
+                
+                label = font.render(display_hint, True, (235, 240, 255))
                 badge_rect = pygame.Rect(
                     rect.right + 6,
                     rect.centery - 11,
