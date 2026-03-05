@@ -34,6 +34,9 @@ class Gilbertov(Enemy):
         self.vulnerable = True
         self.damage_multiplier = 1.0
         self._damage_flash_timer = 0.0
+        self.health_bar_width = 120
+        self.health_bar_height = 8
+        self.health_bar_offset_y = -8
 
     def load_sprites(self):
         sheet = pygame.image.load(self._asset_file).convert_alpha()

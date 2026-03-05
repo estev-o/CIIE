@@ -29,11 +29,11 @@ def _aplicar_vida_extra(player, bonus, flag_attr):
 
 
 def _aplicar_vida_extra_s(player):
-    _aplicar_vida_extra(player, 10, "_mejora_vida_extra_s_aplicada")
+    _aplicar_vida_extra(player, 25, "_mejora_vida_extra_s_aplicada")
 
 
 def _aplicar_vida_extra_m(player):
-    _aplicar_vida_extra(player, 25, "_mejora_vida_extra_m_aplicada")
+    _aplicar_vida_extra(player, 50, "_mejora_vida_extra_m_aplicada")
 
 
 def _aplicar_vida_extra_l(player):
@@ -48,7 +48,7 @@ def _aplicar_escudo(player):
     if hasattr(player, "register_upgrade_cooldown"):
         player.register_upgrade_cooldown(
             "escudo",
-            duration_seconds=300.0,
+            duration_seconds=30.0,
             asset_path="assets/mejoras/escudo.png",
         )
     player._mejora_escudo_aplicada = True
@@ -61,7 +61,7 @@ def _aplicar_blub_lava(player):
     if hasattr(player, "register_upgrade_cooldown"):
         player.register_upgrade_cooldown(
             "blub_lava",
-            duration_seconds=300.0,
+            duration_seconds=180.0,
             asset_path="assets/mejoras/blub_lava.png",
             key_hint="F",
         )
@@ -92,7 +92,7 @@ def _aplicar_super_azulejo(player):
     if hasattr(player, "register_upgrade_cooldown"):
         player.register_upgrade_cooldown(
             "super_azulejo",
-            duration_seconds=180.0,
+            duration_seconds=100.0,
             asset_path="assets/mejoras/super_azulejo.png",
             key_hint="R",
         )

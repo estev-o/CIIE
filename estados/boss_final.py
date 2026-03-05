@@ -14,7 +14,7 @@ from ui.player_health_bar import PlayerHealthBar
 
 class BossFinal(Estado):
     DOOR_CLOSED_DURATION = 10.0
-    DOOR_OPEN_DURATION = 10.0
+    DOOR_OPEN_DURATION = 5.0
     SUMMON_INTERVAL = 1.0
     SUMMON_DAMAGE_MULTIPLIER = 0.2
     SUMMON_ENEMIES = ("mock_melee", "mock_ranger", "mock_explosive")
@@ -126,6 +126,11 @@ class BossFinal(Estado):
         enemy = self.juego.enemy_factory.create_enemy(enemy_name, spawn_x, spawn_y)
         if enemy is None:
             return
+        # Entra ya en estado de persecución al spawnear.
+        if hasattr(enemy, "ai_state"):
+            enemy.ai_state = "alert"
+        if hasattr(enemy, "alert_timer"):
+            enemy.alert_timer = 0.0
         self.append_enemy(enemy)
 
     def _update_boss_cycle(self, dt):
