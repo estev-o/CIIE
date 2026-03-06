@@ -13,7 +13,7 @@ class Pausa(Estado):
         font = self.juego.fonts
         imagen_original = pygame.image.load("assets/UI/cursor/cursor.png").convert_alpha()
         self.cursor_img = pygame.transform.scale(imagen_original, (30, 30))
-        self.cursor_rect = self.cursor_img.get_rect()
+
         #botones
         centro_x = juego.ancho // 2
         centro_y = juego.alto // 2

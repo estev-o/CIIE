@@ -23,7 +23,6 @@ class BossFinal(Estado):
         super().__init__(juego)
         imagen_original = pygame.image.load("assets/UI/cursor/crosshair.png").convert_alpha()
         self.cursor_img = pygame.transform.scale(imagen_original, (30, 30))
-        self.cursor_rect = self.cursor_img.get_rect()
 
         self.player = self.juego.player
         self.tmx_map = TiledTMX(os.path.join("assets", "sala_boss_final", "sala_boss_final.tmx"))
