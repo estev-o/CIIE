@@ -1,6 +1,6 @@
 import pygame
 import math
-from dialogos.dialog import font
+from dialogos.dialog import dialog_font
 
 class Interaction:
     def __init__(
@@ -50,7 +50,7 @@ class Interaction:
 
     def draw(self, screen):
         if self.visible:
-            render = font.render(self._display_text(), True, (255,255,255))
+            render = dialog_font.render(self._display_text(), False, (255,255,255))
             rect = render.get_rect()
             rect.centerx = self.sprite.rect.centerx
             rect.bottom = self.sprite.rect.top - 5
