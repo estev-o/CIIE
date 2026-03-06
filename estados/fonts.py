@@ -1,6 +1,7 @@
 import pygame
 class Fuentes:
     def __init__(self):
+        self.xs = pygame.font.Font("assets/fonts/Snowbell-Wp4g9.ttf", 9)
         self.dialog= pygame.font.Font("assets/fonts/Snowbell-Wp4g9.ttf", 13)
         self.small = pygame.font.Font("assets/fonts/Snowbell-Wp4g9.ttf", 16)
         self.medium = pygame.font.Font("assets/fonts/Snowbell-Wp4g9.ttf", 24)

@@ -4,8 +4,9 @@ from dialogos.sound_bip import sound_bip
 from estados.fonts import Fuentes
 
 fonts= Fuentes()
-dialog_font = fonts.dialog
-small_font = fonts.small
+font_main = fonts.small      #  texto principal
+font_ui   = fonts.dialog     # autor hints
+font_hint = fonts.xs         # ayuda
 
 # ACTION KEYS
 continue_key = "enter"
@@ -236,7 +237,7 @@ class Dialog(Interactuable):
             pygame.draw.rect(screen, (255,255,255), self.rect, 2, border_radius=15)
 
             author = self.actual_node["author"]
-            txt_author = dialog_font.render(author + ":", False, (255,255,255))
+            txt_author = font_ui.render(author + ":", False, (255,255,255))
             screen.blit(txt_author, (self.rect.x+15, self.rect.y+15))
 
             text_to_draw = self._get_display_text()
@@ -255,7 +256,7 @@ class Dialog(Interactuable):
                 if hint:
                     mode = self._get_current_mode()
                     display_hint = hint_ctrl if (mode == "controller" and hint_ctrl) else hint
-                    indicator = dialog_font.render(display_hint, False, (200,200,200))
+                    indicator = font_hint.render(display_hint, False, (200,200,200))
                     hint_x = max(
                         self.rect.x + 15,
                         self.rect.right - indicator.get_width() - 15,
@@ -265,7 +266,7 @@ class Dialog(Interactuable):
             elif self.finished:
                 mode = self._get_current_mode()
                 cont_text = "A (continuar)" if mode == "controller" else "ENTER (continuar)"
-                indicator = dialog_font.render(cont_text, False, (200,200,200))
+                indicator = font_ui.render(cont_text, False, (200,200,200))
                 screen.blit(indicator, (self.rect.right - indicator.get_width() - 15, self.rect.y+15))
 
     def _draw_text(self, screen, text, x, y):
@@ -274,16 +275,16 @@ class Dialog(Interactuable):
 
         for word in words:
             test_line = line + word + " "
-            surface = small_font.render(test_line, False, (255,255,255))
+            surface = font_main.render(test_line, False, (255,255,255))
 
             if surface.get_width() > self.rect.width - 30:
-                screen.blit(small_font.render(line, False, (255,255,255)), (x,y))
-                y += small_font.get_height()
+                screen.blit(font_main.render(line, False, (255,255,255)), (x,y))
+                y += font_main.get_height()
                 line = word + " "
             else:
                 line = test_line
 
-        screen.blit(small_font.render(line, False, (255,255,255)), (x,y))
+        screen.blit(font_main.render(line, False, (255,255,255)), (x,y))
 
     def _get_display_text(self):
         if not self.actual_node:
@@ -302,7 +303,7 @@ class Dialog(Interactuable):
         if self.actual_node.get("carousel_options"):
             if not self.actual_node.get("options"):
                 return
-            pager = dialog_font.render(
+            pager = font_ui.render(
                 f"{self.selected_option + 1}/{len(self.actual_node['options'])}",
                 False,
                 (200,200,200),
@@ -312,7 +313,7 @@ class Dialog(Interactuable):
             return
 
         step = int(self.actual_node.get("options_step", 30))
-        text_font = dialog_font if self.actual_node.get("dialog_options") else small_font
+        text_font = font_ui if self.actual_node.get("dialog_options") else font_main
         if "options_y" in self.actual_node:
             y = int(self.actual_node.get("options_y", self.rect.bottom - 90))
         else:
@@ -342,12 +343,12 @@ class Dialog(Interactuable):
         line_y = self.rect.y + 88
 
         if coste is not None:
-            coste_render = dialog_font.render(f"Coste: {coste} ADN", False, (180,220,255))
+            coste_render = font_ui.render(f"Coste: {coste} ADN", False, (180,220,255))
             screen.blit(coste_render, (base_x, line_y))
             line_y += 18
 
         if estado:
-            estado_render = dialog_font.render(estado, False, (220,220,180))
+            estado_render = font_ui.render(estado, False, (220,220,180))
             screen.blit(estado_render, (base_x, line_y))
             line_y += 18
 
@@ -358,7 +359,7 @@ class Dialog(Interactuable):
                 base_x,
                 line_y,
                 max_width=self.rect.width - 30,
-                text_font=dialog_font,
+                text_font=font_ui,
                 color=(220,220,220),
             )
 

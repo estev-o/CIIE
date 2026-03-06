@@ -1,6 +1,6 @@
 import pygame
 import math
-from dialogos.dialog import dialog_font
+from dialogos.dialog import font_main
 
 class Interaction:
     def __init__(
@@ -36,7 +36,7 @@ class Interaction:
             dx = player.rect.centerx - self.sprite.rect.centerx
             dy = player.rect.centery - self.sprite.rect.centery
             self.visible = math.hypot(dx, dy) <= self.distance
-            
+
             if self.is_launchable(actions):
                 self.interactuable.interact()
                 self.visible = False
@@ -50,7 +50,7 @@ class Interaction:
 
     def draw(self, screen):
         if self.visible:
-            render = dialog_font.render(self._display_text(), False, (255,255,255))
+            render = font_main.render(self._display_text(), False, (255,255,255))
             rect = render.get_rect()
             rect.centerx = self.sprite.rect.centerx
             rect.bottom = self.sprite.rect.top - 5
@@ -59,6 +59,6 @@ class Interaction:
             pygame.draw.rect(screen,(0,0,0),rect,border_radius=10)
             pygame.draw.rect(screen,(255,255,255),rect,2,border_radius=10)
             screen.blit(render, render.get_rect(center=rect.center))
-    
+
     def is_active(self):
         return self.interactuable.is_active()

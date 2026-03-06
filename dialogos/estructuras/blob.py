@@ -3,10 +3,10 @@ hello_blob = {
         "author": "Blob",
         "text": "Hola, soy Blob",
         "options": [
-            {"text": "¿Que es este sitio?", "next": "sitio"},
-            {"text": "¿Como he llegado aquí?", "next": "blub"},
-            {"text": "¿Que mejoras vendes aqui?", "next": "tienda"},
-            {"text": "Marcho que teño que marchar", "next": None}
+            {"text": "¿Qué es este sitio?", "next": "sitio"},
+            {"text": "¿Cómo he llegado aquí?", "next": "blub"},
+            {"text": "¿Qué mejoras vendes aquí?", "next": "tienda"},
+            {"text": "Marcho que tengo que marchar", "next": None}
         ],
         "options_hint": "W/S para cambiar | ENTER para elegir | ESC para salir",
         "options_hint_controller": "D-Pad para cambiar | A para elegir | B para salir",
@@ -14,19 +14,19 @@ hello_blob = {
     },
     "sitio": {
         "author": "Blob",
-        "text": "Este sitio es el laboratorio de Gilbertov. Una dungeon mala mala con bichos pila chungos que te quieren hacer daño.",
+        "text": "Este sitio es el laboratorio de Gilbertov. Una dungeon mala mala con bichos muy chungos que te quieren hacer daño.",
         "next": "init",
         "f": None
     },
     "blub": {
         "author": "Blub",
-        "text": "Por una serie de malas decisiones que has tomado, te presentaste voluntario para formar parte de un experimento. El objetivo de ese experimento era formar a alguien para que fuese el mejor estudiante. Y saliste tu :V",
+        "text": "Por una serie de malas decisiones que has tomado, te presentaste voluntario para formar parte de un experimento. El objetivo de ese experimento era formar a alguien para que fuese el mejor estudiante. Y saliste tú :V",
         "next": "init",
         "f": None
     },
     "tienda": {
         "author": "Blob",
-        "text": "A ver que tengo por aqui...",
+        "text": "A ver qué tengo por aquí...",
         "next": "tienda_lista",
         "f": None
     },
