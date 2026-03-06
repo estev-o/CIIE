@@ -21,6 +21,7 @@ class SoundEngine:
             "dead":         "enemy_death",
             "movement":     "movement",
             "door":         "world",
+            "chest":        "world"
         }
 
         self.music = {
