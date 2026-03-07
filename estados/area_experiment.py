@@ -61,7 +61,7 @@ class AreaExperiment(Estado):
         self.player.pos_y = spawn.y - (r.height / 2)
 
 
-        enemy_names = ["mock_explosive", "mock_ranger", "mock_melee"]
+        enemy_names = ["rob_explosive", "rob_ranger", "slime_melee"]
         enemy_probabilities = [10, 50, 40]
         
         # Enemies

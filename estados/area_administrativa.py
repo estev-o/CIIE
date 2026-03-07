@@ -53,7 +53,7 @@ class AreaAdministrativa(Estado):
         self.player.pos_y = spawn.y - (r.height / 2)
 
 
-        enemy_names = ["mock_explosive", "mock_ranger", "mock_melee"]
+        enemy_names = ["rob_explosive", "rob_ranger", "slime_melee"]
         # Enemies
         for enemy_pos in list(self.tmx_map.get_objects(layer="spawn_enemies")):
             enemy = juego.enemy_factory.create_enemy(random.choice(enemy_names), enemy_pos.x, enemy_pos.y)

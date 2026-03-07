@@ -17,7 +17,7 @@ class BossFinal(Estado):
     DOOR_OPEN_DURATION = 5.0
     SUMMON_INTERVAL = 1.0
     SUMMON_DAMAGE_MULTIPLIER = 0.2
-    SUMMON_ENEMIES = ("mock_melee", "mock_ranger", "mock_explosive")
+    SUMMON_ENEMIES = ("rob_explosive", "rob_ranger", "slime_melee")
 
     def __init__(self, juego):
         super().__init__(juego)
