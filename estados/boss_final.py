@@ -24,6 +24,8 @@ class BossFinal(Estado):
         imagen_original = pygame.image.load("assets/UI/cursor/crosshair.png").convert_alpha()
         self.cursor_img = pygame.transform.scale(imagen_original, (30, 30))
 
+        juego.sound_engine.play_music_if_changed("boss", 3000)
+
         self.player = self.juego.player
         self.tmx_map = TiledTMX(os.path.join("assets", "sala_boss_final", "sala_boss_final.tmx"))
         self._base_layer_order = [
@@ -59,6 +61,26 @@ class BossFinal(Estado):
         self._update_door_state(force=True)
         self._set_boss_vulnerable(True)
         self._set_boss_damage_multiplier(self.SUMMON_DAMAGE_MULTIPLIER)
+
+        # Flash de entrada
+        self._flashes = [
+            (0.1, (0, 0, 0)),
+            (0.1, None),
+            (0.1, (0, 0, 0)),
+            (0.1, None),
+            (0.1, (0, 0, 0)),
+            (0.1, None),
+            (0.1, (0, 0, 0)),
+            (0.1, None),
+            (0.1, (0, 0, 0)),
+            (0.4, None),
+        ]
+        self._flash_timer = 0
+        self._flash_index = 0
+        self._intro_done = False
+
+        self.iniciar_texto_nivel(
+            f"DESPACHO DE GILBERTOV", 2000)
 
     def _spawn_player(self):
         spawn_points = self.tmx_map.get_objects(layer="spawn_point")
@@ -176,6 +198,15 @@ class BossFinal(Estado):
         self.player.rect.topleft = (int(self.player.pos_x), int(self.player.pos_y))
 
     def actualizar(self, dt, acciones):
+        if not self._intro_done:
+            self._flash_timer += dt
+            if self._flash_timer >= self._flashes[self._flash_index][0]:
+                self._flash_timer = 0
+                self._flash_index += 1
+                if self._flash_index >= len(self._flashes):
+                    self._intro_done = True
+            return  # bloquea input y lógica durante el flash
+
         if acciones.get("toggle_pause"):
             self.juego.actions["toggle_pause"] = False
             Pausa(self.juego).entrar_estado()
@@ -191,12 +222,12 @@ class BossFinal(Estado):
             self._teleport_player_to_spawn()
 
         if (
-            not self._victory_screen_opened
-            and (not self.boss.alive() or self.boss.remaining_life <= 0)
+                not self._victory_screen_opened
+                and (not self.boss.alive() or self.boss.remaining_life <= 0)
         ):
             self._victory_screen_opened = True
             from estados.final_screen import FinalScreen
-            FinalScreen(self.juego).entrar_estado()
+            self.juego.fade_to(lambda: FinalScreen(self.juego).entrar_estado())
             return
 
         for enemy in self.enemies:
@@ -223,6 +254,15 @@ class BossFinal(Estado):
         self.player_health_bar.draw(pantalla)
         self.adn_counter.draw(pantalla, self.juego.adn)
         self.player.render_upgrade_cooldowns(pantalla, x=25, y=25)
+
+        self.dibujar_texto_nivel(pantalla)
+
+        if not self._intro_done:
+            color = self._flashes[self._flash_index][1]
+            if color is not None:
+                overlay = pygame.Surface((pantalla.get_width(), pantalla.get_height()))
+                overlay.fill(color)
+                pantalla.blit(overlay, (0, 0))
 
         if self.juego.debug:
             self.player.debug_draw_hitbox(pantalla, (0, 255, 0))

@@ -1,6 +1,7 @@
-from estados.estado import Estado
-from estados.componentes import Boton
 import pygame
+
+from estados.componentes import Boton
+from estados.estado import Estado
 
 
 class Muerte(Estado):
@@ -70,7 +71,7 @@ class Muerte(Estado):
                     self.activar_opcion()
                     self.juego.reset_keys()
                     return
-        
+
         self.mouse_pressed_prev = mouse_pressed
 
         for boton in self.botones:
@@ -92,7 +93,6 @@ class Muerte(Estado):
         elif self.indice_seleccionado == 1:
             from estados.menu_principal import MenuPrincipal
             MenuPrincipal(self.juego).entrar_estado()
-
 
     def dibujar(self, pantalla):
         for y in range(pantalla.get_height()):

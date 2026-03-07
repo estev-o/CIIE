@@ -1,4 +1,5 @@
 import pygame
+import random
 from config.configuracion import Configuracion
 
 class SoundEngine:
@@ -7,40 +8,49 @@ class SoundEngine:
         self.config = configuracion
         self.music_volume = (self.config.get("volumen_musica", 70) / 100) ** 2
         self.sfx_volume = (self.config.get("volumen_efectos", 50) / 100) ** 2
+
+        self._main_songs = ["main", "song1", "song2"]
+        random.shuffle(self._main_songs)
+        self._main_song_index = 0
+
         self.current_music = None
 
         self.channels = {
-            "attack":      pygame.mixer.Channel(0),
+            "attack": pygame.mixer.Channel(0),
             "enemy_death": pygame.mixer.Channel(1),
-            "movement":    pygame.mixer.Channel(2),
-            "world":       pygame.mixer.Channel(3),
+            "movement": pygame.mixer.Channel(2),
+            "world": pygame.mixer.Channel(3),
         }
 
         self.sfx_channel = {
-            "attack":       "attack",
-            "dead":         "enemy_death",
-            "movement":     "movement",
-            "door":         "world",
-            "chest":        "world"
+            "attack": "attack",
+            "dead": "enemy_death",
+            "movement": "movement",
+            "door": "world",
+            "chest": "world"
         }
 
         self.music = {
             "menu": "assets/sounds/Menu theme.mp3",
             "main": "assets/sounds/Main theme.mp3",
             "dead": "assets/sounds/Dead theme.mp3",
+            "song1": "assets/sounds/Song 1.mp3",
+            "song2": "assets/sounds/Song 2.mp3",
+            "win": "assets/sounds/Win theme.mp3",
+            "boss": "assets/sounds/Final boss.mp3",
         }
 
         self.sfx = {
-            "movement":    pygame.mixer.Sound("assets/sounds/movement.mp3"),
-            "door":        pygame.mixer.Sound("assets/sounds/door.wav"),
+            "movement": pygame.mixer.Sound("assets/sounds/movement.mp3"),
+            "door": pygame.mixer.Sound("assets/sounds/door.wav"),
             "menu_select": pygame.mixer.Sound("assets/sounds/menu_select.mp3"),
-            "menu_confirm":pygame.mixer.Sound("assets/sounds/menu_accept.mp3"),
-            "dead":        pygame.mixer.Sound("assets/sounds/deadsfx.wav"),
-            "attack":      pygame.mixer.Sound("assets/sounds/attack.wav"),
-            "collect":     pygame.mixer.Sound("assets/sounds/collect.mp3"),
-            "damage":      pygame.mixer.Sound("assets/sounds/damage.wav"),
-            "chest":       pygame.mixer.Sound("assets/sounds/chest.wav"),
-            "heal":       pygame.mixer.Sound("assets/sounds/heal.wav")
+            "menu_confirm": pygame.mixer.Sound("assets/sounds/menu_accept.mp3"),
+            "dead": pygame.mixer.Sound("assets/sounds/deadsfx.wav"),
+            "attack": pygame.mixer.Sound("assets/sounds/attack.wav"),
+            "collect": pygame.mixer.Sound("assets/sounds/collect.mp3"),
+            "damage": pygame.mixer.Sound("assets/sounds/damage.wav"),
+            "chest": pygame.mixer.Sound("assets/sounds/chest.wav"),
+            "heal": pygame.mixer.Sound("assets/sounds/heal.wav")
         }
 
         for sound in self.sfx.values():
@@ -69,6 +79,11 @@ class SoundEngine:
             return
         self.current_music = name
         self.play_music(name, fade_ms)
+
+    def play_next_main_song(self, fade_ms=500):
+        name = self._main_songs[self._main_song_index % len(self._main_songs)]
+        self._main_song_index += 1
+        self.play_music_if_changed(name, fade_ms)
 
     def set_sfx_volume(self, v):
         self.sfx_volume = (v / 100) ** 2

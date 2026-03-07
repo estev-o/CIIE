@@ -47,7 +47,7 @@ class AreaAdministrativa(Estado):
         self.tmx_map = TiledTMX(tmx_path)
         self.map_layer_order = list(self.tmx_map.layer_names)
         self._door_open = False
-        self.iniciar_texto_nivel(f"AREA ADMINISTRATIVA ({len(AreaAdministrativa.areas_visitadas)}/{self.areas_to_continue})", 2000)
+        self.iniciar_texto_nivel(f"ÁREA ADMINISTRATIVA ({len(AreaAdministrativa.areas_visitadas)}/{self.areas_to_continue})", 2000)
 
         self.player = self.juego.player
 

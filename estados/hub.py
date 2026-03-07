@@ -21,7 +21,8 @@ class Hub(Estado):
         imagen_original = pygame.image.load("assets/UI/cursor/crosshair.png").convert_alpha()
         self.cursor_img = pygame.transform.scale(imagen_original, (30, 30))
         self.set_cursor()
-        juego.sound_engine.play_music_if_changed("main",3000)
+
+        juego.sound_engine.play_next_main_song(3000)
 
         # guarda el mapa desde Tiled como TMX (layers en CSV) en esta ruta.
         tmx_path = os.path.join("assets", "Fondo_Hub", "hub.tmx")

@@ -51,7 +51,7 @@ class Estado():
         self._nivel_inicio = pygame.time.get_ticks()
         self._nivel_activo = True
         self._nivel_font = self.juego.fonts.level_title
-    
+
     def dibujar_texto_nivel(self, pantalla):
         if not getattr(self, "_nivel_activo", False):
             return
@@ -69,16 +69,20 @@ class Estado():
         if tiempo_restante < 1000:
             alpha = int(255 * (tiempo_restante / 1000))
 
+        cx = pantalla.get_width() // 2
+        cy = pantalla.get_height() // 2
+
+        sombra = self._nivel_font.render(self._nivel_nombre, True, (30, 30, 30))
+        sombra.set_alpha(alpha)
+        sombra_rect = sombra.get_rect(center=(cx + 3, cy + 3))
+
         texto = self._nivel_font.render(self._nivel_nombre, True, (255, 255, 255))
         texto.set_alpha(alpha)
+        rect = texto.get_rect(center=(cx, cy))
 
-        # 👇 Centro real de la pantalla
-        rect = texto.get_rect(center=(
-            pantalla.get_width() // 2,
-            pantalla.get_height() // 2
-        ))
-
+        pantalla.blit(sombra, sombra_rect)
         pantalla.blit(texto, rect)
+
     def set_cursor(self):
         if self.cursor_img:
             cursor = pygame.cursors.Cursor((0, 0), self.cursor_img)
