@@ -9,6 +9,7 @@ from objetos.mejoras.catalogo import obtener_mejora
 
 class Player(Character):
     SUPER_AZULEJO_DURATION = 20.0
+    SHIELD_BLOCK_GRACE_TIME = 0.75
     
     def __init__(self, game):
         self._walk_asset_file = "assets/Blub/PNG/Slime1/Walk/Slime1_Walk_full.png"
@@ -132,6 +133,8 @@ class Player(Character):
         if not self.is_upgrade_cooldown_ready("escudo"):
             return False
         self.trigger_upgrade_cooldown("escudo")
+        # Evita que el siguiente frame de colision de contacto atraviese el bloqueo.
+        self.itimer = max(self.itimer, self.SHIELD_BLOCK_GRACE_TIME)
         return True
 
     def _try_use_lava_burst(self):

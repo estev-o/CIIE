@@ -40,6 +40,7 @@ class BossFinal(Estado):
             self.tmx_map.width * self.tmx_map.tile_width,
             self.tmx_map.height * self.tmx_map.tile_height,
         )
+        self._player_spawn_pos = (0.0, 0.0)
 
         self._spawn_player()
         self._spawn_boss()
@@ -60,9 +61,9 @@ class BossFinal(Estado):
         self._set_boss_damage_multiplier(self.SUMMON_DAMAGE_MULTIPLIER)
 
     def _spawn_player(self):
-        spawn_points = self.tmx_map.get_objects(layer="spawn_ponint")
+        spawn_points = self.tmx_map.get_objects(layer="spawn_point")
         if not spawn_points:
-            spawn_points = self.tmx_map.get_objects(layer="spawn_point")
+            spawn_points = self.tmx_map.get_objects(layer="spawn_ponint")
         rect = self.player.get_rect()
         if spawn_points:
             spawn = spawn_points[0]
@@ -71,21 +72,11 @@ class BossFinal(Estado):
         else:
             self.player.pos_x = (self.juego.ancho - rect.width) / 2
             self.player.pos_y = self.juego.alto - rect.height - 30
-        self._player_spawn_pos = (float(self.player.pos_x), float(self.player.pos_y))
         self.player.rect.topleft = (int(self.player.pos_x), int(self.player.pos_y))
+        self._player_spawn_pos = (float(self.player.pos_x), float(self.player.pos_y))
         self.player.facing = "up"
         if hasattr(self.player, "last_aim_axis"):
             self.player.last_aim_axis = pygame.math.Vector2(0, -1)
-
-    def _reset_player_to_spawn(self):
-        if not hasattr(self, "_player_spawn_pos"):
-            return
-        self.player.pos_x, self.player.pos_y = self._player_spawn_pos
-        self.player.rect.topleft = (int(self.player.pos_x), int(self.player.pos_y))
-
-    def _player_is_out_of_bounds(self):
-        hitbox = self.player.body_hitbox
-        return not self._map_bounds.collidepoint(hitbox.center)
 
     def _spawn_boss(self):
         self.boss = Gilbertov(self.juego, x=0, y=0)
@@ -175,6 +166,15 @@ class BossFinal(Estado):
         else:
             self._spawn_accumulator = 0.0
 
+    def _player_inside_map_bounds(self):
+        return self._map_bounds.contains(self.player.body_hitbox)
+
+    def _teleport_player_to_spawn(self):
+        target_x, target_y = self._player_spawn_pos
+        self.player.pos_x = target_x
+        self.player.pos_y = target_y
+        self.player.rect.topleft = (int(self.player.pos_x), int(self.player.pos_y))
+
     def actualizar(self, dt, acciones):
         if acciones.get("toggle_pause"):
             self.juego.actions["toggle_pause"] = False
@@ -186,10 +186,9 @@ class BossFinal(Estado):
         player_tiles = list(enemy_tiles)
         if self._door_closed:
             player_tiles.extend(self.tmx_map.get_tiles("hitbox_puerta_cerrada"))
-        blockers = player_tiles + list(self.enemies)
-        self.player.update(dt, acciones, blockers)
-        if self._player_is_out_of_bounds():
-            self._reset_player_to_spawn()
+        self.player.update(dt, acciones, player_tiles)
+        if not self._player_inside_map_bounds():
+            self._teleport_player_to_spawn()
 
         if (
             not self._victory_screen_opened

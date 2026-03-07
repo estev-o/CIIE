@@ -61,7 +61,7 @@ def _aplicar_blub_lava(player):
     if hasattr(player, "register_upgrade_cooldown"):
         player.register_upgrade_cooldown(
             "blub_lava",
-            duration_seconds=180.0,
+            duration_seconds=90.0,
             asset_path="assets/mejoras/blub_lava.png",
             key_hint="F",
         )
@@ -92,7 +92,7 @@ def _aplicar_super_azulejo(player):
     if hasattr(player, "register_upgrade_cooldown"):
         player.register_upgrade_cooldown(
             "super_azulejo",
-            duration_seconds=100.0,
+            duration_seconds=50.0,
             asset_path="assets/mejoras/super_azulejo.png",
             key_hint="R",
         )
