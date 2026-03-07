@@ -22,7 +22,7 @@ class AreaAdministrativa(Estado):
     def __init__(self, juego, reset=False):
         Estado.__init__(self,juego)
         imagen_original = pygame.image.load("assets/UI/cursor/crosshair.png").convert_alpha()
-        self.imagen_cursor = pygame.transform.scale(imagen_original, (30, 30))
+        self.cursor_img = pygame.transform.scale(imagen_original, (30, 30))
 
         if reset:
             AreaAdministrativa.distintas_areas = AreaAdministrativa.niveles.copy()
