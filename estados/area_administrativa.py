@@ -8,12 +8,13 @@ from ui.health_bar import HealthBarManager
 from ui.player_health_bar import PlayerHealthBar
 from ui.adn_counter import ADNCounter
 from personajes.enemigos.chest import Chest
+from estados.boss_final import BossFinal
 
-NIVEL_FORZADO = "area_exp1.tmx"  # Para pruebas, fuerza a entrar a esta área de experimentación específica
+NIVEL_FORZADO = "area_admin6.tmx"  # Para pruebas, fuerza a entrar a esta área de experimentación específica
 
 
 class AreaAdministrativa(Estado):
-    niveles = ["area_exp1.tmx", "area_exp3.tmx","area_exp3.tmx", "area_exp4.tmx", "area_exp5.tmx", "area_exp6.tmx"]
+    niveles = ["area_admin1.tmx", "area_admin2.tmx", "area_admin3.tmx", "area_admin4.tmx", "area_admin5.tmx", "area_admin5.tmx"]
     distintas_areas = niveles.copy()
     areas_visitadas = []
     areas_to_continue = 3
@@ -33,11 +34,11 @@ class AreaAdministrativa(Estado):
         AreaAdministrativa.distintas_areas.remove(tmx_elegido)
         AreaAdministrativa.areas_visitadas.append(tmx_elegido)
 
-        tmx_path = os.path.join("assets", "area_experimentacion", tmx_elegido)
+        tmx_path = os.path.join("assets", "area_administracion", tmx_elegido)
 
         # CODIGO DEBUG, BORRAR
         if juego.debug:
-            tmx_path = os.path.join("assets", "area_experimentacion", NIVEL_FORZADO)
+            tmx_path = os.path.join("assets", "area_administracion", NIVEL_FORZADO)
 
         self.tmx_map = TiledTMX(tmx_path)
         self.map_layer_order = list(self.tmx_map.layer_names)
@@ -54,10 +55,18 @@ class AreaAdministrativa(Estado):
 
 
         enemy_names = ["mock_explosive", "mock_ranger", "mock_melee"]
+        enemy_probabilities = [10, 50, 40]
+        
         # Enemies
-        for enemy_pos in list(self.tmx_map.get_objects(layer="spawn_enemies")):
-            enemy = juego.enemy_factory.create_enemy(random.choice(enemy_names), enemy_pos.x, enemy_pos.y)
+        spawns = list(self.tmx_map.get_objects(layer="spawn_enemies"))
+        select_number = int((len(AreaAdministrativa.areas_visitadas) / AreaAdministrativa.areas_to_continue) * len(spawns))
+        
+        positions = random.sample(spawns, select_number)
+        enemy_types = random.choices(enemy_names, weights=enemy_probabilities, k=select_number)
+        for i in range(select_number):
+            enemy = juego.enemy_factory.create_enemy(enemy_types[i], positions[i].x, positions[i].y)
             self.append_enemy(enemy)
+
 
         # self.enemy = juego.enemy_factory.create_enemy("mock_explosive", 500, 350)
         # self.append_enemy(self.enemy)
@@ -128,8 +137,9 @@ class AreaAdministrativa(Estado):
         if self.enemies_alive == 0:
             if self.player.body_hitbox.collidepoint(self._door_center):
                 if len(AreaAdministrativa.areas_visitadas) == AreaAdministrativa.areas_to_continue:
-                    print("llegaste al final... por ahora")
-                    exit()
+                    BossFinal(self.juego).entrar_estado()
+                else:
+                    AreaAdministrativa(self.juego).entrar_estado()
 
         # Interacción con cofres
         if acciones.get("interact"):
