@@ -151,7 +151,7 @@ class AreaExperiment(Estado):
             if self.player.body_hitbox.collidepoint(self._door_center):
                 
                 if len(AreaExperiment.areas_visitadas) == AreaExperiment.areas_to_continue:
-                    AreaAdministrativa(self.juego).entrar_estado()
+                    AreaAdministrativa(self.juego, reset=True).entrar_estado()
                 else:
                     AreaExperiment(self.juego).entrar_estado()
 

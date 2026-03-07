@@ -19,10 +19,14 @@ class AreaAdministrativa(Estado):
     areas_visitadas = []
     areas_to_continue = 3
 
-    def __init__(self, juego):
+    def __init__(self, juego, reset=False):
         Estado.__init__(self,juego)
         imagen_original = pygame.image.load("assets/UI/cursor/crosshair.png").convert_alpha()
         self.imagen_cursor = pygame.transform.scale(imagen_original, (30, 30))
+
+        if reset:
+            AreaAdministrativa.distintas_areas = AreaAdministrativa.niveles.copy()
+            AreaAdministrativa.areas_visitadas.clear()
 
         if len(AreaAdministrativa.distintas_areas) == 0:
             AreaAdministrativa.distintas_areas, AreaAdministrativa.areas_visitadas = AreaAdministrativa.areas_visitadas, AreaAdministrativa.distintas_areas
