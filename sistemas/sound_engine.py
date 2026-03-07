@@ -1,6 +1,12 @@
 import pygame
 import random
+from pathlib import Path
 from config.configuracion import Configuracion
+
+BASE = Path("assets/sounds")
+PATH_SFX = BASE / "sfx"
+PATH_MUSIC = BASE / "songs"
+
 
 class SoundEngine:
     def __init__(self, configuracion: Configuracion):
@@ -31,26 +37,26 @@ class SoundEngine:
         }
 
         self.music = {
-            "menu": "assets/sounds/Menu theme.mp3",
-            "main": "assets/sounds/Main theme.mp3",
-            "dead": "assets/sounds/Dead theme.mp3",
-            "song1": "assets/sounds/Song 1.mp3",
-            "song2": "assets/sounds/Song 2.mp3",
-            "win": "assets/sounds/Win theme.mp3",
-            "boss": "assets/sounds/Final boss.mp3",
+            "menu": PATH_MUSIC / "Menu theme.mp3",
+            "main": PATH_MUSIC / "Main theme.mp3",
+            "dead": PATH_MUSIC / "Dead theme.mp3",
+            "song1": PATH_MUSIC / "Song 1.mp3",
+            "song2": PATH_MUSIC / "Song 2.mp3",
+            "win": PATH_MUSIC / "Win theme.mp3",
+            "boss": PATH_MUSIC / "Final boss.mp3",
         }
 
         self.sfx = {
-            "movement": pygame.mixer.Sound("assets/sounds/movement.mp3"),
-            "door": pygame.mixer.Sound("assets/sounds/door.wav"),
-            "menu_select": pygame.mixer.Sound("assets/sounds/menu_select.mp3"),
-            "menu_confirm": pygame.mixer.Sound("assets/sounds/menu_accept.mp3"),
-            "dead": pygame.mixer.Sound("assets/sounds/deadsfx.wav"),
-            "attack": pygame.mixer.Sound("assets/sounds/attack.wav"),
-            "collect": pygame.mixer.Sound("assets/sounds/collect.mp3"),
-            "damage": pygame.mixer.Sound("assets/sounds/damage.wav"),
-            "chest": pygame.mixer.Sound("assets/sounds/chest.wav"),
-            "heal": pygame.mixer.Sound("assets/sounds/heal.wav")
+            "movement": pygame.mixer.Sound(PATH_SFX / "movement.mp3"),
+            "door": pygame.mixer.Sound(PATH_SFX / "door.wav"),
+            "menu_select": pygame.mixer.Sound(PATH_SFX / "menu_select.mp3"),
+            "menu_confirm": pygame.mixer.Sound(PATH_SFX / "menu_accept.mp3"),
+            "dead": pygame.mixer.Sound(PATH_SFX / "deadsfx.wav"),
+            "attack": pygame.mixer.Sound(PATH_SFX / "attack.wav"),
+            "collect": pygame.mixer.Sound(PATH_SFX / "collect.mp3"),
+            "damage": pygame.mixer.Sound(PATH_SFX / "damage.wav"),
+            "chest": pygame.mixer.Sound(PATH_SFX / "chest.wav"),
+            "heal": pygame.mixer.Sound(PATH_SFX / "heal.wav")
         }
 
         for sound in self.sfx.values():
