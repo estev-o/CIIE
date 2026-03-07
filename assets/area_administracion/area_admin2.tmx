@@ -174,10 +174,10 @@
   </object>
  </objectgroup>
  <objectgroup id="7" name="hitbox_fondo">
-  <object id="68" x="408" y="22.6667" width="73.333" height="74"/>
+  <object id="68" x="408" y="22.6667" width="78.3175" height="74"/>
   <object id="73" x="479.334" y="10" width="49.3333" height="43.3333"/>
   <object id="76" x="279.667" y="25" width="136.667" height="510.054"/>
-  <object id="87" x="526" y="22" width="95.3333" height="71.3333"/>
+  <object id="87" x="521.016" y="22" width="100.318" height="71.3333"/>
   <object id="88" x="607.29" y="23.2461" width="109.259" height="296.39"/>
   <object id="89" x="409.783" y="511.333" width="208.883" height="28"/>
   <object id="90" x="608.952" y="385.122" width="103.222" height="141.14"/>

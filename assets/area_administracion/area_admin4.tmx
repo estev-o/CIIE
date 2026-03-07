@@ -217,7 +217,7 @@
   <object id="135" x="961.382" y="385.051" width="62.9291" height="53.5832"/>
   <object id="136" x="993.159" y="62.3061" width="23.6763" height="337.076"/>
  </objectgroup>
- <objectgroup id="8" name="puerta" visible="0">
+ <objectgroup id="8" name="puerta">
   <object id="84" x="854.696" y="83.5204">
    <point/>
   </object>

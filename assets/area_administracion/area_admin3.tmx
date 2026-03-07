@@ -199,7 +199,7 @@
   <object id="120" x="822.44" y="23.0532" width="145.173" height="32.3991"/>
   <object id="121" x="902.815" y="52.9601" width="71.0289" height="40.4989"/>
  </objectgroup>
- <objectgroup id="8" name="puerta" visible="0">
+ <objectgroup id="8" name="puerta">
   <object id="84" x="887.718" y="78.5359">
    <point/>
   </object>
