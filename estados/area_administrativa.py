@@ -14,7 +14,7 @@ NIVEL_FORZADO = "area_admin6.tmx"  # Para pruebas, fuerza a entrar a esta área 
 
 
 class AreaAdministrativa(Estado):
-    niveles = ["area_admin1.tmx", "area_admin2.tmx", "area_admin3.tmx", "area_admin4.tmx", "area_admin5.tmx", "area_admin5.tmx"]
+    niveles = ["area_admin1.tmx", "area_admin2.tmx", "area_admin3.tmx", "area_admin4.tmx", "area_admin5.tmx", "area_admin6.tmx"]
     distintas_areas = niveles.copy()
     areas_visitadas = []
     areas_to_continue = 3
