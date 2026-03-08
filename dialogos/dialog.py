@@ -190,10 +190,11 @@ class Dialog(Interactuable):
         char_objective = int(self.timer * self.speed)
 
         if char_objective > len(self.visible_text):
-            next = self.complete_text[len(self.visible_text)]
-            self.visible_text += next
-            if next != " ":
-                sound_bip.play()
+            if len(self.visible_text) < len(self.complete_text):
+                next = self.complete_text[len(self.visible_text)]
+                self.visible_text += next
+                if next != " ":
+                    sound_bip.play()
 
         if len(self.visible_text) >= len(self.complete_text):
             self.finished = True

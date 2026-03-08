@@ -57,6 +57,7 @@ class Juego():
 
         #fading entre estados
         self._fading = False
+        self._fade_done = False
         self._fade_alpha = 0
         self._fade_duration = 0.5
         self._fade_callback = None
@@ -113,11 +114,19 @@ class Juego():
             if event.type == pygame.QUIT:
                 self.running = False
             if event.type == PLAYER_DEATH:
-                self._death_screen_requested = True
+                if not self._fading:
+                    self._death_screen_requested = True
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_PERIOD:
                     self.debug = not self.debug
     def update(self):
+        if self._fading:
+            if self._fade_done:
+                self._fading = False
+                self._fade_done = False
+                self._fade_alpha = 0
+                self._fade_callback()
+            return
         self.state_stack[-1].actualizar(self.dt, self.actions)
 
     def render(self):
@@ -125,14 +134,12 @@ class Juego():
         if self._fading:
             self._fade_alpha += (255 / self._fade_duration) * self.dt
             if self._fade_alpha >= 255:
-                self._fading = False
-                self._fade_alpha = 0
-                self._fade_callback()
-            else:
-                overlay = pygame.Surface((self.ancho, self.alto))
-                overlay.set_alpha(int(self._fade_alpha))
-                overlay.fill((0, 0, 0))
-                self.game_canvas.blit(overlay, (0, 0))
+                self._fade_alpha = 255
+                self._fade_done = True
+            overlay = pygame.Surface((self.ancho, self.alto))
+            overlay.set_alpha(int(self._fade_alpha))
+            overlay.fill((0, 0, 0))
+            self.game_canvas.blit(overlay, (0, 0))
 
         self.screen.blit(
             pygame.transform.scale(self.game_canvas, self.screen.get_size()),
@@ -174,7 +181,7 @@ class Juego():
         from estados.muerte import Muerte
         if self.state_stack and self.actual_state.__class__.__name__ == "Muerte":
             return
-        Muerte(self).entrar_estado()
+        self.fade_to(lambda: Muerte(self).entrar_estado())
 
     def start_new_run(self, start_state="menu"):
         pygame.event.clear(PLAYER_DEATH)
