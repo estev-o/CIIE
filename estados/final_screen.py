@@ -60,6 +60,8 @@ class FinalScreen(Estado):
             for i, boton in enumerate(self.botones):
                 if boton.verificar_click(pos_mouse_escalado):
                     self.indice_seleccionado = i
+                    self.activar_opcion()
+                    self.juego.reset_keys()
                     return
 
         self.mouse_pressed_prev = mouse_pressed
