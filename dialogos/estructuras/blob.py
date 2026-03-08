@@ -6,7 +6,7 @@ hello_blob = {
             {"text": "¿Qué es este sitio?", "next": "sitio"},
             {"text": "¿Cómo he llegado aquí?", "next": "blub"},
             {"text": "¿Qué mejoras vendes aquí?", "next": "tienda"},
-            {"text": "Marcho que tengo que marchar", "next": None}
+            {"text": "Marcho que teño que marchar", "next": None}
         ],
         "options_hint": "W/S para cambiar | ENTER para elegir | ESC para salir",
         "options_hint_controller": "D-Pad para cambiar | A para elegir | B para salir",
