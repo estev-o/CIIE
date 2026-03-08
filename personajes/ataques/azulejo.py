@@ -8,7 +8,7 @@ class Azulejo(Attack):
         image = pygame.image.load("assets/ataques/azulejo.png").convert_alpha()
 
         super().__init__(
-            damage = 500,
+            damage = 10,
             game = game,
             image = image,
             speed = 500
