@@ -3,7 +3,7 @@ import pygame
 class Attack(pygame.sprite.Sprite):
     def __init__(self, game, image, damage, speed, rect=None):
         super().__init__()
-        self.damage = damage
+        self._damage = damage
         self.game = game
         self.speed = speed
         self.image = image
@@ -13,6 +13,12 @@ class Attack(pygame.sprite.Sprite):
             self.rect = rect
         else:
             self.rect = self.image.get_rect()
+
+    @property
+    def damage(self):
+        if hasattr(self.game, 'inf_damage') and self.game.inf_damage:
+            return float('inf')
+        return self._damage
 
     def init(self, *args, **kwargs):
         raise NotImplementedError

@@ -162,9 +162,6 @@ class Character(pygame.sprite.Sprite, ABC):
         pass
 
     def apply_damage(self, damage_amount):
-        if hasattr(self.game, 'inf_damage') and self.game.inf_damage and self.__class__.__name__ != "Player":
-            damage_amount = float('inf')
-            
         if damage_amount > 0:
             self._actual_life = max(self._actual_life - damage_amount, 0)
 
@@ -172,9 +169,6 @@ class Character(pygame.sprite.Sprite, ABC):
                 self.die()
 
     def apply_damage_percentage(self, damage_percentage):
-        if hasattr(self.game, 'inf_damage') and self.game.inf_damage and self.__class__.__name__ != "Player":
-            damage_percentage = 100
-            
         if 0 < damage_percentage <= 100:
             damage = self.max_live * damage_percentage / 100
             self._actual_life = max(self._actual_life - damage, 0)
