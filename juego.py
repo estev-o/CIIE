@@ -2,7 +2,7 @@
 import os,time,pygame
 
 from config.configuracion import Configuracion
-from estados.titulo3 import Titulo
+from estados.titulo import Titulo
 
 from personajes.enemigos.enemy_factory import EnemyFactory
 from estados.fonts import Fuentes

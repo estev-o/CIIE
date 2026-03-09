@@ -1,4 +1,7 @@
 import pygame
+
+"""Clase para centralizar las fuentes y sus tamaños"""
+
 class Fuentes:
     def __init__(self):
         self.xs = pygame.font.Font("assets/fonts/Snowbell-Wp4g9.ttf", 9)
