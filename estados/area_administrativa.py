@@ -57,6 +57,7 @@ class AreaAdministrativa(Estado):
         spawn = self.tmx_map.get_objects(layer="spawn_point")[0]
         self.player.pos_x = spawn.x - (r.width / 2)
         self.player.pos_y = spawn.y - (r.height / 2)
+        self.player.rect.topleft = (int(self.player.pos_x), int(self.player.pos_y))
 
 
         enemy_names = ["mock_explosive", "mock_ranger", "mock_melee"]

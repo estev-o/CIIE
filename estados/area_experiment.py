@@ -49,7 +49,7 @@ class AreaExperiment(Estado):
         self.tmx_map = TiledTMX(tmx_path)
         self.map_layer_order = list(self.tmx_map.layer_names)
         self._door_open = False
-        self.iniciar_texto_nivel(f"ÁREA EXPERIMANTACION ({len(AreaExperiment.areas_visitadas)}/{self.areas_to_continue})", 3000)
+        self.iniciar_texto_nivel(f"ÁREA DE EXPERIMENTACIÓN ({len(AreaExperiment.areas_visitadas)}/{self.areas_to_continue})", 3000)
 
         self.player = self.juego.player
 
@@ -58,6 +58,7 @@ class AreaExperiment(Estado):
         spawn = self.tmx_map.get_objects(layer="spawn_point")[0]
         self.player.pos_x = spawn.x - (r.width / 2)
         self.player.pos_y = spawn.y - (r.height / 2)
+        self.player.rect.topleft = (int(self.player.pos_x), int(self.player.pos_y))
 
 
         enemy_names = ["mock_explosive", "mock_ranger", "mock_melee"]
