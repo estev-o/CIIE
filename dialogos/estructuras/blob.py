@@ -19,7 +19,7 @@ hello_blob = {
         "f": None
     },
     "blub": {
-        "author": "Blub",
+        "author": "Blob",
         "text": "Por una serie de malas decisiones que has tomado, te presentaste voluntario para formar parte de un experimento. El objetivo de ese experimento era formar a alguien para que fuese el mejor estudiante. Y saliste tú :V",
         "next": "init",
         "f": None
