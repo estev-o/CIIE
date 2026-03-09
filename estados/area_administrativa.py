@@ -48,7 +48,7 @@ class AreaAdministrativa(Estado):
         self.tmx_map = TiledTMX(tmx_path)
         self.map_layer_order = list(self.tmx_map.layer_names)
         self._door_open = False
-        self.iniciar_texto_nivel(f"ÁREA ADMINISTRATIVA ({len(AreaAdministrativa.areas_visitadas)}/{self.areas_to_continue})", 2000)
+        self.iniciar_texto_nivel(f"ÁREA ADMINISTRATIVA ({len(AreaAdministrativa.areas_visitadas)}/{self.areas_to_continue})", 3000)
 
         self.player = self.juego.player
 
@@ -126,6 +126,10 @@ class AreaAdministrativa(Estado):
             from estados.pausa import Pausa
             Pausa(self.juego).entrar_estado()
             return
+            
+        if getattr(self, "_nivel_activo", False):
+            return
+
         solid_tiles = self.tmx_map.get_tiles()
         self.player.update(dt, acciones, solid_tiles)
         for enemy in self.enemies:
@@ -155,7 +159,6 @@ class AreaAdministrativa(Estado):
         if self.enemies_alive == 0:
             if self.player.body_hitbox.collidepoint(self._door_center):
                 if self.juego.debug and self.juego.skip_to_boss:
-                    from estados.boss_final import BossFinal
                     BossFinal(self.juego).entrar_estado()
                 elif len(AreaAdministrativa.areas_visitadas) == AreaAdministrativa.areas_to_continue:
                     BossFinal(self.juego).entrar_estado()

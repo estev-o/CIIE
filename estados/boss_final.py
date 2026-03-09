@@ -62,25 +62,14 @@ class BossFinal(Estado):
         self._set_boss_vulnerable(True)
         self._set_boss_damage_multiplier(self.SUMMON_DAMAGE_MULTIPLIER)
 
-        # Flash de entrada
-        self._flashes = [
-            (0.1, (0, 0, 0)),
-            (0.1, None),
-            (0.1, (0, 0, 0)),
-            (0.1, None),
-            (0.1, (0, 0, 0)),
-            (0.1, None),
-            (0.1, (0, 0, 0)),
-            (0.1, None),
-            (0.1, (0, 0, 0)),
-            (0.4, None),
-        ]
-        self._flash_timer = 0
-        self._flash_index = 0
+        # Fade in de entrada (tono ominoso)
+        self._fade_timer = 0.0
+        self._black_duration = 1.5
+        self._fade_duration = 3.5
         self._intro_done = False
 
         self.iniciar_texto_nivel(
-            f"DESPACHO DE GILBERTOV", 2000)
+            f"DESPACHO DE GILBERTOV", 5000)
 
     def _spawn_player(self):
         spawn_points = self.tmx_map.get_objects(layer="spawn_point")
@@ -199,13 +188,10 @@ class BossFinal(Estado):
 
     def actualizar(self, dt, acciones):
         if not self._intro_done:
-            self._flash_timer += dt
-            if self._flash_timer >= self._flashes[self._flash_index][0]:
-                self._flash_timer = 0
-                self._flash_index += 1
-                if self._flash_index >= len(self._flashes):
-                    self._intro_done = True
-            return  # bloquea input y lógica durante el flash
+            self._fade_timer += dt
+            if self._fade_timer >= (self._black_duration + self._fade_duration):
+                self._intro_done = True
+            return  # bloquea input y lógica durante el fade
 
         if acciones.get("toggle_pause"):
             self.juego.actions["toggle_pause"] = False
@@ -255,14 +241,19 @@ class BossFinal(Estado):
         self.adn_counter.draw(pantalla, self.juego.adn)
         self.player.render_upgrade_cooldowns(pantalla, x=25, y=25)
 
-        self.dibujar_texto_nivel(pantalla)
-
         if not self._intro_done:
-            color = self._flashes[self._flash_index][1]
-            if color is not None:
-                overlay = pygame.Surface((pantalla.get_width(), pantalla.get_height()))
-                overlay.fill(color)
-                pantalla.blit(overlay, (0, 0))
+            if self._fade_timer < self._black_duration:
+                alpha = 255
+            else:
+                progress = (self._fade_timer - self._black_duration) / self._fade_duration
+                alpha = max(0, int(255 * (1.0 - progress)))
+                
+            overlay = pygame.Surface((pantalla.get_width(), pantalla.get_height()))
+            overlay.fill((0, 0, 0))
+            overlay.set_alpha(alpha)
+            pantalla.blit(overlay, (0, 0))
+
+        self.dibujar_texto_nivel(pantalla)
 
         if self.juego.debug:
             self.player.debug_draw_hitbox(pantalla, (0, 255, 0))

@@ -63,8 +63,11 @@ class Estado():
             self._nivel_activo = False
             return
 
-        # Fade out último segundo
+        # Fade in primer segundo
         alpha = 255
+        if tiempo_transcurrido < 1000:
+            alpha = int(255 * (tiempo_transcurrido / 1000))
+        # Fade out último segundo
         tiempo_restante = self._nivel_duracion - tiempo_transcurrido
         if tiempo_restante < 1000:
             alpha = int(255 * (tiempo_restante / 1000))
@@ -79,6 +82,16 @@ class Estado():
         texto = self._nivel_font.render(self._nivel_nombre, True, (255, 255, 255))
         texto.set_alpha(alpha)
         rect = texto.get_rect(center=(cx, cy))
+
+        # Oscurecer la pantalla
+        overlay_alpha = int(255 * 0.6) # Max ~153 out of 255
+        if tiempo_restante < 1000:
+            overlay_alpha = int(255 * 0.6 * (tiempo_restante / 1000))
+        
+        overlay = pygame.Surface((pantalla.get_width(), pantalla.get_height()))
+        overlay.fill((0, 0, 0))
+        overlay.set_alpha(overlay_alpha)
+        pantalla.blit(overlay, (0, 0))
 
         pantalla.blit(sombra, sombra_rect)
         pantalla.blit(texto, rect)

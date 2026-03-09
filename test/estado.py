@@ -76,4 +76,11 @@ class Estado():
             pantalla.get_height() // 2
         ))
 
+        # Oscurecer la pantalla
+        overlay_alpha = int(alpha * 0.6) # Max ~153 out of 255
+        overlay = pygame.Surface((pantalla.get_width(), pantalla.get_height()))
+        overlay.fill((0, 0, 0))
+        overlay.set_alpha(overlay_alpha)
+        pantalla.blit(overlay, (0, 0))
+
         pantalla.blit(texto, rect)
