@@ -23,7 +23,6 @@ class ActionManager:
             controller.init()
             
         self.joysticks = {}
-        # Wait, get_count() actually relies on pygame.joystick internally, but Controller() initializes it safely
         if not pygame.joystick.get_init():
             pygame.joystick.init()
             
@@ -31,7 +30,6 @@ class ActionManager:
             if controller.is_controller(i):
                 joy = controller.Controller(i)
                 joy.init()
-                # A Pygame Controller encapsulates a Joystick. We can use the Joystick ID.
                 self.joysticks[joy.as_joystick().get_instance_id()] = joy
 
         self.current_mode = "keyboard_mouse"

@@ -11,8 +11,6 @@ from ui.player_health_bar import PlayerHealthBar
 from dialogos.interaction import Interaction
 from estados.pausa import Pausa
 
-
-DEBUG = False
 class Hub(Estado):
     SHOP_SELECTION_LAYERS = ("seleccion_tienda1", "seleccion_tienda2", "seleccion_tienda3")
 
@@ -159,7 +157,11 @@ class Hub(Estado):
         self.player_health_bar.update(dt, self.player.remaining_life, self.player.max_live)
         self.update_interactions(self.player, conditional_actions)
         if self.player.body_hitbox.collidepoint(self._door_center):
-            AreaExperiment(self.juego, reset=True).entrar_estado()
+            if self.juego.debug and self.juego.skip_to_boss:
+                from estados.boss_final import BossFinal
+                BossFinal(self.juego).entrar_estado()
+            else:
+                AreaExperiment(self.juego, reset=True).entrar_estado()
             return
 
     def dibujar(self, pantalla):

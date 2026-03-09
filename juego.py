@@ -13,10 +13,11 @@ from personajes.player import Player
 from sistemas.acciones import ActionManager
 from sistemas.sound_engine import SoundEngine
 
-DEBUG = True
+DEBUG = False
 SKIP_HUB = False
 INVINCIBLE = True
 INF_DAMAGE = True
+SKIP_TO_BOSS = False
 
 class Juego():
     def __init__(self):
@@ -35,6 +36,7 @@ class Juego():
 
         self.debug = DEBUG
         self.skip_hub = SKIP_HUB
+        self.skip_to_boss = SKIP_TO_BOSS
         self.inf_damage = INF_DAMAGE
         
         # pantalla completa
@@ -168,12 +170,8 @@ class Juego():
         self.action_manager.reset_keys()
 
     def load_states(self):
-        if self.debug and self.skip_hub:
-            from estados.area_experiment import AreaExperiment
-            self.state_stack.append(AreaExperiment(self))
-        else:
-            self.title_screen = Titulo(self)
-            self.state_stack.append(self.title_screen)
+        self.title_screen = Titulo(self)
+        self.state_stack.append(self.title_screen)
         self.actual_state.set_cursor()
 
     def open_death_screen(self):
@@ -195,8 +193,17 @@ class Juego():
             self.player._actual_life = 10000
         self.state_stack = []
         if start_state == "hub":
-            from estados.hub import Hub
-            self.state_stack.append(Hub(self))
+            if self.debug and self.skip_to_boss:
+                from estados.boss_final import BossFinal
+                self.state_stack.append(BossFinal(self))
+                self.actual_state.set_cursor()
+            elif self.debug and self.skip_hub:
+                from estados.area_experiment import AreaExperiment
+                self.state_stack.append(AreaExperiment(self, reset=True))
+                self.actual_state.set_cursor()
+            else:
+                from estados.hub import Hub
+                self.state_stack.append(Hub(self))
         else:
             self.state_stack.append(Titulo(self))
 

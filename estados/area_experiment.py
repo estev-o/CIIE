@@ -149,8 +149,10 @@ class AreaExperiment(Estado):
 
         if self.enemies_alive == 0:
             if self.player.body_hitbox.collidepoint(self._door_center):
-                
-                if len(AreaExperiment.areas_visitadas) == AreaExperiment.areas_to_continue:
+                if self.juego.debug and self.juego.skip_to_boss:
+                    from estados.boss_final import BossFinal
+                    BossFinal(self.juego).entrar_estado()
+                elif len(AreaExperiment.areas_visitadas) == AreaExperiment.areas_to_continue:
                     AreaAdministrativa(self.juego, reset=True).entrar_estado()
                 else:
                     AreaExperiment(self.juego).entrar_estado()

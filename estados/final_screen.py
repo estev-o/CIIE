@@ -27,9 +27,10 @@ class FinalScreen(Estado):
 
         font = self.juego.fonts
         centro_x = juego.ancho // 2
+        
         self.botones = [
-            Boton(centro_x - 150, 220, 300, 60, "Nueva Partida", font.medium),
-            Boton(centro_x - 150, 300, 300, 60, "Menú principal", font.medium),
+            Boton(centro_x - 150, 320, 300, 60, "Nueva Partida", font.medium),
+            Boton(centro_x - 150, 400, 300, 60, "Menú principal", font.medium),
         ]
 
         self.indice_seleccionado = 0
@@ -113,6 +114,11 @@ class FinalScreen(Estado):
             self.juego.sound_engine.play("menu_confirm")
 
     def dibujar(self, pantalla):
+        titulo = self.juego.fonts.big.render("¡VICTORIA!", False, (255, 255, 255))
+        titulo_rect = titulo.get_rect(center=(self.juego.ancho // 2, 100))
+        sombra = self.juego.fonts.big.render("¡VICTORIA!", False, (40, 80, 40))
+        sombra_rect = sombra.get_rect(center=(self.juego.ancho // 2 + 4, 100 + 4))
+
         if self.fase_animacion != "stats":
             pantalla.fill((0, 0, 0))
             alfa = 255
@@ -123,6 +129,11 @@ class FinalScreen(Estado):
             alfa = max(0, min(255, alfa))
             self.imagen_final.set_alpha(alfa)
             pantalla.blit(self.imagen_final, (0, 0))
+            
+            sombra.set_alpha(alfa)
+            titulo.set_alpha(alfa)
+            pantalla.blit(sombra, sombra_rect)
+            pantalla.blit(titulo, titulo_rect)
             return
 
         for y in range(pantalla.get_height()):
@@ -134,24 +145,19 @@ class FinalScreen(Estado):
             )
             pygame.draw.line(pantalla, color, (0, y), (pantalla.get_width(), y))
 
-        titulo = self.juego.fonts.big.render("¡VICTORIA!", False, (255, 255, 255))
-        titulo_rect = titulo.get_rect(center=(self.juego.ancho // 2, 100))
-        sombra = self.juego.fonts.big.render("¡VICTORIA!", False, (40, 80, 40))
-        sombra_rect = sombra.get_rect(center=(self.juego.ancho // 2 + 4, 104))
-
         subtitulo = self.juego.fonts.medium.render(
             "¡Has derrotado a Gilbertov!",
             False,
             (230, 255, 230),
         )
-        subtitulo_rect = subtitulo.get_rect(center=(self.juego.ancho // 2, 155))
+        subtitulo_rect = subtitulo.get_rect(center=(self.juego.ancho // 2, 190))
 
         adn_texto = self.juego.fonts.medium.render(
             f"ADN acumulado: {self.juego.adn}",
             False,
             (255, 255, 255),
         )
-        adn_rect = adn_texto.get_rect(center=(self.juego.ancho // 2, 185))
+        adn_rect = adn_texto.get_rect(center=(self.juego.ancho // 2, 240))
 
         pantalla.blit(sombra, sombra_rect)
         pantalla.blit(titulo, titulo_rect)
