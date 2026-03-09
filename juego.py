@@ -13,9 +13,10 @@ from personajes.player import Player
 from sistemas.acciones import ActionManager
 from sistemas.sound_engine import SoundEngine
 
-DEBUG = False
+DEBUG = True
 SKIP_HUB = False
-INVINCIBLE = False
+INVINCIBLE = True
+INF_DAMAGE = True
 
 class Juego():
     def __init__(self):
@@ -34,6 +35,7 @@ class Juego():
 
         self.debug = DEBUG
         self.skip_hub = SKIP_HUB
+        self.inf_damage = INF_DAMAGE
         
         # pantalla completa
         if self.configuracion.get("pantalla_completa", False):

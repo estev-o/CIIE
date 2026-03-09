@@ -11,6 +11,18 @@ class FinalScreen(Estado):
         imagen_original = pygame.image.load("assets/UI/cursor/cursor.png").convert_alpha()
         self.cursor_img = pygame.transform.scale(imagen_original, (30, 30))
 
+        try:
+            self.imagen_final = pygame.image.load("assets/pantalla final/pantalla final.png").convert()
+            self.imagen_final = pygame.transform.scale(self.imagen_final, (juego.ancho, juego.alto))
+        except:
+            self.imagen_final = pygame.Surface((juego.ancho, juego.alto))
+            self.imagen_final.fill((0, 0, 0))
+
+        self.fase_animacion = "fade_in"
+        self.timer_animacion = 0.0
+        self.duracion_fade = 2.0
+        self.duracion_mostrar = 4.0
+
         juego.sound_engine.play_music_if_changed("win", 1000)
 
         font = self.juego.fonts
@@ -28,6 +40,22 @@ class FinalScreen(Estado):
         self.mouse_pressed_prev = pygame.mouse.get_pressed()[0]
 
     def actualizar(self, dt, acciones):
+        if self.fase_animacion != "stats":
+            self.timer_animacion += dt
+            if self.fase_animacion == "fade_in":
+                if self.timer_animacion >= self.duracion_fade:
+                    self.fase_animacion = "mostrar"
+                    self.timer_animacion = 0.0
+            elif self.fase_animacion == "mostrar":
+                if self.timer_animacion >= self.duracion_mostrar:
+                    self.fase_animacion = "fade_out"
+                    self.timer_animacion = 0.0
+            elif self.fase_animacion == "fade_out":
+                if self.timer_animacion >= self.duracion_fade:
+                    self.fase_animacion = "stats"
+                    self.juego.reset_keys()
+            return
+
         if self.cooldown_nav > 0:
             self.cooldown_nav -= dt
 
@@ -85,6 +113,18 @@ class FinalScreen(Estado):
             self.juego.sound_engine.play("menu_confirm")
 
     def dibujar(self, pantalla):
+        if self.fase_animacion != "stats":
+            pantalla.fill((0, 0, 0))
+            alfa = 255
+            if self.fase_animacion == "fade_in":
+                alfa = int((self.timer_animacion / self.duracion_fade) * 255)
+            elif self.fase_animacion == "fade_out":
+                alfa = int((1.0 - (self.timer_animacion / self.duracion_fade)) * 255)
+            alfa = max(0, min(255, alfa))
+            self.imagen_final.set_alpha(alfa)
+            pantalla.blit(self.imagen_final, (0, 0))
+            return
+
         for y in range(pantalla.get_height()):
             ratio = y / pantalla.get_height()
             color = (
