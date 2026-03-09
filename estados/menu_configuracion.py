@@ -1,5 +1,5 @@
 from estados.estado import Estado
-from estados.componentes import SliderHorizontal, OpcionBinaria
+from estados.componentes import SliderHorizontal, OpcionBinaria, Boton, ModalConfirmacion
 import pygame
 
 
@@ -40,8 +40,24 @@ class MenuConfiguracion(Estado):
             self.config.get("pantalla_completa", False)
         )
 
+        # Boton borrar progreso
+        self.btn_borrar_progreso = Boton(
+            centro_x - 175,
+            410,
+            350,
+            50,
+            "Borrar Progreso",
+            font.medium
+        )
+        self.btn_borrar_progreso.color_normal = (150, 40, 40)
+        self.btn_borrar_progreso.color_hover = (180, 60, 60)
+        self.btn_borrar_progreso.color_seleccionado = (220, 80, 80)
+
+        # modal confirmacion
+        self.modal = None
+
         # navegación teclado
-        self.elementos_navegables = 3
+        self.elementos_navegables = 4
         self.indice_nav = 0
         self.cooldown_nav = 0
         self.delay_nav = 0.15
@@ -62,9 +78,15 @@ class MenuConfiguracion(Estado):
             return 1
         if self.opcion_fullscreen.obtener_rect().collidepoint(pos):
             return 2
+        if self.btn_borrar_progreso.rect.collidepoint(pos):
+            return 3
         return None
 
     def actualizar(self, dt, acciones):
+
+        if self.modal:
+            self.modal.actualizar(dt, acciones)
+            return
 
         if not self.prev:
             self.prev = acciones.copy()
@@ -113,6 +135,10 @@ class MenuConfiguracion(Estado):
                 self.opcion_fullscreen.cambiar()
                 self.aplicar_fullscreen()
 
+        elif self.indice_nav == 3:
+            if click_mouse and self.btn_borrar_progreso.rect.collidepoint(pos_mouse_escalado):
+                self.abrir_modal()
+
         # -------- navegación teclado --------
         if self.cooldown_nav > 0:
             self.cooldown_nav -= dt
@@ -144,11 +170,16 @@ class MenuConfiguracion(Estado):
         if enter and self.indice_nav == 2:
             self.opcion_fullscreen.cambiar()
             self.aplicar_fullscreen()
+        elif enter and self.indice_nav == 3:
+            self.abrir_modal()
 
         # escape
         if back:
             self.guardar_y_salir()
             self.juego.reset_keys()
+
+        self.btn_borrar_progreso.seleccionado = (self.indice_nav == 3)
+        self.btn_borrar_progreso.actualizar(dt)
 
         self.prev = acciones.copy()
 
@@ -163,6 +194,25 @@ class MenuConfiguracion(Estado):
                 (self.juego.ancho, self.juego.alto)
             )
 
+    def abrir_modal(self):
+        self.juego.sound_engine.play("menu_confirm")
+        self.modal = ModalConfirmacion(
+            self.juego,
+            "Esto borrará todo tu progreso.\n¿Estás seguro?",
+            self.confirmar_borrado,
+            self.cerrar_modal
+        )
+
+    def cerrar_modal(self):
+        self.modal = None
+
+    def confirmar_borrado(self):
+        self.config.set("mejoras_persistentes", [])
+        self.config.set("adn", 0)
+        if hasattr(self.juego, "mejoras"):
+            self.juego.mejoras._mejoras.clear()
+        self.juego.adn = 0
+        self.juego.start_new_run("menu")
 
 
     def guardar_y_salir(self):
@@ -179,6 +229,8 @@ class MenuConfiguracion(Estado):
             return self.slider_efectos.rect.centery
         elif self.indice_nav == 2:
             return self.opcion_fullscreen.obtener_rect().centery
+        elif self.indice_nav == 3:
+            return self.btn_borrar_progreso.rect.centery
 
     def dibujar(self, pantalla):
 
@@ -192,6 +244,7 @@ class MenuConfiguracion(Estado):
         self.slider_musica.dibujar(pantalla)
         self.slider_efectos.dibujar(pantalla)
         self.opcion_fullscreen.dibujar(pantalla)
+        self.btn_borrar_progreso.dibujar(pantalla)
 
         y = self.obtener_y_indice()
         pygame.draw.circle(pantalla, (255, 200, 100), (60, y), 8)
@@ -204,3 +257,6 @@ class MenuConfiguracion(Estado):
             False, (150, 150, 180)
         )
         pantalla.blit(info, info.get_rect(center=(self.juego.ancho // 2, self.juego.alto - 40)))
+
+        if self.modal:
+            self.modal.dibujar(pantalla)

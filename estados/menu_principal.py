@@ -1,10 +1,6 @@
 from estados.estado import Estado
 from estados.componentes import Boton
 import pygame
-
-from estados.hub import Hub
-
-
 class MenuPrincipal(Estado):
 
     def __init__(self, juego):
@@ -20,10 +16,9 @@ class MenuPrincipal(Estado):
         # crear botones
         centro_x = juego.ancho // 2
         self.botones = [
-            Boton(centro_x - 150, 200, 300, 60, "Nueva Partida", font.medium),
-            Boton(centro_x - 150, 280, 300, 60, "Continuar", font.medium),
-            Boton(centro_x - 150, 360, 300, 60, "Configuración", font.medium),
-            Boton(centro_x - 150, 440, 300, 60, "Salir", font.medium)
+            Boton(centro_x - 150, 200, 300, 60, "Jugar", font.medium),
+            Boton(centro_x - 150, 280, 300, 60, "Configuración", font.medium),
+            Boton(centro_x - 150, 360, 300, 60, "Salir", font.medium)
         ]
 
         self.indice_seleccionado = 0
@@ -97,11 +92,9 @@ class MenuPrincipal(Estado):
         if self.indice_seleccionado == 0:
             self.juego.fade_to(lambda: self.juego.start_new_run("hub"))
         elif self.indice_seleccionado == 1:
-            self.juego.fade_to(lambda: Hub(self.juego).entrar_estado())
-        elif self.indice_seleccionado == 2:
             from estados.menu_configuracion import MenuConfiguracion
             MenuConfiguracion(self.juego).entrar_estado()
-        elif self.indice_seleccionado == 3:
+        elif self.indice_seleccionado == 2:
             self.juego.running = False
 
     def dibujar(self, pantalla):

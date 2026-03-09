@@ -174,3 +174,106 @@ class OpcionBinaria:
         surface.blit(valor, (rect.right - valor.get_width(), rect.y))
 
 
+# =========================================================
+# MODAL CONFIRMACION
+# =========================================================
+class ModalConfirmacion:
+    def __init__(self, juego, texto, callback_confirmar, callback_cancelar):
+        self.juego = juego
+        self.texto = texto
+        self.callback_confirmar = callback_confirmar
+        self.callback_cancelar = callback_cancelar
+        
+        self.ancho = 640
+        self.alto = 250
+        self.rect = pygame.Rect(0, 0, self.ancho, self.alto)
+        self.rect.center = (self.juego.ancho // 2, self.juego.alto // 2)
+        
+        y_botones = self.rect.bottom - 80
+        btn_ancho = 200
+        btn_alto = 50
+        espacio = 40
+        x_cancelar = self.rect.centerx - btn_ancho - espacio // 2
+        x_confirmar = self.rect.centerx + espacio // 2
+        
+        self.btn_cancelar = Boton(x_cancelar, y_botones, btn_ancho, btn_alto, "Cancelar", self.juego.fonts.medium)
+        self.btn_confirmar = Boton(x_confirmar, y_botones, btn_ancho, btn_alto, "Borrar", self.juego.fonts.medium)
+        self.btn_confirmar.color_normal = (150, 40, 40)
+        self.btn_confirmar.color_hover = (180, 60, 60)
+        self.btn_confirmar.color_seleccionado = (220, 80, 80)
+        
+        self.botones = [self.btn_cancelar, self.btn_confirmar]
+        self.indice_nav = 0
+        
+        self.cooldown_nav = 0
+        self.delay_nav = 0.15
+        
+        self.prev_mouse_pos = (0, 0)
+        self.mouse_pressed_prev = pygame.mouse.get_pressed()[0]
+        self.mouse_moviendose = False
+
+    def actualizar(self, dt, acciones):
+        pos_mouse_escalado = acciones.get("mouse_pos", (0, 0))
+        mouse_pressed = pygame.mouse.get_pressed()[0]
+        click_mouse = mouse_pressed and not self.mouse_pressed_prev
+        self.mouse_pressed_prev = mouse_pressed
+
+        self.mouse_moviendose = pos_mouse_escalado != self.prev_mouse_pos
+        self.prev_mouse_pos = pos_mouse_escalado
+
+        if self.mouse_moviendose:
+            for i, btn in enumerate(self.botones):
+                if btn.verificar_hover(pos_mouse_escalado):
+                    if i != self.indice_nav:
+                        self.juego.sound_engine.play("menu_select")
+                    self.indice_nav = i
+
+        left = acciones.get("arrowLeft")
+        right = acciones.get("arrowRight")
+        enter = acciones.get("enter")
+        back = acciones.get("back")
+        
+        if self.cooldown_nav > 0:
+            self.cooldown_nav -= dt
+            
+        if self.cooldown_nav <= 0:
+            if left or right:
+                self.indice_nav = (self.indice_nav + 1) % 2
+                self.juego.sound_engine.play("menu_select")
+                self.cooldown_nav = self.delay_nav
+                
+        for i, btn in enumerate(self.botones):
+            btn.seleccionado = (i == self.indice_nav)
+            btn.actualizar(dt)
+            
+        if (click_mouse and self.botones[self.indice_nav].rect.collidepoint(pos_mouse_escalado)) or enter:
+            self.juego.sound_engine.play("menu_confirm")
+            if self.indice_nav == 0:
+                self.callback_cancelar()
+            elif self.indice_nav == 1:
+                self.callback_confirmar()
+        elif back:
+            self.callback_cancelar()
+
+    def dibujar(self, pantalla):
+        # fondo oscuro semitransparente
+        overlay = pygame.Surface((self.juego.ancho, self.juego.alto), pygame.SRCALPHA)
+        overlay.fill((0, 0, 0, 180))
+        pantalla.blit(overlay, (0, 0))
+        
+        # fondo modal
+        pygame.draw.rect(pantalla, (40, 40, 60), self.rect, border_radius=15)
+        pygame.draw.rect(pantalla, (150, 150, 200), self.rect, 3, border_radius=15)
+        
+        lineas = self.texto.split('\n')
+        y_inicial = self.rect.top + 60
+        if len(lineas) > 1:
+            y_inicial = self.rect.top + 50
+            
+        for i, linea in enumerate(lineas):
+            texto_surface = self.juego.fonts.medium.render(linea, False, (255, 255, 255))
+            texto_rect = texto_surface.get_rect(center=(self.rect.centerx, y_inicial + i * 35))
+            pantalla.blit(texto_surface, texto_rect)
+        
+        for btn in self.botones:
+            btn.dibujar(pantalla)
