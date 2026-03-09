@@ -2,6 +2,20 @@ import pygame
 import pygame._sdl2.controller as controller
 
 class ActionManager:
+    @property
+    def current_mode(self):
+        return getattr(self, '_current_mode', "keyboard_mouse")
+
+    @current_mode.setter
+    def current_mode(self, value):
+        if getattr(self, '_current_mode', None) != value:
+            self._current_mode = value
+            if pygame.display.get_surface() is not None:
+                if value == "controller":
+                    pygame.mouse.set_visible(False)
+                else:
+                    pygame.mouse.set_visible(True)
+
     def __init__(self):
         if not pygame.get_init():
             pygame.init()

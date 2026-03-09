@@ -8,6 +8,7 @@ from ui.health_bar import HealthBarManager
 from ui.player_health_bar import PlayerHealthBar
 from ui.adn_counter import ADNCounter
 from personajes.enemigos.chest import Chest
+from dialogos.interaction import Interaction
 from estados.boss_final import BossFinal
 
 NIVEL_FORZADO = "area_admin6.tmx"  # Para pruebas, fuerza a entrar a esta área de experimentación específica
@@ -95,6 +96,18 @@ class AreaAdministrativa(Estado):
             chest = juego.enemy_factory.create_enemy("chest", spawn_chest.x, spawn_chest.y, rarity=rarity)
             if chest is not None:
                 self.append_enemy(chest)
+                self.append_interaction(
+                    Interaction(
+                        chest,
+                        "Abrir [E]",
+                        chest,
+                        "interact",
+                        distance=50,
+                        text_controller="Abrir [A]",
+                        game=self.juego,
+                        availability_check=lambda c=chest: (not c.locked and not c.opened and not c.opening),
+                    )
+                )
         
         # Initializar health bar manager
         self.health_bar_manager = HealthBarManager(self.enemies)
@@ -118,6 +131,7 @@ class AreaAdministrativa(Estado):
         for enemy in self.enemies:
             enemy.ai_behavior(self.player, dt, solid_tiles)
         self.objects.update(self.player, dt)
+        self.update_interactions(self.player, acciones)
         
         self.health_bar_manager.update()
         self.player_health_bar.update(dt, self.player.remaining_life, self.player.max_live)
@@ -145,14 +159,6 @@ class AreaAdministrativa(Estado):
                 else:
                     AreaAdministrativa(self.juego).entrar_estado()
 
-        # Interacción con cofres
-        if acciones.get("interact"):
-            acciones["interact"] = False  # Consumir el input
-            for enemy in self.enemies:
-                if isinstance(enemy, Chest):
-                    if self.player.hitbox.colliderect(enemy.hitbox):
-                        enemy.interact()
-
     def dibujar(self, pantalla):
         pantalla.fill((0, 0, 0))
         self.tmx_map.draw(pantalla, only=self.map_layer_order)
@@ -168,6 +174,7 @@ class AreaAdministrativa(Estado):
         self.adn_counter.draw(pantalla, self.juego.adn)
         self.player.render_upgrade_cooldowns(pantalla, x=25, y=25)
         self.dibujar_texto_nivel(pantalla);
+        self.draw_interactions(pantalla)
 
         if self.juego.debug:
             font = pygame.font.Font(None, 28)
