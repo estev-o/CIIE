@@ -2,13 +2,15 @@ import pygame
 import os
 
 class PlayerHealthBar:
-    def __init__(self, x, y, max_hp=100, scale=3):
+    def __init__(self, x, y, max_hp=100, current_hp=None, scale=3):
         self.x = x
         self.y = y
         self.scale = scale
         self.max_hp = max_hp
-        self.display_hp = max_hp
-        self.target_hp = max_hp
+        if current_hp is None:
+            current_hp = max_hp
+        self.display_hp = current_hp
+        self.target_hp = current_hp
         
         # Load and scale assets
         base_path = os.path.join("assets", "UI", "barra de vida")

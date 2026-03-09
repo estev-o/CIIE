@@ -48,7 +48,7 @@ class BossFinal(Estado):
         self._spawn_boss()
 
         self.health_bar_manager = HealthBarManager(self.enemies)
-        self.player_health_bar = PlayerHealthBar(25, self.juego.alto - 65)
+        self.player_health_bar = PlayerHealthBar(25, self.juego.alto - 65, max_hp=self.player.max_live, current_hp=self.player.remaining_life)
         self.adn_counter = ADNCounter()
         self.adn_counter.set_position(
             self.player_health_bar.x,

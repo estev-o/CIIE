@@ -16,7 +16,7 @@ class Attack(pygame.sprite.Sprite):
 
     @property
     def damage(self):
-        if hasattr(self.game, 'inf_damage') and self.game.inf_damage:
+        if getattr(self.game, 'debug', False) and getattr(self.game, 'inf_damage', False):
             return float('inf')
         return self._damage
 

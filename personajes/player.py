@@ -162,6 +162,8 @@ class Player(Character):
         return self.super_azulejo_remaining > 0.0
 
     def apply_damage(self, damage_amount):
+        if getattr(self.game, 'debug', False) and getattr(self.game, 'invincible', False):
+            return
         if damage_amount > 0 and self._try_block_with_shield():
             return
         if self.itimer > 0:
@@ -174,6 +176,8 @@ class Player(Character):
             self.game.sound_engine.play("damage")
 
     def apply_damage_percentage(self, damage_percentage):
+        if getattr(self.game, 'debug', False) and getattr(self.game, 'invincible', False):
+            return
         if damage_percentage > 0 and self._try_block_with_shield():
             return
         if self.itimer > 0:

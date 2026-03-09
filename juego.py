@@ -38,6 +38,7 @@ class Juego():
         self.skip_hub = SKIP_HUB
         self.skip_to_boss = SKIP_TO_BOSS
         self.inf_damage = INF_DAMAGE
+        self.invincible = INVINCIBLE
         
         # pantalla completa
         if self.configuracion.get("pantalla_completa", False):
@@ -52,7 +53,7 @@ class Juego():
         self.adn = int(self.configuracion.get("adn", 0) or 0)
         self.mejoras = MejorasManager(self.configuracion)
         self.player = Player(self)
-        if INVINCIBLE:
+        if self.debug and self.invincible:
             self.player.max_live = 10000
             self.player._actual_life = 10000
         self.enemy_factory= EnemyFactory(self, "personajes/enemigos/enemy_list.json")
@@ -188,7 +189,7 @@ class Juego():
         self._death_screen_requested = False
         self.reset_keys()
         self.player = Player(self)
-        if INVINCIBLE:
+        if self.debug and self.invincible:
             self.player.max_live = 10000
             self.player._actual_life = 10000
         self.state_stack = []

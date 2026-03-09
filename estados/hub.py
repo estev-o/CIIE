@@ -51,7 +51,7 @@ class Hub(Estado):
         self.blob.pos_x = spawn_blob.x - (rb.width / 2)
         self.blob.pos_y = spawn_blob.y - (rb.height / 2)
         self.blob.rect.topleft = (int(self.blob.pos_x), int(self.blob.pos_y))
-        self.player_health_bar = PlayerHealthBar(25, self.juego.alto - 65)
+        self.player_health_bar = PlayerHealthBar(25, self.juego.alto - 65, max_hp=self.player.max_live, current_hp=self.player.remaining_life)
         self.adn_counter = ADNCounter()
         self.adn_counter.set_position(
             self.player_health_bar.x,
