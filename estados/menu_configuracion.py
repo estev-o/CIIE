@@ -20,14 +20,14 @@ class MenuConfiguracion(Estado):
 
         # Sliders
         self.slider_musica = SliderHorizontal(
-            centro_x - 200, 150, 400, 0, 100,
+            centro_x - 200, 130, 400, 0, 100,
             self.config.get("volumen_musica"),
             font.medium,
             "Volumen Música"
         )
 
         self.slider_efectos = SliderHorizontal(
-            centro_x - 200, 240, 400, 0, 100,
+            centro_x - 200, 220, 400, 0, 100,
             self.config.get("volumen_efectos"),
             font.medium,
             "Volumen Efectos"
@@ -36,7 +36,7 @@ class MenuConfiguracion(Estado):
         # Opción binaria fullscreen
         self.opcion_fullscreen = OpcionBinaria(
             centro_x - 200,
-            330,
+            310,
             400,
             "Pantalla Completa",
             font.medium,
@@ -46,7 +46,7 @@ class MenuConfiguracion(Estado):
         # Botón borrar progreso
         self.btn_borrar_progreso = Boton(
             centro_x - 175,
-            410,
+            390,
             350,
             50,
             "Borrar Progreso",
@@ -236,9 +236,14 @@ class MenuConfiguracion(Estado):
         pantalla.fill((20, 20, 40))
 
         titulo = self.juego.fonts.big.render("CONFIGURACIÓN", False, (255, 255, 255))
-        pantalla.blit(titulo, titulo.get_rect(center=(self.juego.ancho // 2, 60)))
+        titulo_rect = titulo.get_rect(center=(self.juego.ancho // 2, 55))
 
-        pygame.draw.line(pantalla, (100, 100, 150), (100, 100), (self.juego.ancho - 100, 100), 2)
+        sombra = self.juego.fonts.big.render("CONFIGURACIÓN", False, (50, 50, 80))
+        sombra_rect = sombra.get_rect(center=(self.juego.ancho // 2 + 4, 59))
+        pantalla.blit(sombra, sombra_rect)
+        pantalla.blit(titulo, titulo_rect)
+
+        pygame.draw.line(pantalla, (100, 100, 150), (100, 90), (self.juego.ancho - 100, 90), 2)
 
         self.slider_musica.dibujar(pantalla)
         self.slider_efectos.dibujar(pantalla)
