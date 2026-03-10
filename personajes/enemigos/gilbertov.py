@@ -28,7 +28,7 @@ class Gilbertov(Enemy):
             hitbox_offset_x=4,
             hitbox_offset_y=6,
             max_live=3000,
-            asset_file="assets/Gilvertov/Gilvertov.png",
+            asset_file="assets/personajes/Gilvertov/Gilvertov.png",
             drop_table=[],
         )
         self.vulnerable = True

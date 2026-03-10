@@ -14,7 +14,7 @@
     "anim_fps": 15,
     "hitbox_offset_x": 40,
     "hitbox_offset_y": 40,
-    "asset_file": "assets/Blub/PNG/Slime2/Walk/Slime2_Walk_full.png",
+    "asset_file": "assets/personajes/Blub/PNG/Slime2/Walk/Slime2_Walk_full.png",
     "drop_table": [
       { "object": "adn", "weight": 0.9 },
       { "object": null, "weight": 0.1 }
@@ -35,7 +35,7 @@
     "anim_fps": 2,
     "hitbox_offset_x": 0,
     "hitbox_offset_y": 2,
-    "asset_file": "assets/enemies/mine_drone.png",
+    "asset_file": "assets/personajes/enemies/mine_drone.png",
     "drop_table": [
       { "object": "adn", "weight": 0.9 },
       { "object": null, "weight": 0.1 }
@@ -53,7 +53,7 @@
     "attack_type": "kamikaze",
     "attack_cooldown": 1,
     "attack_speed": 300,
-    "asset_file": "assets/enemies/electric_drone.png",
+    "asset_file": "assets/personajes/enemies/electric_drone.png",
     "anim_fps": 2,
     "hitbox_offset_x": 0,
     "hitbox_offset_y": 2,

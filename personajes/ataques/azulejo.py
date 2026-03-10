@@ -5,7 +5,7 @@ from personajes.ataques.attack import Attack
 
 class Azulejo(Attack):
     def __init__(self, game):
-        image = pygame.image.load("assets/ataques/azulejo.png").convert_alpha()
+        image = pygame.image.load("assets/personajes/ataques/azulejo.png").convert_alpha()
 
         super().__init__(
             damage = 10,

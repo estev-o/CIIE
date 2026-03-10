@@ -40,11 +40,11 @@ class AreaExperiment(Estado):
         AreaExperiment.distintas_areas.remove(tmx_elegido)
         AreaExperiment.areas_visitadas.append(tmx_elegido)
 
-        tmx_path = os.path.join("assets", "area_experimentacion", tmx_elegido)
+        tmx_path = os.path.join("assets", "areas-salas", "area_experimentacion", tmx_elegido)
 
         # CODIGO DEBUG, BORRAR
         if juego.debug:
-            tmx_path = os.path.join("assets", "area_experimentacion", NIVEL_FORZADO)
+            tmx_path = os.path.join("assets", "areas-salas", "area_experimentacion", NIVEL_FORZADO)
 
         self.tmx_map = TiledTMX(tmx_path)
         self.map_layer_order = list(self.tmx_map.layer_names)

@@ -27,7 +27,7 @@ class BossFinal(Estado):
         juego.sound_engine.play_music_if_changed("boss", 3000)
 
         self.player = self.juego.player
-        self.tmx_map = TiledTMX(os.path.join("assets", "sala_boss_final", "sala_boss_final.tmx"))
+        self.tmx_map = TiledTMX(os.path.join("assets", "areas-salas", "sala_boss_final", "sala_boss_final.tmx"))
         self._base_layer_order = [
             name for name in self.tmx_map.layer_names
             if name not in ("puerta_abierta", "puerta_cerrada")

@@ -299,7 +299,7 @@ class Enemy(Character):
         if self.ai_state == "alert" and self.alert_timer > 0:
             if not hasattr(self, 'alert_icon_loaded'):
                 try:
-                    self.alert_icon = pygame.image.load("assets/enemies/Alert.png").convert_alpha()
+                    self.alert_icon = pygame.image.load("assets/personajes/enemies/Alert.png").convert_alpha()
                     self.alert_icon = pygame.transform.scale(self.alert_icon, (15 * self.scale, 20 * self.scale))
                     self.alert_icon_loaded = True
                 except:

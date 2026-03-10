@@ -19,7 +19,7 @@ class Blob(Character):
             anim_fps=5,
             hitbox_offset_x=17,
             hitbox_offset_y=17,
-            asset_file="assets/Blob/SlimeIdleSheet.png",
+            asset_file="assets/personajes/Blob/SlimeIdleSheet.png",
         )
         self.set_dialog(Dialog(copy.deepcopy(hello_blob), rect=(247, 330, 530, 210)))
 

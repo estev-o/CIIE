@@ -49,7 +49,7 @@ def _aplicar_escudo(player):
         player.register_upgrade_cooldown(
             "escudo",
             duration_seconds=30.0,
-            asset_path="assets/mejoras/escudo.png",
+            asset_path="assets/objects/mejoras/escudo.png",
         )
     player._mejora_escudo_aplicada = True
 
@@ -62,14 +62,14 @@ def _aplicar_blub_lava(player):
         player.register_upgrade_cooldown(
             "blub_lava",
             duration_seconds=40.0,
-            asset_path="assets/mejoras/blub_lava.png",
+            asset_path="assets/objects/mejoras/blub_lava.png",
             key_hint="F",
         )
 
-    player._walk_asset_file = "assets/Blub/PNG/Slime3/Walk/Slime3_Walk_full.png"
-    player._idle_asset_file = "assets/Blub/PNG/Slime3/Idle/Slime3_Idle_full.png"
+    player._walk_asset_file = "assets/personajes/Blub/PNG/Slime3/Walk/Slime3_Walk_full.png"
+    player._idle_asset_file = "assets/personajes/Blub/PNG/Slime3/Idle/Slime3_Idle_full.png"
     if hasattr(player, "_hurt_asset_file"):
-        player._hurt_asset_file = "assets/Blub/PNG/Slime3/Hurt/Slime3_Hurt_full.png"
+        player._hurt_asset_file = "assets/personajes/Blub/PNG/Slime3/Hurt/Slime3_Hurt_full.png"
     # Mantener sincronizado con la comprobacion base de Character y recargar visual al instante.
     player._asset_file = player._walk_asset_file
     if hasattr(player, "load_sprites"):
@@ -93,7 +93,7 @@ def _aplicar_super_azulejo(player):
         player.register_upgrade_cooldown(
             "super_azulejo",
             duration_seconds=40.0,
-            asset_path="assets/mejoras/super_azulejo.png",
+            asset_path="assets/objects/mejoras/super_azulejo.png",
             key_hint="R",
         )
 
@@ -106,7 +106,7 @@ MEJORAS = {
         "nombre": "Disparo rapido",
         "descripcion": "Reduce el tiempo entre disparos del ataque basico.",
         "coste_adn": 10,
-        "asset_path": "assets/mejoras/pocion_rapidez.png",
+        "asset_path": "assets/objects/mejoras/pocion_rapidez.png",
         "apply": _aplicar_disparo_rapido,
     },
     "disparo_triple": {
@@ -114,7 +114,7 @@ MEJORAS = {
         "nombre": "Disparo triple",
         "descripcion": "Dispara 3 proyectiles con una apertura pequena, estilo escopeta.",
         "coste_adn": 20,
-        "asset_path": "assets/mejoras/disparo_triple.png",
+        "asset_path": "assets/objects/mejoras/disparo_triple.png",
         "apply": _aplicar_disparo_triple,
     },
     "vida_extra_s": {
@@ -122,7 +122,7 @@ MEJORAS = {
         "nombre": "Vida extra S",
         "descripcion": "Aumenta la vida maxima en 10.",
         "coste_adn": 12,
-        "asset_path": "assets/mejoras/vida_extra_S.png",
+        "asset_path": "assets/objects/mejoras/vida_extra_S.png",
         "apply": _aplicar_vida_extra_s,
     },
     "vida_extra_m": {
@@ -130,7 +130,7 @@ MEJORAS = {
         "nombre": "Vida extra M",
         "descripcion": "Aumenta la vida maxima en 25.",
         "coste_adn": 30,
-        "asset_path": "assets/mejoras/vida_extra_M.png",
+        "asset_path": "assets/objects/mejoras/vida_extra_M.png",
         "apply": _aplicar_vida_extra_m,
     },
     "vida_extra_l": {
@@ -138,7 +138,7 @@ MEJORAS = {
         "nombre": "Vida extra L",
         "descripcion": "Aumenta la vida maxima en 100.",
         "coste_adn": 120,
-        "asset_path": "assets/mejoras/vida_extra_L.png",
+        "asset_path": "assets/objects/mejoras/vida_extra_L.png",
         "apply": _aplicar_vida_extra_l,
     },
     "escudo": {
@@ -146,7 +146,7 @@ MEJORAS = {
         "nombre": "Escudo",
         "descripcion": "Bloquea un golpe y se recarga cada 5 minutos.",
         "coste_adn": 45,
-        "asset_path": "assets/mejoras/escudo.png",
+        "asset_path": "assets/objects/mejoras/escudo.png",
         "apply": _aplicar_escudo,
     },
     "blub_lava": {
@@ -154,7 +154,7 @@ MEJORAS = {
         "nombre": "Blub lava",
         "descripcion": "Convierte a Blub en su version de lava. Desbloquea la base para su ataque especial.",
         "coste_adn": 150,
-        "asset_path": "assets/mejoras/blub_lava.png",
+        "asset_path": "assets/objects/mejoras/blub_lava.png",
         "apply": _aplicar_blub_lava,
     },
     "super_azulejo": {
@@ -162,7 +162,7 @@ MEJORAS = {
         "nombre": "Super azulejo",
         "descripcion": "Activa 20s de disparo en 8 direcciones. Recarga en 3 minutos.",
         "coste_adn": 120,
-        "asset_path": "assets/mejoras/super_azulejo.png",
+        "asset_path": "assets/objects/mejoras/super_azulejo.png",
         "apply": _aplicar_super_azulejo,
     },
 }

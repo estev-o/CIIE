@@ -9,7 +9,7 @@ from sistemas.configuracion import Configuracion
 from estados.titulo import Titulo
 
 from personajes.enemigos.enemy_factory import EnemyFactory
-from estados.fonts import Fuentes
+from sistemas.fonts import Fuentes
 from objetos.object_factory import ObjectFactory
 from objetos.mejoras.manager import MejorasManager
 from personajes.constants import PLAYER_DEATH

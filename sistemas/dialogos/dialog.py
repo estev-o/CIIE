@@ -1,7 +1,7 @@
 import pygame
 from sistemas.dialogos.interactuable import Interactuable
 from sistemas.dialogos.sound_bip import sound_bip
-from estados.fonts import Fuentes
+from sistemas.fonts import Fuentes
 
 fonts= Fuentes()
 font_main = fonts.small      #  texto principal

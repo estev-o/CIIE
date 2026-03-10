@@ -83,7 +83,7 @@ class ExplosionSprite(pygame.sprite.Sprite):
 
         # Cargar y escalar las 10 imágenes de la animación
         for i in range(1, 11):
-            img_path = f"assets/enemies/explosion/Explosion_blue_circle{i}.png"
+            img_path = f"assets/personajes/enemies/explosion/Explosion_blue_circle{i}.png"
             try:
                 # Usamos convert_alpha() para que las transparencias del PNG se vean bien
                 img = pygame.image.load(img_path).convert_alpha()

@@ -52,7 +52,7 @@ class EnemyProjectile(pygame.sprite.Sprite):
         # Cargamos una imagen y la enrojecemos
         try:
             # Carga la imagen completamente nueva y original
-            self.original_image = pygame.image.load("assets/ataques/azulejo.png").convert_alpha()
+            self.original_image = pygame.image.load("assets/personajes/ataques/azulejo.png").convert_alpha()
         except FileNotFoundError:
             # Fallback por si la ruta falla (para evitar que el juego se cierre)
             print("Error: No se encontró 'assets/ataques/azulejo.png'. Usando sprite por defecto.")

@@ -35,7 +35,7 @@ class Hub(Estado):
         juego.sound_engine.play_next_main_song(3000)
 
         # guarda el mapa desde Tiled como TMX (layers en CSV) en esta ruta.
-        tmx_path = os.path.join("assets", "Fondo_Hub", "hub.tmx")
+        tmx_path = os.path.join("assets", "areas-salas", "Fondo_Hub", "hub.tmx")
 
         # Esto detecta todos los tilesets
         self.tmx_map = TiledTMX(tmx_path)

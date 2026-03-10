@@ -11,7 +11,7 @@ class FinalScreen(Menu):
 
         #Cargar imagen final victoria
         try:
-            self.imagen_final = pygame.image.load("assets/pantalla final/pantalla final.png").convert()
+            self.imagen_final = pygame.image.load("assets/areas-salas/pantalla final/pantalla final.png").convert()
             self.imagen_final = pygame.transform.scale(self.imagen_final, (juego.ancho, juego.alto))
         except:
             self.imagen_final = pygame.Surface((juego.ancho, juego.alto))

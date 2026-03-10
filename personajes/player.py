@@ -12,10 +12,10 @@ class Player(Character):
     SHIELD_BLOCK_GRACE_TIME = 0.75
     
     def __init__(self, game):
-        self._walk_asset_file = "assets/Blub/PNG/Slime1/Walk/Slime1_Walk_full.png"
-        self._idle_asset_file = "assets/Blub/PNG/Slime1/Idle/Slime1_Idle_full.png"
-        self._hurt_asset_file = "assets/Blub/PNG/Slime1/Hurt/Slime1_Hurt_full.png"
-        self._death_asset_file = "assets/Blub/PNG/Slime1/Death/Slime1_Death_full.png"
+        self._walk_asset_file = "assets/personajes/Blub/PNG/Slime1/Walk/Slime1_Walk_full.png"
+        self._idle_asset_file = "assets/personajes/Blub/PNG/Slime1/Idle/Slime1_Idle_full.png"
+        self._hurt_asset_file = "assets/personajes/Blub/PNG/Slime1/Hurt/Slime1_Hurt_full.png"
+        self._death_asset_file = "assets/personajes/Blub/PNG/Slime1/Death/Slime1_Death_full.png"
         super().__init__(
             game=game,
             max_live=100,
