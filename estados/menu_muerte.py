@@ -2,37 +2,52 @@ import pygame
 
 from estados.componentes import Boton
 from estados.estado import Estado
+from estados.menu_principal import MenuPrincipal
 
 
 class Muerte(Estado):
-
+    """Estado que implementa el menú de muerte del juego."""
     def __init__(self, juego):
         Estado.__init__(self, juego)
 
+        # Obtener gestor de fuentes del juego
         font = self.juego.fonts
 
+        # Iniciar música del menú si no está ya reproduciéndose
         juego.sound_engine.play_music_if_changed("dead", 3000)
+
+        #Cargar sprite cursor personalizado
         imagen_original = pygame.image.load("assets/UI/cursor/cursor.png").convert_alpha()
         self.cursor_img = pygame.transform.scale(imagen_original, (30, 30))
 
         centro_x = juego.ancho // 2
+
+        # Crear botones usando componentes.py
         self.botones = [
-            Boton(centro_x - 150, 200, 300, 60, "Nueva Partida", font.medium),
-            Boton(centro_x - 150, 280, 300, 60, "Menú principal", font.medium),
+            Boton(centro_x - 150, 200, 300, 60, "Nueva Partida", font.medium,
+                  lambda: self.juego.fade_to(lambda: self.juego.start_new_run("hub"))),
+            Boton(centro_x - 150, 280, 300, 60, "Menú principal", font.medium,
+                  lambda: self.juego.fade_to(lambda: MenuPrincipal(self.juego).entrar_estado()))
         ]
 
+        # Indice de botón seleccionado
         self.indice_seleccionado = 0
         self.botones[self.indice_seleccionado].seleccionado = True
 
+        # Control  navegación con cooldown
         self.cooldown_nav = 0
         self.delay_nav = 0.15
+
+        # Estado previo del ratón para detectar clicks
         self.mouse_pressed_prev = pygame.mouse.get_pressed()[0]
         self._last_mouse_pos = None
 
     def actualizar(self, dt, acciones):
+        # Reducir cooldown de navegación
         if self.cooldown_nav > 0:
             self.cooldown_nav -= dt
 
+        # Navegación circular teclado/mando
         if self.cooldown_nav <= 0:
             if acciones.get("arrowUp"):
                 self.cambiar_seleccion(-1)
@@ -43,17 +58,30 @@ class Muerte(Estado):
             elif acciones.get("back"):
                 self.juego.running = False
 
+        # Activar opciones botones
         if acciones.get("enter") or acciones.get("interact"):
-            self.activar_opcion()
-            self.juego.reset_keys()
+            self.botones[self.indice_seleccionado].activar()
+            self.juego.sound_engine.play("menu_accept")
+            self.juego.reset_keys()  # Evitar inputs duplicados
             return
 
+        # Obtener el modo actual
         current_mode = acciones.get("current_mode", "keyboard_mouse")
+
+        # Obtener posición del ratón ya escalada
         pos_mouse_escalado = acciones.get("mouse_pos", (0, 0))
+
+        # Leer estado actual click izquierdo
+        mouse_pressed = pygame.mouse.get_pressed()[0]
+
+        # Detectar si el ratón se ha movido
         mouse_moved = (self._last_mouse_pos is not None
                        and pos_mouse_escalado != self._last_mouse_pos)
+
+        # Guardar pos actual para comparar en el siguiente frame
         self._last_mouse_pos = pos_mouse_escalado
 
+        # Procesar hovering ratón sobre botones
         if current_mode == "keyboard_mouse" and mouse_moved:
             for i, boton in enumerate(self.botones):
                 if boton.verificar_hover(pos_mouse_escalado):
@@ -63,12 +91,14 @@ class Muerte(Estado):
                         self.botones[self.indice_seleccionado].seleccionado = True
                         self.juego.sound_engine.play("menu_select")
 
+        # Procesar click ratón sobre botones
         mouse_pressed = pygame.mouse.get_pressed()[0]
         if mouse_pressed and not self.mouse_pressed_prev:
             for i, boton in enumerate(self.botones):
                 if boton.verificar_click(pos_mouse_escalado):
                     self.indice_seleccionado = i
-                    self.activar_opcion()
+                    boton.activar()
+                    self.juego.sound_engine.play("menu_accept")
                     self.juego.reset_keys()
                     return
 
@@ -77,22 +107,13 @@ class Muerte(Estado):
         for boton in self.botones:
             boton.actualizar(dt)
 
+    # Cambiar selección circular botones con teclado o mando
     def cambiar_seleccion(self, direccion):
         self.botones[self.indice_seleccionado].seleccionado = False
         self.indice_seleccionado = (self.indice_seleccionado + direccion) % len(self.botones)
         self.botones[self.indice_seleccionado].seleccionado = True
         self.juego.sound_engine.play("menu_select")
 
-    def activar_opcion(self):
-        self.juego.sound_engine.play("menu_confirm")
-        if self.indice_seleccionado == 0:
-            self.juego.fade_to(lambda: self.juego.start_new_run("hub"))
-        elif self.indice_seleccionado == 1:
-            from estados.menu_principal import MenuPrincipal
-            self.juego.fade_to(lambda: MenuPrincipal(self.juego).entrar_estado())
-        elif self.indice_seleccionado == 1:
-            from estados.menu_principal import MenuPrincipal
-            MenuPrincipal(self.juego).entrar_estado()
 
     def dibujar(self, pantalla):
         for y in range(pantalla.get_height()):
