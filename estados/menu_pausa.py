@@ -176,7 +176,7 @@ class Pausa(Estado):
             info_text = "B: Atrás | A: Seleccionar"
         else:
             info_text = "ESC: Atrás | ENTER: Seleccionar"
-        info = self.juego.fonts.small.render(info_text, True, (180, 180, 200))
+        info = self.juego.fonts.small.render(info_text, False, (180, 180, 200))
         info_rect = info.get_rect(center=(centro_x, self.juego.alto - 40))
         pantalla.blit(info, info_rect)
 
@@ -228,11 +228,11 @@ class Pausa(Estado):
         pygame.draw.rect(pantalla, (24, 24, 40), self.sidebar_rect, border_radius=12)
         pygame.draw.rect(pantalla, (90, 110, 160), self.sidebar_rect, 2, border_radius=12)
 
-        titulo = self.juego.fonts.medium.render("Mejoras", True, (255, 255, 255))
+        titulo = self.juego.fonts.medium.render("Mejoras", False, (255, 255, 255))
         pantalla.blit(titulo, (self.sidebar_rect.x + 14, self.sidebar_rect.y + 10))
 
         if not self.upgrade_items:
-            txt = self.juego.fonts.small.render("Ninguna", True, (190, 190, 210))
+            txt = self.juego.fonts.small.render("Ninguna", False, (190, 190, 210))
             pantalla.blit(txt, (self.sidebar_rect.x + 14, self.sidebar_rect.y + 50))
             return
 
@@ -248,7 +248,7 @@ class Pausa(Estado):
                 img_rect = item["image"].get_rect(center=rect.center)
                 pantalla.blit(item["image"], img_rect)
             else:
-                fallback = self.juego.fonts.small.render("?", True, (255, 255, 255))
+                fallback = self.juego.fonts.small.render("?", False, (255, 255, 255))
                 pantalla.blit(fallback, fallback.get_rect(center=rect.center))
 
         if self.hover_mejora_index is not None:
@@ -274,12 +274,12 @@ class Pausa(Estado):
         pygame.draw.rect(pantalla, (10, 10, 18), rect, border_radius=10)
         pygame.draw.rect(pantalla, (180, 200, 255), rect, 2, border_radius=10)
 
-        name_surf = self.juego.fonts.medium.render(nombre, True, (255, 255, 255))
+        name_surf = self.juego.fonts.medium.render(nombre, False, (255, 255, 255))
         pantalla.blit(name_surf, (rect.x + 12, rect.y + 8))
 
         text_y = rect.y + 34
         for line in lineas:
-            line_surf = self.juego.fonts.small.render(line, True, (220, 220, 230))
+            line_surf = self.juego.fonts.small.render(line, False, (220, 220, 230))
             pantalla.blit(line_surf, (rect.x + 12, text_y))
             text_y += 18
 

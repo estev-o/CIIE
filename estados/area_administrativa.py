@@ -41,7 +41,6 @@ class AreaAdministrativa(Estado):
 
         tmx_path = os.path.join("assets", "area_administracion", tmx_elegido)
 
-        # CODIGO DEBUG, BORRAR
         if juego.debug:
             tmx_path = os.path.join("assets", "area_administracion", NIVEL_FORZADO)
 

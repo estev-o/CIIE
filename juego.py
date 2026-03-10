@@ -1,4 +1,8 @@
-# Example file showing a circle moving on screen
+"""
+Módulo principal del juego.
+Gestiona el bucle principal, la inicialización de subsistemas, instancias globales
+(jugador, fábricas de entidades) y la arquitectura de estados (State Machine).
+"""
 import os,time,pygame
 
 from config.configuracion import Configuracion
@@ -20,9 +24,13 @@ INF_DAMAGE = True
 SKIP_TO_BOSS = False
 
 class Juego():
+    """
+    Clase principal que inicializa el motor, maneja el bucle principal y la máquina de estados.
+    """
     def __init__(self):
-        #Configuración del mixer para motor sonido.
+        # Configuración del mixer para motor sonido.
         pygame.mixer.pre_init(44100, -16, 2, 512)
+
         pygame.init()
 
         #Crear objetos gestores de configuración, fuentes y motor sonido.
@@ -30,6 +38,7 @@ class Juego():
         self.fonts=Fuentes()
         self.sound_engine = SoundEngine(self.configuracion)
 
+        # Inicialización de subsistemas y ventana
         self.ancho, self.alto = 1024, 544
         self.game_canvas = pygame.Surface((self.ancho, self.alto))
         self.screen = pygame.display.set_mode((self.ancho, self.alto))
@@ -37,14 +46,12 @@ class Juego():
         self.action_manager = ActionManager()
         self.actions = self.action_manager.actions
 
-
         self.debug = DEBUG
         self.skip_hub = SKIP_HUB
         self.skip_to_boss = SKIP_TO_BOSS
         self.inf_damage = INF_DAMAGE
         self.invincible = INVINCIBLE
-        
-        # pantalla completa
+
         if self.configuracion.get("pantalla_completa", False):
             self.screen = pygame.display.set_mode((self.ancho, self.alto), pygame.FULLSCREEN)
         else:
@@ -62,9 +69,9 @@ class Juego():
             self.player._actual_life = 10000
         self.enemy_factory= EnemyFactory(self, "personajes/enemigos/enemy_list.json")
         self.object_factory = ObjectFactory("objetos/object_list.json")
-        self.state_stack = []
 
-        #fading entre estados
+        # Gestión de estados y variables para transiciones visuales (Fading)
+        self.state_stack = []
         self._fading = False
         self._fade_done = False
         self._fade_alpha = 0
@@ -73,6 +80,10 @@ class Juego():
 
         self.load_assets()
         self.load_states()
+
+    # -----------------------------------------------------------------
+    # --- Gestión de Progresión (ADN) y Mejoras
+    # -----------------------------------------------------------------
 
     def add_adn(self, amount):
         amount = int(amount)
@@ -97,6 +108,10 @@ class Juego():
 
     def desbloquear_mejora(self, mejora_id):
         return self.mejoras.unlock(mejora_id)
+
+    # -----------------------------------------------------------------
+    # --- Bucle Principal (Game Loop) y Procesamiento de Eventos
+    # -----------------------------------------------------------------
 
     def game_loop(self):
         while self.running:
@@ -128,6 +143,11 @@ class Juego():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_PERIOD:
                     self.debug = not self.debug
+
+    # -----------------------------------------------------------------
+    # --- Actualización Lógica y Renderizado (Update & Render)
+    # -----------------------------------------------------------------
+
     def update(self):
         if self._fading:
             if self._fade_done:
@@ -174,6 +194,10 @@ class Juego():
     def reset_keys(self):
         self.action_manager.reset_keys()
 
+    # -----------------------------------------------------------------
+    # --- Gestión de Estados del Juego, Reinicios y Transiciones
+    # -----------------------------------------------------------------
+
     def load_states(self):
         self.title_screen = Titulo(self)
         self.state_stack.append(self.title_screen)
@@ -212,7 +236,6 @@ class Juego():
         else:
             self.state_stack.append(Titulo(self))
 
-    #fading
     def fade_to(self, callback, duration=0.4):
         self._fade_alpha = 0
         self._fade_duration = duration
