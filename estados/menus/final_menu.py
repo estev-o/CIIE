@@ -1,18 +1,13 @@
 import pygame
-
+from estados.menus.menu_base import Menu
 from estados.menus.componentes import Boton
-from estados.estado import Estado
 from estados.menus.menu_principal import MenuPrincipal
 
 
-class FinalScreen(Estado):
+class FinalScreen(Menu):
     """Estado que implementa el menú final de victoria."""
     def __init__(self, juego):
-        super().__init__(juego)
-
-        #Cargar sprite cursor
-        imagen_original = pygame.image.load("assets/UI/cursor/cursor.png").convert_alpha()
-        self.cursor_img = pygame.transform.scale(imagen_original, (30, 30))
+        Menu.__init__(self, juego)
 
         #Cargar imagen final victoria
         try:
@@ -43,15 +38,10 @@ class FinalScreen(Estado):
                   lambda: self.juego.fade_to(lambda: MenuPrincipal(self.juego).entrar_estado()))
         ]
 
-        self.indice_seleccionado = 0
         self.botones[self.indice_seleccionado].seleccionado = True
 
-        self.cooldown_nav = 0.0
-        self.delay_nav = 0.15
-        self.mouse_pressed_prev = pygame.mouse.get_pressed()[0]
-        self._last_mouse_pos = None
-
     def actualizar(self, dt, acciones):
+        # Mientras dure la animación, solo avanzar el timer
         if self.fase_animacion != "stats":
             self.timer_animacion += dt
             if self.fase_animacion == "fade_in":
@@ -68,73 +58,8 @@ class FinalScreen(Estado):
                     self.juego.reset_keys()
             return
 
-        # Reducir cooldown de navegación
-        if self.cooldown_nav > 0:
-            self.cooldown_nav -= dt
-
-        # Navegación circular teclado/mando
-        if self.cooldown_nav <= 0:
-            if acciones.get("arrowUp"):
-                self.cambiar_seleccion(-1)
-                self.cooldown_nav = self.delay_nav
-            elif acciones.get("arrowDown"):
-                self.cambiar_seleccion(1)
-                self.cooldown_nav = self.delay_nav
-            elif acciones.get("back"):
-                self.juego.running = False
-        # Activar opciones botones
-        if acciones.get("enter") or acciones.get("interact"):
-            self.botones[self.indice_seleccionado].activar()
-            self.juego.sound_engine.play("menu_accept")
-            self.juego.reset_keys() # Evitar inputs duplicados
-            return
-
-        # Obtener el modo actual
-        current_mode = acciones.get("current_mode", "keyboard_mouse")
-
-        # Obtener posición del ratón ya escalada
-        pos_mouse_escalado = acciones.get("mouse_pos", (0, 0))
-
-        # Leer estado actual click izquierdo
-        mouse_pressed = pygame.mouse.get_pressed()[0]
-
-        # Detectar si el ratón se ha movido
-        mouse_moved = (self._last_mouse_pos is not None
-                       and pos_mouse_escalado != self._last_mouse_pos)
-
-        # Guardar pos actual para comparar en el siguiente frame
-        self._last_mouse_pos = pos_mouse_escalado
-
-        # Procesar hovering ratón sobre botones
-        if current_mode == "keyboard_mouse" and mouse_moved:
-            for i, boton in enumerate(self.botones):
-                if (boton.verificar_hover(pos_mouse_escalado) and i != self.indice_seleccionado):
-                    self.botones[self.indice_seleccionado].seleccionado = False
-                    self.indice_seleccionado = i
-                    self.botones[self.indice_seleccionado].seleccionado = True
-                    self.juego.sound_engine.play("menu_select")
-
-        # Procesar click ratón sobre botones
-        if current_mode == "keyboard_mouse" and mouse_pressed and not self.mouse_pressed_prev:
-            for i, boton in enumerate(self.botones):
-                if boton.verificar_click(pos_mouse_escalado):
-                    self.indice_seleccionado = i
-                    boton.activar()
-                    self.juego.sound_engine.play("menu_accept")
-                    self.juego.reset_keys()
-                    return
-
-        self.mouse_pressed_prev = mouse_pressed
-
-        for boton in self.botones:
-            boton.actualizar(dt)
-
-    # Cambiar selección circular botones con teclado o mando
-    def cambiar_seleccion(self, direccion):
-        self.botones[self.indice_seleccionado].seleccionado = False
-        self.indice_seleccionado = (self.indice_seleccionado + direccion) % len(self.botones)
-        self.botones[self.indice_seleccionado].seleccionado = True
-        self.juego.sound_engine.play("menu_select")
+        # Una vez en fase stats, delegar al actualizar base
+        super().actualizar(dt, acciones)
 
     def dibujar(self, pantalla):
         titulo = self.juego.fonts.big.render("¡VICTORIA!", False, (255, 255, 255))
@@ -152,7 +77,7 @@ class FinalScreen(Estado):
             alfa = max(0, min(255, alfa))
             self.imagen_final.set_alpha(alfa)
             pantalla.blit(self.imagen_final, (0, 0))
-            
+
             sombra.set_alpha(alfa)
             titulo.set_alpha(alfa)
             pantalla.blit(sombra, sombra_rect)

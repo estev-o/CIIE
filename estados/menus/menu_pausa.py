@@ -1,21 +1,17 @@
-from estados.estado import Estado
+import pygame
+from estados.menus.menu_base import Menu
 from estados.menus.componentes import Boton
 from estados.menus.menu_configuracion import MenuConfiguracion
 from objetos.mejoras.catalogo import obtener_mejora
-import pygame
 
 
-class Pausa(Estado):
+class Pausa(Menu):
     """Estado que implementa el menú principal de pausa y muestra mejoras activas."""
     def __init__(self, juego):
-        Estado.__init__(self, juego)
+        Menu.__init__(self, juego)
 
         # Obtener gestor de fuentes del juego
         font = self.juego.fonts
-
-        # Cargar sprite cursor personalizado
-        imagen_original = pygame.image.load("assets/UI/cursor/cursor.png").convert_alpha()
-        self.cursor_img = pygame.transform.scale(imagen_original, (30, 30))
 
         centro_x = juego.ancho // 2
         centro_y = juego.alto // 2
@@ -37,20 +33,11 @@ class Pausa(Estado):
             from estados.menus.menu_principal import MenuPrincipal
             MenuPrincipal(self.juego).entrar_estado()
 
-        # Índice de botón seleccionado
-        self.indice_seleccionado = 0
         self.botones[self.indice_seleccionado].seleccionado = True
 
-        # Control  navegación con cooldown
-        self.cooldown_nav = 0
-        self.delay_nav = 0.15
-
         # Estado previo del ratón para detectar clicks
-        self.mouse_pressed_prev = pygame.mouse.get_pressed()[0]
         self.pos_mouse_escalado = (0, 0)
-
         self.hover_mejora_index = None
-        self._last_mouse_pos = None
 
         self.sidebar_rect = pygame.Rect(self.juego.ancho - 250, centro_y - 150, 220, 400)
         self.upgrade_icon_size = 46
@@ -139,7 +126,6 @@ class Pausa(Estado):
         self.botones[self.indice_seleccionado].seleccionado = True
         self.juego.sound_engine.play("menu_select")
 
-
     def dibujar(self, pantalla):
         # Dibujar estado anterior (el juego)
         self.estado_prev.dibujar(pantalla)
@@ -182,7 +168,6 @@ class Pausa(Estado):
 
         self._dibujar_barra_mejoras(pantalla)
 
-
     def _crear_items_mejoras(self):
         items = []
         owned_ids = ()
@@ -222,7 +207,6 @@ class Pausa(Estado):
             })
 
         return items
-
 
     def _dibujar_barra_mejoras(self, pantalla):
         pygame.draw.rect(pantalla, (24, 24, 40), self.sidebar_rect, border_radius=12)
