@@ -49,7 +49,7 @@ class AreaExperiment(Estado):
         self.tmx_map = TiledTMX(tmx_path)
         self.map_layer_order = list(self.tmx_map.layer_names)
         self._door_open = False
-        self.iniciar_texto_nivel(f"ÁREA DE EXPERIMENTACIÓN ({len(AreaExperiment.areas_visitadas)}/{self.areas_to_continue})", 3000)
+        self.iniciar_texto_nivel(f"ÁREA EXPERIMENTACIÓN ({len(AreaExperiment.areas_visitadas)}/{self.areas_to_continue})", 3000)
 
         self.player = self.juego.player
 

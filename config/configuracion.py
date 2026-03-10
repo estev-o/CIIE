@@ -3,6 +3,8 @@ import json
 import os
 
 class Configuracion:
+    """Clase para manejar la configuración y la persistencia de partidas."""
+
     ARCHIVO_CONFIG = "config.json"
 
     CONFIG_DEFAULT = {
@@ -45,7 +47,7 @@ class Configuracion:
 
     def set(self, clave, valor):
         self.config[clave] = valor
-        self.guardar()
+        self.guardar() # guarda automáticamente al cambiar un valor
 
     def reset(self):
         self.config = copy.deepcopy(self.CONFIG_DEFAULT)
