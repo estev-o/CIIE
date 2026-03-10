@@ -9,7 +9,7 @@ from ui.player_health_bar import PlayerHealthBar
 from ui.adn_counter import ADNCounter
 from personajes.enemigos.chest import Chest
 from estados.area_administrativa import AreaAdministrativa
-from dialogos.interaction import Interaction
+from sistemas.dialogos.interaction import Interaction
 
 NIVEL_FORZADO = "area_exp3.tmx"  # Para pruebas, fuerza a entrar a esta área de experimentación específica
 

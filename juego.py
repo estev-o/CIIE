@@ -3,9 +3,9 @@ Módulo principal del juego.
 Gestiona el bucle principal, la inicialización de subsistemas, instancias globales
 (jugador, fábricas de entidades) y la arquitectura de estados (State Machine).
 """
-import os,time,pygame
+import pygame
 
-from config.configuracion import Configuracion
+from sistemas.configuracion import Configuracion
 from estados.titulo import Titulo
 
 from personajes.enemigos.enemy_factory import EnemyFactory

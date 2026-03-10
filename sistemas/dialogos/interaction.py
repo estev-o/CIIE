@@ -1,6 +1,6 @@
 import pygame
 import math
-from dialogos.dialog import font_main
+from sistemas.dialogos.dialog import font_main
 
 class Interaction:
     def __init__(

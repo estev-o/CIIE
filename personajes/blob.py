@@ -1,7 +1,7 @@
 import copy
 from personajes.character import Character
-from dialogos.estructuras.blob import hello_blob
-from dialogos.dialog import Dialog
+from sistemas.dialogos.estructuras.blob import hello_blob
+from sistemas.dialogos.dialog import Dialog
 import pygame
 
 class Blob(Character):

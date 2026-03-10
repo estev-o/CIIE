@@ -1,7 +1,7 @@
 import pygame
 import random
 from pathlib import Path
-from config.configuracion import Configuracion
+from sistemas.configuracion import Configuracion
 
 #Paths assets
 BASE = Path("assets/sounds")

@@ -8,7 +8,7 @@ from ui.health_bar import HealthBarManager
 from ui.player_health_bar import PlayerHealthBar
 from ui.adn_counter import ADNCounter
 from personajes.enemigos.chest import Chest
-from dialogos.interaction import Interaction
+from sistemas.dialogos.interaction import Interaction
 from estados.boss_final import BossFinal
 
 NIVEL_FORZADO = "area_admin6.tmx"  # Para pruebas, fuerza a entrar a esta área de experimentación específica
