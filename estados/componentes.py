@@ -320,7 +320,7 @@ class ModalConfirmacion:
 
         # Confirmar selección
         if (click_mouse and self.botones[self.indice_nav].rect.collidepoint(pos_mouse_escalado)) or enter:
-            self.juego.sound_engine.play("menu_confirm")
+            self.juego.sound_engine.play("menu_accept")
 
             if self.indice_nav == 0:
                 self.callback_cancelar()

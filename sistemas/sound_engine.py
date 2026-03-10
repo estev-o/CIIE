@@ -59,8 +59,8 @@ class SoundEngine:
         self.sfx = {
             "movement": pygame.mixer.Sound(PATH_SFX / "movement.mp3"),
             "door": pygame.mixer.Sound(PATH_SFX / "door.wav"),
-            "menu_select": pygame.mixer.Sound(PATH_SFX / "menu_select.mp3"),
-            "menu_confirm": pygame.mixer.Sound(PATH_SFX / "menu_accept.mp3"),
+            "menu_select": pygame.mixer.Sound(PATH_SFX / "menu_select.wav"),
+            "menu_accept": pygame.mixer.Sound(PATH_SFX / "menu_accept.wav"),
             "dead": pygame.mixer.Sound(PATH_SFX / "deadsfx.wav"),
             "attack": pygame.mixer.Sound(PATH_SFX / "attack.wav"),
             "collect": pygame.mixer.Sound(PATH_SFX / "collect.mp3"),

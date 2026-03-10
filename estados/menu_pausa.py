@@ -1,37 +1,54 @@
 from estados.estado import Estado
 from estados.componentes import Boton
+from estados.menu_configuracion import MenuConfiguracion
 from objetos.mejoras.catalogo import obtener_mejora
 import pygame
 
 
 class Pausa(Estado):
-    """Menú de pausa con opciones"""
-
+    """Estado que implementa el menú principal de pausa y muestra mejoras activas."""
     def __init__(self, juego):
         Estado.__init__(self, juego)
 
+        # Obtener gestor de fuentes del juego
         font = self.juego.fonts
+
+        # Cargar sprite cursor personalizado
         imagen_original = pygame.image.load("assets/UI/cursor/cursor.png").convert_alpha()
         self.cursor_img = pygame.transform.scale(imagen_original, (30, 30))
 
-        #botones
         centro_x = juego.ancho // 2
         centro_y = juego.alto // 2
 
+        # Crear botones usando componentes.py
         self.botones = [
-            Boton(centro_x - 150, centro_y - 30, 300, 55, "Continuar", font.medium),
-            Boton(centro_x - 150, centro_y + 40, 300, 55, "Configuración", font.medium),
-            Boton(centro_x - 150, centro_y + 110, 300, 55, "Menú Principal", font.medium)
+            Boton(centro_x - 150, centro_y - 30, 300, 55, "Continuar", font.medium,
+                  lambda: self.salir_estado()),
+            Boton(centro_x - 150, centro_y + 40, 300, 55, "Configuración", font.medium,
+                  lambda: MenuConfiguracion(self.juego).entrar_estado()),
+            Boton(centro_x - 150, centro_y + 110, 300, 55, "Menú Principal", font.medium,
+                  lambda:self.juego.fade_to(_ir_a_menu))
         ]
 
+        #Función auxiliar que limpia pila estados y vuelve al menú principal
+        def _ir_a_menu():
+            while len(self.juego.state_stack) > 1:
+                self.juego.state_stack.pop()
+            from estados.menu_principal import MenuPrincipal
+            MenuPrincipal(self.juego).entrar_estado()
+
+        # Índice de botón seleccionado
         self.indice_seleccionado = 0
         self.botones[self.indice_seleccionado].seleccionado = True
 
+        # Control  navegación con cooldown
         self.cooldown_nav = 0
         self.delay_nav = 0.15
 
+        # Estado previo del ratón para detectar clicks
         self.mouse_pressed_prev = pygame.mouse.get_pressed()[0]
         self.pos_mouse_escalado = (0, 0)
+
         self.hover_mejora_index = None
         self._last_mouse_pos = None
 
@@ -39,51 +56,12 @@ class Pausa(Estado):
         self.upgrade_icon_size = 46
         self.upgrade_items = self._crear_items_mejoras()
 
-    def _crear_items_mejoras(self):
-        items = []
-        owned_ids = ()
-        if hasattr(self.juego, "mejoras"):
-            owned_ids = self.juego.mejoras.owned_ids()
-
-        pad_x = 16
-        pad_y = 46
-        gap = 10
-        cols = 3
-
-        for i, mejora_id in enumerate(owned_ids):
-            mejora = obtener_mejora(mejora_id)
-            if not mejora:
-                continue
-
-            image = None
-            asset_path = mejora.get("asset_path")
-            if asset_path:
-                try:
-                    image = pygame.image.load(asset_path).convert_alpha()
-                    image = pygame.transform.scale(image, (self.upgrade_icon_size, self.upgrade_icon_size))
-                except Exception:
-                    image = None
-
-            col = i % cols
-            row = i // cols
-            x = self.sidebar_rect.x + pad_x + col * (self.upgrade_icon_size + gap)
-            y = self.sidebar_rect.y + pad_y + row * (self.upgrade_icon_size + gap)
-            rect = pygame.Rect(x, y, self.upgrade_icon_size, self.upgrade_icon_size)
-
-            items.append({
-                "id": mejora_id,
-                "mejora": mejora,
-                "image": image,
-                "rect": rect,
-            })
-
-        return items
-
     def actualizar(self, dt, acciones):
-        # Actualizar cooldown
+        # Reducir cooldown de navegación
         if self.cooldown_nav > 0:
             self.cooldown_nav -= dt
 
+        # Navegación circular teclado/mando
         if acciones.get("back") or acciones.get("toggle_pause"):
             if acciones.get("back"):
                 self.juego.actions["back"] = False
@@ -92,7 +70,6 @@ class Pausa(Estado):
             self.salir_estado()
             return
 
-        # teclado / mando
         if self.cooldown_nav <= 0:
             if acciones.get("arrowUp"):
                 self.cambiar_seleccion(-1)
@@ -101,24 +78,31 @@ class Pausa(Estado):
                 self.cambiar_seleccion(1)
                 self.cooldown_nav = self.delay_nav
 
+        # Activar opciones botones
         if acciones.get("enter") or acciones.get("interact"):
-            self.activar_opcion()
+            self.juego.sound_engine.play("menu_accept")
+            self.botones[self.indice_seleccionado].activar()
             self.juego.reset_keys()
             return
 
-        # Mouse (solo en modo teclado/ratón para no interferir con el mando)
+        # Obtener modo actual
         current_mode = acciones.get("current_mode", "keyboard_mouse")
-        pos_mouse = pygame.mouse.get_pos()
-        escala_x = self.juego.ancho / self.juego.screen.get_width()
-        escala_y = self.juego.alto / self.juego.screen.get_height()
-        pos_mouse_escalado = (int(pos_mouse[0] * escala_x), int(pos_mouse[1] * escala_y))
-        self.pos_mouse_escalado = pos_mouse_escalado
 
+        # Obtener posición del ratón ya escalada
+        pos_mouse_escalado = acciones.get("mouse_pos", (0, 0))
+
+        # Leer estado actual click izquierdo
         mouse_pressed = pygame.mouse.get_pressed()[0]
+
+        # Detectar si el ratón se ha movido
         mouse_moved = (self._last_mouse_pos is not None
                        and pos_mouse_escalado != self._last_mouse_pos)
-        self._last_mouse_pos = pos_mouse_escalado
 
+        # Guardar pos actual para comparar en el siguiente frame
+        self._last_mouse_pos = pos_mouse_escalado
+        self.pos_mouse_escalado = pos_mouse_escalado
+
+        # Procesar hovering ratón sobre botones y mejoras
         if current_mode == "keyboard_mouse" and mouse_moved:
             for i, boton in enumerate(self.botones):
                 if boton.verificar_hover(pos_mouse_escalado):
@@ -134,11 +118,13 @@ class Pausa(Estado):
                     self.hover_mejora_index = i
                     break
 
+        # Procesar click ratón sobre botones
         if current_mode == "keyboard_mouse" and mouse_pressed and not self.mouse_pressed_prev:
             for i, boton in enumerate(self.botones):
                 if boton.verificar_click(pos_mouse_escalado):
                     self.indice_seleccionado = i
-                    self.activar_opcion()
+                    self.juego.sound_engine.play("menu_accept")
+                    boton.activar()
                     self.juego.reset_keys()
                     return
 
@@ -153,23 +139,6 @@ class Pausa(Estado):
         self.botones[self.indice_seleccionado].seleccionado = True
         self.juego.sound_engine.play("menu_select")
 
-    def activar_opcion(self):
-        if self.indice_seleccionado == 0:
-            self.juego.sound_engine.play("menu_confirm")
-            self.salir_estado()
-
-        elif self.indice_seleccionado == 1:
-            from estados.menu_configuracion import MenuConfiguracion
-            MenuConfiguracion(self.juego).entrar_estado()
-
-        elif self.indice_seleccionado == 2:
-            def _ir_a_menu():
-                while len(self.juego.state_stack) > 1:
-                    self.juego.state_stack.pop()
-                from estados.menu_principal import MenuPrincipal
-                MenuPrincipal(self.juego).entrar_estado()
-
-            self.juego.fade_to(_ir_a_menu)
 
     def dibujar(self, pantalla):
         # Dibujar estado anterior (el juego)
@@ -212,6 +181,48 @@ class Pausa(Estado):
         pantalla.blit(info, info_rect)
 
         self._dibujar_barra_mejoras(pantalla)
+
+
+    def _crear_items_mejoras(self):
+        items = []
+        owned_ids = ()
+        if hasattr(self.juego, "mejoras"):
+            owned_ids = self.juego.mejoras.owned_ids()
+
+        pad_x = 16
+        pad_y = 46
+        gap = 10
+        cols = 3
+
+        for i, mejora_id in enumerate(owned_ids):
+            mejora = obtener_mejora(mejora_id)
+            if not mejora:
+                continue
+
+            image = None
+            asset_path = mejora.get("asset_path")
+            if asset_path:
+                try:
+                    image = pygame.image.load(asset_path).convert_alpha()
+                    image = pygame.transform.scale(image, (self.upgrade_icon_size, self.upgrade_icon_size))
+                except Exception:
+                    image = None
+
+            col = i % cols
+            row = i // cols
+            x = self.sidebar_rect.x + pad_x + col * (self.upgrade_icon_size + gap)
+            y = self.sidebar_rect.y + pad_y + row * (self.upgrade_icon_size + gap)
+            rect = pygame.Rect(x, y, self.upgrade_icon_size, self.upgrade_icon_size)
+
+            items.append({
+                "id": mejora_id,
+                "mejora": mejora,
+                "image": image,
+                "rect": rect,
+            })
+
+        return items
+
 
     def _dibujar_barra_mejoras(self, pantalla):
         pygame.draw.rect(pantalla, (24, 24, 40), self.sidebar_rect, border_radius=12)

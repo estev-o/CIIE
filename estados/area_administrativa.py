@@ -124,7 +124,7 @@ class AreaAdministrativa(Estado):
     def actualizar(self, dt, acciones):
         if acciones.get("toggle_pause"):
             self.juego.actions["toggle_pause"] = False
-            from estados.pausa import Pausa
+            from estados.menu_pausa import Pausa
             Pausa(self.juego).entrar_estado()
             return
             

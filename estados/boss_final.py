@@ -5,7 +5,7 @@ import pygame
 
 from assets.tiles import TiledTMX
 from estados.estado import Estado
-from estados.pausa import Pausa
+from estados.menu_pausa import Pausa
 from personajes.enemigos.gilbertov import Gilbertov
 from ui.adn_counter import ADNCounter
 from ui.health_bar import HealthBarManager

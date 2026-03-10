@@ -9,7 +9,7 @@ from objetos.mejoras.catalogo import listar_mejoras
 from ui.adn_counter import ADNCounter
 from ui.player_health_bar import PlayerHealthBar
 from dialogos.interaction import Interaction
-from estados.pausa import Pausa
+from estados.menu_pausa import Pausa
 
 class Hub(Estado):
     SHOP_SELECTION_LAYERS = ("seleccion_tienda1", "seleccion_tienda2", "seleccion_tienda3")

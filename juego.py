@@ -21,10 +21,15 @@ SKIP_TO_BOSS = False
 
 class Juego():
     def __init__(self):
+        #Configuración del mixer para motor sonido.
         pygame.mixer.pre_init(44100, -16, 2, 512)
         pygame.init()
+
+        #Crear objetos gestores de configuración, fuentes y motor sonido.
         self.configuracion=Configuracion()
         self.fonts=Fuentes()
+        self.sound_engine = SoundEngine(self.configuracion)
+
         self.ancho, self.alto = 1024, 544
         self.game_canvas = pygame.Surface((self.ancho, self.alto))
         self.screen = pygame.display.set_mode((self.ancho, self.alto))
@@ -32,7 +37,6 @@ class Juego():
         self.action_manager = ActionManager()
         self.actions = self.action_manager.actions
 
-        self.sound_engine=SoundEngine(self.configuracion)
 
         self.debug = DEBUG
         self.skip_hub = SKIP_HUB
@@ -179,7 +183,7 @@ class Juego():
         self._death_screen_requested = False
         pygame.event.clear(PLAYER_DEATH)
         self.reset_keys()
-        from estados.muerte import Muerte
+        from estados.menu_muerte import Muerte
         if self.state_stack and self.actual_state.__class__.__name__ == "Muerte":
             return
         self.fade_to(lambda: Muerte(self).entrar_estado())
