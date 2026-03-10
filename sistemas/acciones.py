@@ -1,7 +1,22 @@
+"""
+Gestión de entradas (Input).
+Procesa eventos de teclado, ratón y mando, traduciéndolos a un diccionario de acciones
+que el resto del juego puede consultar en cualquier momento.
+"""
 import pygame
 import pygame._sdl2.controller as controller
 
+# -----------------------------------------------------------------
+# --- Administrador de Acciones (Input Manager)
+# -----------------------------------------------------------------
+
 class ActionManager:
+    """
+    Traductor centralizado que convierte eventos físicos (teclado, ratón, mando) en acciones del juego.
+    """
+    # Define el modo de control actual: "keyboard_mouse" o "controller".
+    # Esta propiedad permite una transición fluida, actualizándose automáticamente
+    # según la última entrada recibida para ajustar la interfaz o el gameplay.
     @property
     def current_mode(self):
         return getattr(self, '_current_mode', "keyboard_mouse")
@@ -33,6 +48,9 @@ class ActionManager:
                 self.joysticks[joy.as_joystick().get_instance_id()] = joy
 
         self.current_mode = "keyboard_mouse"
+        
+        # Diccionario central de la clase. El resto de sistemas del juego solo leen de aquí 
+        # (ej. self.actions["attack1"]) sin importar qué botón o tecla física se haya pulsado.
         self.actions = {
             "left": False, "right": False, "up": False, "down": False,
             "attack1": False, "attack2": False, "attack3": False, "enter": False, "back": False, "interact": False,
@@ -44,7 +62,6 @@ class ActionManager:
             "enter", "interact", "back", "toggle_pause"
         }
 
-        # Input maps
         self.keyboard_map = {
             pygame.K_a: ["left", "arrowLeft"],
             pygame.K_d: ["right", "arrowRight"],
@@ -63,10 +80,10 @@ class ActionManager:
         }
         
         self.controller_button_map = {
-            pygame.CONTROLLER_BUTTON_A: ["interact", "enter"],          # Cross / A
-            pygame.CONTROLLER_BUTTON_B: ["back"],               # Circle / B
-            pygame.CONTROLLER_BUTTON_X: ["attack2"],           # Square / X
-            pygame.CONTROLLER_BUTTON_Y: ["attack3"],           # Triangle / Y
+            pygame.CONTROLLER_BUTTON_A: ["interact", "enter"],
+            pygame.CONTROLLER_BUTTON_B: ["back"],
+            pygame.CONTROLLER_BUTTON_X: ["attack2"],
+            pygame.CONTROLLER_BUTTON_Y: ["attack3"],
             pygame.CONTROLLER_BUTTON_RIGHTSHOULDER: ["attack1"],  # R1 / RB
             pygame.CONTROLLER_BUTTON_START: ["toggle_pause"],  # Options / Start
             pygame.CONTROLLER_BUTTON_DPAD_UP: ["arrowUp"],
@@ -74,6 +91,10 @@ class ActionManager:
             pygame.CONTROLLER_BUTTON_DPAD_LEFT: ["arrowLeft"],
             pygame.CONTROLLER_BUTTON_DPAD_RIGHT: ["arrowRight"]
         }
+
+    # -----------------------------------------------------------------
+    # --- Reseteo de Acciones
+    # -----------------------------------------------------------------
 
     def reset_not_maintainable_keys(self):
         for k in self.not_maintainable_keys:
@@ -85,8 +106,11 @@ class ActionManager:
             if k not in ["mouse_pos", "aim_axis"]:
                 self.actions[k] = False
 
+    # -----------------------------------------------------------------
+    # --- Gestión de Eventos y Mapeo de Entradas
+    # -----------------------------------------------------------------
+
     def _set_action(self, action_data, is_down):
-        """Helper to set action dict, supporting both string and list inputs."""
         if not action_data:
             return
             
@@ -96,6 +120,9 @@ class ActionManager:
         else:
             self.actions[action_data] = is_down
 
+    # Bucle principal de eventos que debe llamarse cada frame.
+    # Consume la cola de eventos de Pygame, actualiza el estado de cada 
+    # posible acción del juego y delega en el handler correspondiente a cada hardware.
     def get_events(self):
         events = pygame.event.get()
         self.reset_not_maintainable_keys()
@@ -126,7 +153,6 @@ class ActionManager:
             self.actions["attack1"] = False
 
     def _handle_controller(self, event):
-        # Connection handling
         if event.type == pygame.CONTROLLERDEVICEADDED:
             try:
                 if controller.is_controller(event.device_index):
@@ -144,16 +170,13 @@ class ActionManager:
                 del self.joysticks[event.instance_id]
             return
 
-        # Buttons handling (D-pad is handled as buttons in this API!)
         if event.type in (pygame.CONTROLLERBUTTONDOWN, pygame.CONTROLLERBUTTONUP):
             self.current_mode = "controller"
             action = self.controller_button_map.get(event.button)
             self._set_action(action, event.type == pygame.CONTROLLERBUTTONDOWN)
 
-        # Axis handling for movement/aiming
         elif event.type == pygame.CONTROLLERAXISMOTION:
             axis = event.axis
-            # Pygame controllers return an axis from -32768 to 32767
             value = event.value / 32768.0
             deadzone = 0.2
 
@@ -169,34 +192,29 @@ class ActionManager:
             if axis == pygame.CONTROLLER_AXIS_LEFTX:
                 self.actions["left"] = (value < 0)
                 self.actions["right"] = (value > 0)
-                
-                # Also trigger arrow actions to navigate menus
                 self.actions["arrowLeft"] = (value < 0)
                 self.actions["arrowRight"] = (value > 0)
             
             elif axis == pygame.CONTROLLER_AXIS_LEFTY:
                 self.actions["up"] = (value < 0)
                 self.actions["down"] = (value > 0)
-                
-                # Also trigger arrow actions to navigate menus
                 self.actions["arrowUp"] = (value < 0)
                 self.actions["arrowDown"] = (value > 0)
                 
             elif axis == pygame.CONTROLLER_AXIS_RIGHTX:
-                # Store aim X
                 self.actions["aim_axis"] = (value, self.actions["aim_axis"][1])
                 
             elif axis == pygame.CONTROLLER_AXIS_RIGHTY:
-                # Store aim Y
                 self.actions["aim_axis"] = (self.actions["aim_axis"][0], value)
                 
             elif axis == pygame.CONTROLLER_AXIS_TRIGGERRIGHT:
-                # Basic attack using right trigger
                 self.actions["attack1"] = (value > 0.5)
 
+    # -----------------------------------------------------------------
+    # --- Procesamiento de Ratón y Apuntado
+    # -----------------------------------------------------------------
+
     def process_mouse_and_aim(self, game_canvas, screen):
-        """Calculates scaled mouse pos and provides it globally, 
-        regardless of if we use it or not."""
         mouse_pos = pygame.mouse.get_pos()
         if screen.get_width() != 0 and screen.get_height() != 0:
             scale_x = game_canvas.get_width() / screen.get_width()

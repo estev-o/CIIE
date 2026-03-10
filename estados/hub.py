@@ -1,3 +1,6 @@
+"""
+Gestión del Hub principal.
+"""
 import os
 import random
 import pygame
@@ -12,7 +15,15 @@ from dialogos.interaction import Interaction
 from estados.pausa import Pausa
 
 class Hub(Estado):
+    """
+    Estado que representa la base principal.
+    Maneja la tienda de ADN, las interacciones con NPCs y la transición al nivel de acción.
+    """
     SHOP_SELECTION_LAYERS = ("seleccion_tienda1", "seleccion_tienda2", "seleccion_tienda3")
+
+    # -----------------------------------------------------------------
+    # --- Inicialización y Carga del Nivel
+    # -----------------------------------------------------------------
 
     def __init__(self, juego):
         Estado.__init__(self,juego)
@@ -68,6 +79,10 @@ class Hub(Estado):
             Interaction(self.blob, "Hablar [E]", self.blob.dialog, "interact",
                         text_controller="Hablar [A]", game=self.juego)
         )
+
+    # -----------------------------------------------------------------
+    # --- Gestión de la Tienda de ADN
+    # -----------------------------------------------------------------
 
     def _generar_mejoras_tienda(self):
         spawns = self.tmx_map.get_objects(layer="spawn_mejoras")
@@ -128,6 +143,10 @@ class Hub(Estado):
 
         return self.SHOP_SELECTION_LAYERS[slot_index]
 
+    # -----------------------------------------------------------------
+    # --- Actualización y Lógica Principal
+    # -----------------------------------------------------------------
+
     def actualizar(self, dt, acciones):
 
         if self.juego.debug:
@@ -157,6 +176,7 @@ class Hub(Estado):
         self.blob.update(dt, acciones, tiles)
         self.player_health_bar.update(dt, self.player.remaining_life, self.player.max_live)
         self.update_interactions(self.player, conditional_actions)
+        
         if self.player.body_hitbox.collidepoint(self._door_center):
             if self.juego.debug and self.juego.skip_to_boss:
                 from estados.boss_final import BossFinal
@@ -164,6 +184,10 @@ class Hub(Estado):
             else:
                 AreaExperiment(self.juego, reset=True).entrar_estado()
             return
+
+    # -----------------------------------------------------------------
+    # --- Renderizado
+    # -----------------------------------------------------------------
 
     def dibujar(self, pantalla):
         pantalla.fill((0, 0, 0))
