@@ -92,7 +92,7 @@ class Titulo(Estado):
             self.alpha -= self.fade_speed * dt
             if self.alpha <= 0:
                 self.alpha = 0
-                from estados.menu_principal import MenuPrincipal
+                from estados.menus.menu_principal import MenuPrincipal
                 MenuPrincipal(self.juego).entrar_estado()
 
         # ENTER para saltar

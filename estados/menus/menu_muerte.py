@@ -1,8 +1,8 @@
 import pygame
 
-from estados.componentes import Boton
+from estados.menus.componentes import Boton
 from estados.estado import Estado
-from estados.menu_principal import MenuPrincipal
+from estados.menus.menu_principal import MenuPrincipal
 
 
 class Muerte(Estado):

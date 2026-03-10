@@ -1,5 +1,5 @@
 from estados.estado import Estado
-from estados.componentes import SliderHorizontal, OpcionBinaria, Boton, ModalConfirmacion
+from estados.menus.componentes import SliderHorizontal, OpcionBinaria, Boton, ModalConfirmacion
 import pygame
 
 

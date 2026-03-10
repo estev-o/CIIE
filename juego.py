@@ -207,7 +207,7 @@ class Juego():
         self._death_screen_requested = False
         pygame.event.clear(PLAYER_DEATH)
         self.reset_keys()
-        from estados.menu_muerte import Muerte
+        from estados.menus.menu_muerte import Muerte
         if self.state_stack and self.actual_state.__class__.__name__ == "Muerte":
             return
         self.fade_to(lambda: Muerte(self).entrar_estado())

@@ -1,6 +1,6 @@
 from estados.estado import Estado
-from estados.componentes import Boton
-from estados.menu_configuracion import MenuConfiguracion
+from estados.menus.componentes import Boton
+from estados.menus.menu_configuracion import MenuConfiguracion
 from objetos.mejoras.catalogo import obtener_mejora
 import pygame
 
@@ -34,7 +34,7 @@ class Pausa(Estado):
         def _ir_a_menu():
             while len(self.juego.state_stack) > 1:
                 self.juego.state_stack.pop()
-            from estados.menu_principal import MenuPrincipal
+            from estados.menus.menu_principal import MenuPrincipal
             MenuPrincipal(self.juego).entrar_estado()
 
         # Índice de botón seleccionado

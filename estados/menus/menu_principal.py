@@ -1,7 +1,7 @@
 from estados.estado import Estado
-from estados.componentes import Boton
+from estados.menus.componentes import Boton
 import pygame
-from estados.menu_configuracion import MenuConfiguracion
+from estados.menus.menu_configuracion import MenuConfiguracion
 
 class MenuPrincipal(Estado):
     """Estado que implementa el menú principal del juego."""

@@ -5,7 +5,7 @@ import pygame
 
 from assets.tiles import TiledTMX
 from estados.estado import Estado
-from estados.menu_pausa import Pausa
+from estados.menus.menu_pausa import Pausa
 from personajes.enemigos.gilbertov import Gilbertov
 from ui.adn_counter import ADNCounter
 from ui.health_bar import HealthBarManager
@@ -212,7 +212,7 @@ class BossFinal(Estado):
                 and (not self.boss.alive() or self.boss.remaining_life <= 0)
         ):
             self._victory_screen_opened = True
-            from estados.final_screen import FinalScreen
+            from estados.menus.final_screen import FinalScreen
             self.juego.fade_to(lambda: FinalScreen(self.juego).entrar_estado())
             return
 
