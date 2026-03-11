@@ -22,7 +22,7 @@ class SoundEngine:
         self.sfx_volume = (self.config.get("volumen_efectos") / 100) ** 2
 
         #Lista de canciones para reproducir de manera aleatoria durante el gameplay
-        self._main_songs = ["main", "song1", "song2"]
+        self._main_songs = ["theme1", "theme2", "theme3"]
         random.shuffle(self._main_songs)
         self._main_song_index = 0
 
@@ -48,10 +48,10 @@ class SoundEngine:
         #Paths canciones y sfx
         self.music = {
             "menu": PATH_MUSIC / "Menu theme.mp3",
-            "main": PATH_MUSIC / "Main theme.mp3",
             "dead": PATH_MUSIC / "Dead theme.mp3",
-            "song1": PATH_MUSIC / "Song 1.mp3",
-            "song2": PATH_MUSIC / "Song 2.mp3",
+            "theme1": PATH_MUSIC / "Theme 1.mp3",
+            "theme2": PATH_MUSIC / "Theme 2.mp3",
+            "theme3": PATH_MUSIC / "Theme 3.mp3",
             "win": PATH_MUSIC / "Win theme.mp3",
             "boss": PATH_MUSIC / "Final boss.mp3",
         }
