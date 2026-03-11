@@ -4,6 +4,9 @@ from personajes.enemigos.attacks.attack_behavior import AttackBehavior
 
 
 class MeleeAttack(AttackBehavior):
+    """
+        Comportamiento de ataque para enemigos melee
+    """
     def __init__(self, enemy):
         super().__init__(enemy)
         self.is_lunging = False
@@ -13,6 +16,10 @@ class MeleeAttack(AttackBehavior):
         self.target_distance = 0
 
     def execute(self, player, dt, solid_tiles=None):
+        """
+        Método que ejecuta ataque para enemigos melee
+        El enemigo se proyectará en un salto hacia el jugador
+        """
         # Si no está en medio de un ataque, comprobamos cooldown y rango
         if not self.is_lunging:
 
@@ -58,8 +65,6 @@ class MeleeAttack(AttackBehavior):
 
 
     def _end_lunge(self):
+        # Finalizar el salto
         self.is_lunging = False
         self.enemy.cooldown_timer = self.enemy.attack_cooldown
-
-
-

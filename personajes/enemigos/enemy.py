@@ -10,6 +10,8 @@ from personajes.enemigos.attacks.ranged_attack import RangedAttack
 
 
 class Enemy(Character):
+    """ Clase que dictamina el comportamiento y características de instancias enemigo"""
+
     def __init__(
             self,
             game,
@@ -70,10 +72,12 @@ class Enemy(Character):
         self.alert_timer = 0
         self.cooldown_timer=0
 
-
+    # ----------------------------------
+    # ---- LÓGICA DE COMPORTAMIENTO ----
+    # ----------------------------------
     def idle_behavior(self, dt, tiles=None):
         """
-        Proporciona al enemigo un movimiento aleatorio.
+        Proporciona al enemigo un movimiento aleatorio con periodos de descanso aleatorios.
         """
         self.idle_timer -= dt
 
@@ -142,6 +146,7 @@ class Enemy(Character):
         dy = player.rect.centery - self.rect.centery
         dist = math.hypot(dx, dy)
 
+        # Hacemos que busque mantener una distancia apropiada si el jugador se aleja
         if dist > self.attack_range or self.cooldown_timer>0:
             self.cooldown_timer -= dt
             self.maintain_distance(player,dt, solid_tiles)
@@ -150,6 +155,9 @@ class Enemy(Character):
             self.attack_behavior.execute(player, dt, solid_tiles)
 
     def maintain_distance(self, player, dt, solid_tiles):
+        """
+        Asegura que el enemigo se mantenga a una distancia en la que pueda atacar sin estar necesariamente pegado al jugador
+        """
         dx = player.rect.centerx - self.rect.centerx
         dy = player.rect.centery - self.rect.centery
         dist = math.hypot(dx, dy)
@@ -197,6 +205,7 @@ class Enemy(Character):
         """
         Gestor de estados para el comportamiento del enemigo.
         """
+        # Si acaba de ser alertado, que se mantenga quieto mirando al jugador durante un breve instante
         if self.alert_timer > 0:
             self.alert_timer -= dt
 
@@ -211,6 +220,7 @@ class Enemy(Character):
 
             self.animate(0, False)
 
+        # Tras descubrir al enemigo, que siga la lógica de alerta
         elif self.ai_state == "alert":
             self.alerted_behavior(player, dt, solid_tiles)
 
@@ -222,11 +232,14 @@ class Enemy(Character):
             )
             taken_damage = self.remaining_life < self.max_live
 
+            # Cuando el jugador entre en su angulo de vision o haya dañado a este enemigo, que cambie a estado de alerta
             if dist <= self.vision_range or taken_damage:
                 self.ai_state = "alert"
                 self.alert_timer = 0.7
             else:
+                # Mientras no haya descubierto al jugador, mantenga su comportamiento tranquilo
                 self.idle_behavior(dt, solid_tiles)
+
 
     def die(self):
         self.game.sound_engine.play("dead")
@@ -248,6 +261,9 @@ class Enemy(Character):
                 if drop is not None:
                     self.game.actual_state.objects.add(drop)
 
+    # --------------------
+    #  --- RENDERIZADO ---
+    # --------------------
     def load_sprites(self):
         sheet = pygame.image.load(self._asset_file).convert_alpha()
 

@@ -4,10 +4,17 @@ from personajes.enemigos.attacks.attack_behavior import AttackBehavior
 
 
 class RangedAttack(AttackBehavior):
+    """
+        Comportamiento de ataque para enemigos ranged
+    """
     def __init__(self, enemy):
         super().__init__(enemy)
 
     def execute(self, player, dt, solid_tiles):
+        """
+        Método que ejecuta ataque para enemigos a distancia
+        Dispara en dirección al jugador
+        """
         dx = player.rect.centerx - self.enemy.rect.centerx
         dy = player.rect.centery - self.enemy.rect.centery
         dist = math.hypot(dx, dy)
@@ -24,6 +31,9 @@ class RangedAttack(AttackBehavior):
         self.enemy.cooldown_timer = self.enemy.attack_cooldown
 
     def shoot(self, dir_x, dir_y):
+        """
+            Carga los disparos enemigos en el estado
+        """
         projectile = EnemyProjectile(
             game=self.enemy.game,
             pos=self.enemy.rect.center,
@@ -38,6 +48,7 @@ class RangedAttack(AttackBehavior):
 
 
 class EnemyProjectile(pygame.sprite.Sprite):
+    """ Clase de Renderizado y Actualización de los disparos enemigos """
     def __init__(self, game, pos, dir_x, dir_y, damage, speed):
         super().__init__()
         self.game = game
@@ -59,7 +70,7 @@ class EnemyProjectile(pygame.sprite.Sprite):
             self.original_image = pygame.Surface((15, 15), pygame.SRCALPHA)
             pygame.draw.circle(self.original_image, (255, 255, 255), (7, 7), 7)
 
-        # Enrojecemos la imagen (R:255, G:0, B:0)
+        # Enrojecemos la imagen
         self.original_image.fill((255, 0, 0, 255), special_flags=pygame.BLEND_RGBA_MULT)
 
         self.image = self.original_image
@@ -84,8 +95,10 @@ class EnemyProjectile(pygame.sprite.Sprite):
             self.kill()
 
     def check_collisions(self, solid_tiles):
+        # Comprueba colisión del disparo con el jugador o una superficie sólida
         player = self.game.actual_state.player
         if pygame.Rect.colliderect(self.rect, player.hitbox):
+            # Aplica un daño al jugador
             player.apply_damage(self.damage)
             self.kill()
             return

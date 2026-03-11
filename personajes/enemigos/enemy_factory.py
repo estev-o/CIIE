@@ -4,7 +4,10 @@ import os
 from personajes.enemigos.enemy import Enemy
 from personajes.enemigos.chest import Chest
 
-
+'''
+    Constructor de Enemigos
+Analiza un archivo JSON (enemy_list.json) y crea instancias enemigo con las características que este archivo describe 
+'''
 class EnemyFactory:
     def __init__(self, game, filepath):
         self.game = game
@@ -22,8 +25,7 @@ class EnemyFactory:
 
     def create_enemy(self, enemy_name, x, y, **overrides):
         """
-        Crea una instancia de Enemy basada en el tipo (string)
-        y la posición dada.
+        Crea una instancia de Enemy basada en el tipo (string) y la posición dada.
         """
         if enemy_name not in self.enemy_data:
             print(f"ERROR: El enemigo '{enemy_name}' no existe en el JSON.")

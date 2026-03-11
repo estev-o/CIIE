@@ -6,6 +6,9 @@ from personajes.enemigos.attacks.attack_behavior import AttackBehavior
 
 
 class ExplosiveAttack(AttackBehavior):
+    """
+        Comportamiento de ataque para enemigos kamikazes
+    """
     def __init__(self, enemy):
         super().__init__(enemy)
         self.has_exploded = False  # Control para evitar bucles infinitos al morir
@@ -15,6 +18,10 @@ class ExplosiveAttack(AttackBehavior):
         self.chase_player(player, dt, solid_tiles)
 
     def chase_player(self, player, dt, solid_tiles):
+        """
+        Método de persecución al Jugador
+        Si logra chocar con el, explota y lo daña
+        """
         if self.enemy.remaining_life <= 0 or pygame.Rect.colliderect(player.hitbox, self.enemy.hitbox):
             self.explode()
         dx = player.rect.centerx - self.enemy.hitbox.centerx
@@ -43,6 +50,9 @@ class ExplosiveAttack(AttackBehavior):
 
         self.enemy.animate(dt, moving=True)
     def explode(self):
+        """
+        Metodo manejador de la explosión
+        """
         state = self.enemy.game.actual_state
 
         # Dañar al jugador si está dentro del radio de explosión (attack_range)
@@ -75,6 +85,7 @@ class ExplosiveAttack(AttackBehavior):
 
 
 class ExplosionSprite(pygame.sprite.Sprite):
+    """ Clase de Renderizado de la explosion"""
     def __init__(self, x, y, radio):
         super().__init__()
 
