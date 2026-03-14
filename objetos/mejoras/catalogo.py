@@ -149,7 +149,7 @@ MEJORAS = {
     "escudo": {
         "id": "escudo",
         "nombre": "Escudo",
-        "descripcion": "Bloquea un golpe y se recarga cada 5 minutos.",
+        "descripcion": "Bloquea un golpe.",
         "coste_adn": 45,
         "asset_path": "assets/objects/mejoras/escudo.png",
         "apply": _aplicar_escudo,
@@ -157,7 +157,7 @@ MEJORAS = {
     "blub_lava": {
         "id": "blub_lava",
         "nombre": "Blub lava",
-        "descripcion": "Convierte a Blub en su version de lava. Desbloquea la base para su ataque especial.",
+        "descripcion": "Convierte a Blub en su version de lava. Desbloquea su ataque especial.",
         "coste_adn": 150,
         "asset_path": "assets/objects/mejoras/blub_lava.png",
         "apply": _aplicar_blub_lava,
@@ -165,7 +165,7 @@ MEJORAS = {
     "super_azulejo": {
         "id": "super_azulejo",
         "nombre": "Super azulejo",
-        "descripcion": "Activa 20s de disparo en 8 direcciones. Recarga en 3 minutos.",
+        "descripcion": "Activa 20s de disparo en 8 direcciones.",
         "coste_adn": 120,
         "asset_path": "assets/objects/mejoras/super_azulejo.png",
         "apply": _aplicar_super_azulejo,
