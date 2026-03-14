@@ -3,7 +3,7 @@ import pygame
 import math
 
 # Sonido que hace cada caracter
-def generate_bip(freq=450, volume=0.3, duration=0.018):
+def generate_bip(freq=450, volume=0.1, duration=0.018):
     sample_rate = 44100
     n_samples = int(sample_rate * duration)
     buf = array.array("h")
