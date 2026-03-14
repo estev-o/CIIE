@@ -1,3 +1,8 @@
+
+# ------------------------------------------------------------------
+# --- Catálogo de mejoras disponibles en el juego, con su lógica de aplicación.
+# ------------------------------------------------------------------
+
 def _aplicar_disparo_rapido(player):
     if getattr(player, "_mejora_disparo_rapido_aplicada", False):
         return

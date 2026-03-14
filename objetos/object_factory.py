@@ -3,6 +3,9 @@ import json
 from objetos.health_potion import HealthPotion
 from objetos.adn import ADN
 
+# -----------------------------------------------------------------
+# --- Patrón factory para objetos, para crear objetos a partir de una configuración JSON.
+# -----------------------------------------------------------------
 
 class ObjectFactory:
     def __init__(self, filepath):

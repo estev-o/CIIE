@@ -13,6 +13,9 @@ from sistemas.dialogos.interaction import Interaction
 
 NIVEL_FORZADO = "area_exp3.tmx"  # Para pruebas, fuerza a entrar a esta área de experimentación específica
 
+#-----------------------------------------------------------------
+# --- Estado de las áreas de experimentación, con generación aleatoria de enemigos y cofres
+#-----------------------------------------------------------------
 
 class AreaExperiment(Estado):
     niveles = ["area_exp1.tmx", "area_exp2.tmx","area_exp3.tmx", "area_exp4.tmx", "area_exp5.tmx", "area_exp6.tmx"]

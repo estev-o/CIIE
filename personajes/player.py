@@ -189,9 +189,6 @@ class Player(Character):
             self.hurt_timer = self.hurt_time
 
     def aim_assist(self, aim_dir, max_angle_deg=20.0):
-        """If aim_dir points within max_angle_deg of a living enemy,
-        snap aim toward the closest such enemy.
-        Returns the (possibly corrected) direction vector."""
         state = getattr(self.game, "actual_state", None)
         if state is None:
             return aim_dir

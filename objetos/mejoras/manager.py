@@ -1,5 +1,8 @@
 from objetos.mejoras.catalogo import existe_mejora
 
+# -----------------------------------------------------------------
+# --- Manager para las mejoras desbloqueadas por el jugador, con persistencia en la configuración
+# -----------------------------------------------------------------
 
 class MejorasManager:
     CONFIG_KEY = "mejoras_persistentes"

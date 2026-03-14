@@ -1,5 +1,9 @@
 import pygame
 
+# -----------------------------------------------------------------
+# ---- Clase base para los estados del juego (áreas, hub, etc).
+# -----------------------------------------------------------------
+
 class Estado():
     def __init__(self, juego):
         self.juego = juego

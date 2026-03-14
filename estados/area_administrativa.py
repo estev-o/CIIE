@@ -13,6 +13,9 @@ from estados.boss_final import BossFinal
 
 NIVEL_FORZADO = "area_admin6.tmx"  # Para pruebas, fuerza a entrar a esta área de experimentación específica
 
+#-----------------------------------------------------------------
+# --- Estado de las áreas administrativas, con generación aleatoria de enemigos y cofres
+#-----------------------------------------------------------------
 
 class AreaAdministrativa(Estado):
     niveles = ["area_admin1.tmx", "area_admin2.tmx", "area_admin3.tmx", "area_admin4.tmx", "area_admin5.tmx", "area_admin6.tmx"]

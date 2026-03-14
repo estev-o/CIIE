@@ -11,6 +11,9 @@ from ui.adn_counter import ADNCounter
 from ui.health_bar import HealthBarManager
 from ui.player_health_bar import PlayerHealthBar
 
+# -----------------------------------------------------------------
+# --- Estado específico del boss final, con su propia lógica de fases.
+# -----------------------------------------------------------------
 
 class BossFinal(Estado):
     DOOR_CLOSED_DURATION = 10.0
